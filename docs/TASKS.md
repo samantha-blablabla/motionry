@@ -24,6 +24,11 @@
 ## Completed ✅
 - [x] Change font to Plus Jakarta Sans
 - [x] Improve AnimationCard UI/UX (spacing & balance)
+- [x] Enhance ColorPicker (Solid/Gradient support)
+- [x] Update Modal Layout (60/40 Split)
+- [x] Add Framer Motion/CSS sub-tabs to Pro Code
+- [x] Enable Color Customization across all Animations
+- [ ] Fix Gradient color support for all animation cards (Solid works, Gradient pending)
 - [ ] Add more animations to library
 - [ ] Animation preview on AnimationCard
 - [ ] Search improvements

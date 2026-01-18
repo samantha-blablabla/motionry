@@ -12,11 +12,17 @@ interface Toast {
 interface ToastSlideProps {
   direction?: 'left' | 'right' | 'top' | 'bottom';
   stagger?: number;
+  backgroundColor?: string;
+  textColor?: string;
+  accentColor?: string;
 }
 
-export function ToastSlide({ 
-  direction = 'right', 
-  stagger = 100 
+export function ToastSlide({
+  direction = 'right',
+  stagger = 100,
+  backgroundColor = '#1a1a1e',
+  textColor = '#ffffff',
+  accentColor = '#22c55e'
 }: ToastSlideProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextId, setNextId] = useState(1);
@@ -81,17 +87,18 @@ export function ToastSlide({
               initial={getInitialPosition()}
               animate={{ x: 0, y: 0, opacity: 1 }}
               exit={getExitPosition()}
-              transition={{ 
-                type: 'spring', 
-                damping: 25, 
+              transition={{
+                type: 'spring',
+                damping: 25,
                 stiffness: 300,
                 delay: index * (stagger / 1000)
               }}
-              className="flex items-center gap-2 px-4 py-3 bg-surface-overlay border border-surface-border rounded-lg shadow-lg"
+              className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg"
+              style={{ backgroundColor, border: '1px solid rgba(255,255,255,0.1)' }}
             >
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              <span className="text-sm text-text-primary whitespace-nowrap">{toast.message}</span>
-              <button 
+              <CheckCircle className="w-4 h-4" style={{ color: accentColor }} />
+              <span className="text-sm whitespace-nowrap" style={{ color: textColor }}>{toast.message}</span>
+              <button
                 onClick={() => removeToast(toast.id)}
                 className="ml-2 p-0.5 hover:bg-surface rounded"
               >

@@ -6,23 +6,28 @@ interface TextPopProps {
   lift?: number;
   stagger?: number;
   text?: string;
+  textColor?: string;
+  hoverColor?: string;
 }
 
-export function TextPop({ 
-  lift = -8, 
+export function TextPop({
+  lift = -8,
   stagger = 30,
-  text = 'Hover me!'
+  text = 'Hover me!',
+  textColor = '#ffffff',
+  hoverColor = '#6366f1'
 }: TextPopProps) {
   return (
     <div className="flex flex-wrap justify-center">
       {text.split('').map((char, index) => (
         <motion.span
           key={index}
-          className="text-2xl font-bold text-text-primary inline-block cursor-default"
-          whileHover={{ y: lift, color: '#6366f1' }}
-          transition={{ 
-            type: 'spring', 
-            stiffness: 500, 
+          className="text-2xl font-bold inline-block cursor-default"
+          style={{ color: textColor }}
+          whileHover={{ y: lift, color: hoverColor }}
+          transition={{
+            type: 'spring',
+            stiffness: 500,
             damping: 15,
             delay: 0 // Remove stagger on individual hover for better UX
           }}
@@ -35,8 +40,8 @@ export function TextPop({
 }
 
 // Alternative: Wave effect on container hover
-export function TextPopWave({ 
-  lift = -8, 
+export function TextPopWave({
+  lift = -8,
   stagger = 30,
   text = 'Hover me!'
 }: TextPopProps) {
@@ -50,7 +55,7 @@ export function TextPopWave({
 
   const letterVariants = {
     initial: { y: 0 },
-    hover: { 
+    hover: {
       y: lift,
       transition: {
         type: 'spring',
@@ -61,7 +66,7 @@ export function TextPopWave({
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="flex flex-wrap justify-center cursor-pointer"
       variants={containerVariants}
       initial="initial"

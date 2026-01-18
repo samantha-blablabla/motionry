@@ -26,6 +26,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
   const [configValues, setConfigValues] = useState<ConfigValues>({});
   const [copied, setCopied] = useState(false);
   const [previewMode, setPreviewMode] = useState<'dark' | 'light'>('dark');
+  const [proMode, setProMode] = useState<'framer' | 'css'>('framer');
   const { showToast } = useToast();
 
   // Initialize config values when animation changes
@@ -36,6 +37,10 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
         defaults[key] = config.default;
       });
       setConfigValues(defaults);
+
+      // Auto-select available code mode
+      if (animation.code.framerMotion) setProMode('framer');
+      else if (animation.code.css) setProMode('css');
     }
   }, [animation]);
 
@@ -81,7 +86,14 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
   // Generate customized code
   const getCustomizedCode = () => {
     if (!animation) return '';
-    let code = animation.code.framerMotion || animation.code.css || animation.prompts.pro;
+
+    // Get base code based on selected mode
+    let code = '';
+    if (proMode === 'framer') {
+      code = animation.code.framerMotion || '// No Framer Motion code available';
+    } else {
+      code = animation.code.css || '// No CSS code available';
+    }
 
     Object.entries(configValues).forEach(([key, value]) => {
       const config = animation.config[key];
@@ -156,14 +168,14 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
 
           {/* Modal */}
           <motion.div
-            className="fixed inset-2 sm:inset-4 md:inset-[8%] bg-surface-raised border border-surface-border rounded-2xl z-50 overflow-hidden flex flex-col"
+            className="fixed inset-2 sm:inset-4 md:inset-[8%] border border-surface-border rounded-2xl z-50 flex flex-col shadow-2xl"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-surface-border">
+            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-surface-border bg-surface-raised rounded-t-2xl">
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg md:text-xl font-semibold text-text-primary truncate">{animation.name}</h2>
                 <p className="text-xs md:text-sm text-text-muted mt-0.5 truncate">{animation.description}</p>
@@ -177,10 +189,10 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
             </div>
 
             {/* Content: 2-Column Layout */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+            <div className="flex-1 flex flex-col md:flex-row min-h-0 bg-surface-raised rounded-b-2xl">
 
-              {/* LEFT: Preview (Fixed) */}
-              <div className="md:w-1/2 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-surface-border min-h-[200px] md:min-h-0">
+              {/* LEFT: Preview (Fixed) - Needs rounded bottom-left if on desktop */}
+              <div className="md:w-[60%] relative flex items-center justify-center border-b md:border-b-0 md:border-r border-surface-border min-h-[200px] md:min-h-0 overflow-hidden md:rounded-bl-2xl">
                 {/* Background */}
                 <div className={cn(
                   'absolute inset-0 transition-colors duration-300',
@@ -213,7 +225,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
               </div>
 
               {/* RIGHT: Tabs (Custom + Prompt/Code) */}
-              <div className="md:w-1/2 flex flex-col min-h-0 flex-1">
+              <div className="md:w-[40%] flex flex-col min-h-0 flex-1">
                 {/* Tabs Header */}
                 <div className="flex border-b border-surface-border">
                   <button
@@ -349,14 +361,45 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
                             </div>
                           ) : (
                             <div>
+                              {animation.code.framerMotion && animation.code.css && (
+                                <div className="flex items-center gap-2 mb-3 bg-surface-overlay p-1 rounded-lg w-fit">
+                                  <button
+                                    onClick={() => setProMode('framer')}
+                                    className={cn(
+                                      "px-3 py-1 text-xs font-medium rounded-md transition-all",
+                                      proMode === 'framer'
+                                        ? "bg-surface text-text-primary shadow-sm"
+                                        : "text-text-muted hover:text-text-primary"
+                                    )}
+                                  >
+                                    Framer Motion
+                                  </button>
+                                  <button
+                                    onClick={() => setProMode('css')}
+                                    className={cn(
+                                      "px-3 py-1 text-xs font-medium rounded-md transition-all",
+                                      proMode === 'css'
+                                        ? "bg-surface text-text-primary shadow-sm"
+                                        : "text-text-muted hover:text-text-primary"
+                                    )}
+                                  >
+                                    CSS
+                                  </button>
+                                </div>
+                              )}
+
                               <div className="flex items-center gap-2 mb-2">
                                 <span className={cn(
                                   "px-2 py-0.5 text-xs font-medium rounded",
-                                  animation.code.framerMotion
+                                  (proMode === 'framer' && animation.code.framerMotion)
                                     ? "bg-purple-500/20 text-purple-400"
                                     : "bg-blue-500/20 text-blue-400"
                                 )}>
-                                  {animation.code.framerMotion ? 'Framer Motion' : 'CSS'}
+                                  {proMode === 'framer' && animation.code.framerMotion
+                                    ? 'Framer Motion'
+                                    : (proMode === 'css' && animation.code.css
+                                      ? 'CSS'
+                                      : 'No code available')}
                                 </span>
                               </div>
                               <pre className="p-4 bg-surface rounded-lg border border-surface-border overflow-x-auto text-xs">

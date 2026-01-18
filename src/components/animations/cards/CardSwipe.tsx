@@ -7,11 +7,15 @@ import { Heart, X, RotateCcw } from 'lucide-react';
 interface CardSwipeProps {
   threshold?: number;
   rotation?: number;
+  cardColor?: string;
+  borderColor?: string;
 }
 
-export function CardSwipe({ 
-  threshold = 100, 
-  rotation = 15 
+export function CardSwipe({
+  threshold = 100,
+  rotation = 15,
+  cardColor = 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+  borderColor = '#6366f1'
 }: CardSwipeProps) {
   const [cards, setCards] = useState([
     { id: 1, title: 'Card 1', color: 'from-violet-500 to-purple-500' },
@@ -37,7 +41,7 @@ export function CardSwipe({
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (cards.length === 0) return;
-    
+
     const currentCard = cards[cards.length - 1];
     setSwipedCards(prev => [...prev, currentCard.id]);
     setCards(prev => prev.slice(0, -1));
@@ -63,7 +67,7 @@ export function CardSwipe({
         ) : (
           cards.map((card, index) => {
             const isTop = index === cards.length - 1;
-            
+
             return (
               <motion.div
                 key={card.id}
@@ -90,13 +94,13 @@ export function CardSwipe({
                 {/* Like/Nope Indicators */}
                 {isTop && (
                   <>
-                    <motion.div 
+                    <motion.div
                       className="absolute top-4 right-4 px-2 py-1 bg-green-500 rounded text-white text-xs font-bold"
                       style={{ opacity: likeOpacity }}
                     >
                       LIKE
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                       className="absolute top-4 left-4 px-2 py-1 bg-red-500 rounded text-white text-xs font-bold"
                       style={{ opacity: nopeOpacity }}
                     >
@@ -121,7 +125,7 @@ export function CardSwipe({
         >
           <X className="w-5 h-5" />
         </motion.button>
-        
+
         <motion.button
           className="p-2 rounded-full bg-surface-overlay text-text-muted border border-surface-border"
           whileHover={{ scale: 1.1 }}

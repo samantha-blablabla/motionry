@@ -6,11 +6,15 @@ import { motion } from 'framer-motion';
 interface ProgressFillProps {
   duration?: number;
   shimmer?: boolean;
+  fillColor?: string;
+  trackColor?: string;
 }
 
-export function ProgressFill({ 
-  duration = 2, 
-  shimmer = true 
+export function ProgressFill({
+  duration = 2,
+  shimmer = true,
+  fillColor = '#6366f1',
+  trackColor = '#2a2a2e'
 }: ProgressFillProps) {
   const [progress, setProgress] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -18,7 +22,7 @@ export function ProgressFill({
   const startAnimation = () => {
     setProgress(0);
     setIsAnimating(true);
-    
+
     // Simulate progress
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -40,15 +44,19 @@ export function ProgressFill({
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-[240px]">
       {/* Progress Bar */}
-      <div className="w-full h-3 bg-surface-border rounded-full overflow-hidden">
+      <div
+        className="w-full h-3 rounded-full overflow-hidden"
+        style={{ backgroundColor: trackColor }}
+      >
         <motion.div
-          className="h-full bg-accent rounded-full relative overflow-hidden"
+          className="h-full rounded-full relative overflow-hidden"
+          style={{ backgroundColor: fillColor }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ 
-            type: 'spring', 
-            stiffness: 50, 
-            damping: 15 
+          transition={{
+            type: 'spring',
+            stiffness: 50,
+            damping: 15
           }}
         >
           {/* Shimmer overlay */}

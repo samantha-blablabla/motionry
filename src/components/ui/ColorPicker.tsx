@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,6 +18,8 @@ const COLOR_PRESETS = [
     { name: 'Yellow', colors: { primary: '#eab308', secondary: '#facc15' } },
 ];
 
+import { HexColorPicker } from 'react-colorful';
+
 interface ColorPickerProps {
     label: string;
     value: string;
@@ -24,45 +27,220 @@ interface ColorPickerProps {
 }
 
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [mode, setMode] = useState<'solid' | 'gradient'>('solid');
+    const [gradientColors, setGradientColors] = useState({ start: '#6366f1', end: '#a5b4fc' });
+
+    // Parse initial value to determine mode and colors
+    useEffect(() => {
+        if (value.includes('gradient')) {
+            setMode('gradient');
+            const match = value.match(/linear-gradient\(\d+deg,\s*(.+?),\s*(.+?)\)/);
+            if (match) {
+                setGradientColors({ start: match[1], end: match[2] });
+            }
+        } else {
+            setMode('solid');
+        }
+    }, [value]);
+
+    const handleGradientChange = (type: 'start' | 'end', color: string) => {
+        const newColors = { ...gradientColors, [type]: color };
+        setGradientColors(newColors);
+        onChange(`linear-gradient(135deg, ${newColors.start}, ${newColors.end})`);
+    };
 
     return (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
                 <span className="text-text-muted">{label}</span>
-                <span className="text-text-primary font-mono text-xs">{value.toUpperCase()}</span>
+                <div className="flex bg-surface-overlay rounded-lg p-0.5 border border-surface-border">
+                    <button
+                        onClick={() => {
+                            setMode('solid');
+                            onChange(gradientColors.start);
+                        }}
+                        className={cn(
+                            "px-2 py-0.5 text-[10px] font-medium rounded-md transition-all",
+                            mode === 'solid' ? "bg-surface text-text-primary shadow-sm" : "text-text-muted hover:text-text-primary"
+                        )}
+                    >
+                        Solid
+                    </button>
+                    <button
+                        onClick={() => {
+                            setMode('gradient');
+                            onChange(`linear-gradient(135deg, ${gradientColors.start}, ${gradientColors.end})`);
+                        }}
+                        className={cn(
+                            "px-2 py-0.5 text-[10px] font-medium rounded-md transition-all",
+                            mode === 'gradient' ? "bg-surface text-text-primary shadow-sm" : "text-text-muted hover:text-text-primary"
+                        )}
+                    >
+                        Gradient
+                    </button>
+                </div>
             </div>
-            <div className="flex items-center gap-2">
-                {/* Color swatch button */}
-                <button
-                    onClick={() => inputRef.current?.click()}
-                    className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-surface-border hover:border-text-muted transition-colors"
-                    style={{ backgroundColor: value }}
-                >
-                    <input
-                        ref={inputRef}
-                        type="color"
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                    />
-                </button>
 
-                {/* Hex input */}
+            {mode === 'solid' ? (
+                <ColorSwatch
+                    color={value}
+                    onChange={onChange}
+                />
+            ) : (
+                <div className="space-y-2">
+                    {/* Gradient Preview */}
+                    <div
+                        className="w-full h-9 rounded-lg border border-surface-border"
+                        style={{ background: value }}
+                    />
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <ColorSwatch
+                            color={gradientColors.start}
+                            onChange={(c) => handleGradientChange('start', c)}
+                        />
+                        <ColorSwatch
+                            color={gradientColors.end}
+                            onChange={(c) => handleGradientChange('end', c)}
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function ColorSwatch({ color, onChange }: { color: string, onChange: (c: string) => void }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+    const updatePosition = () => {
+        if (buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            // Default to showing below, check if space is limited (simple check)
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const showAbove = spaceBelow < 300; // If less than 300px below, show above
+
+            // For position: fixed, we use rect properties directly (viewport relative)
+            // DO NOT add window.scrollY/scrollX
+            setCoords({
+                top: showAbove ? rect.top - 10 : rect.bottom + 10,
+                left: rect.left
+            });
+            return showAbove;
+        }
+        return false;
+    };
+
+    // Toggle logic
+    const togglePicker = () => {
+        if (!isOpen) {
+            updatePosition();
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
+        }
+    };
+
+    // Handle resize/scroll - update position continuously if open
+    useEffect(() => {
+        if (isOpen) {
+            window.addEventListener('scroll', updatePosition, true); // true for capture to catch all scrolls
+            window.addEventListener('resize', updatePosition);
+            return () => {
+                window.removeEventListener('scroll', updatePosition, true);
+                window.removeEventListener('resize', updatePosition);
+            };
+        }
+    }, [isOpen]);
+
+    // Close on click outside (modified for Portal)
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isOpen && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+                // Check if click target is inside the popover
+                // Since we render into body, we can check by closest selector
+                const target = event.target as HTMLElement;
+                if (!target.closest('.color-picker-popover')) {
+                    setIsOpen(false);
+                }
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
+
+    // Ensure we only render portal on client
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
+    return (
+        <div className="relative w-full">
+            <div className="flex items-center gap-2">
+                <button
+                    ref={buttonRef}
+                    onClick={togglePicker}
+                    className="w-8 h-8 rounded-lg border border-surface-border flex-shrink-0 cursor-pointer hover:border-text-muted transition-colors relative overflow-hidden"
+                    style={{ backgroundColor: color }}
+                >
+                    {/* Checkerboard background for transparency (optional, but good for UX) */}
+                    <div className="absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNMCAwSDRWMHoiIGZpbGw9IiNlZWVlZWUiLz48cGF0aCBkPSJNNA0oejR2NGgtNHoiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4=')] opacity-20" />
+                </button>
                 <input
                     type="text"
-                    value={value}
-                    onChange={(e) => {
-                        const hex = e.target.value;
-                        if (/^#[0-9A-Fa-f]{0,6}$/.test(hex)) {
-                            onChange(hex);
-                        }
-                    }}
+                    value={color}
+                    onChange={(e) => onChange(e.target.value)}
                     className="flex-1 px-2 py-1.5 text-xs font-mono bg-surface border border-surface-border rounded-lg text-text-primary focus:border-accent outline-none"
                     placeholder="#000000"
                 />
             </div>
+
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.1 }}
+                            style={{
+                                position: 'fixed',
+                                top: coords.top,
+                                left: coords.left,
+                                // Prevent going off-screen to the left/right if needed
+                                maxWidth: '100vw'
+                            }}
+                            className={cn(
+                                "z-[9999] origin-top-left color-picker-popover", // Ensure extremely high Z-Index
+                                "pointer-events-auto", // Ensure clicks work
+                                coords.top < (buttonRef.current?.getBoundingClientRect().top || 0) ? "-translate-y-full origin-bottom-left" : ""
+                            )}
+                        >
+                            <div className="p-3 bg-surface-raised border border-surface-border rounded-xl shadow-2xl backdrop-blur-sm mt-0">
+                                <HexColorPicker color={color} onChange={onChange} />
+                                {/* Preset Colors */}
+                                <div className="mt-3 flex flex-wrap gap-1.5 w-[200px]">
+                                    {['#6366f1', '#3b82f6', '#22c55e', '#ef4444', '#f97316', '#ec4899', '#06b6d4', '#eab308', '#ffffff', '#000000'].map((preset) => (
+                                        <button
+                                            key={preset}
+                                            className="w-5 h-5 rounded-md border border-surface-border/50 hover:scale-110 transition-transform"
+                                            style={{ backgroundColor: preset }}
+                                            onClick={() => onChange(preset)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 }

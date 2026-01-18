@@ -7,11 +7,17 @@ import { Search, X } from 'lucide-react';
 interface SearchExpandProps {
   expandWidth?: number;
   collapsedWidth?: number;
+  backgroundColor?: string;
+  borderColor?: string;
+  iconColor?: string;
 }
 
-export function SearchExpand({ 
-  expandWidth = 240, 
-  collapsedWidth = 44 
+export function SearchExpand({
+  expandWidth = 240,
+  collapsedWidth = 44,
+  backgroundColor = '#1a1a1e',
+  borderColor = '#2a2a2e',
+  iconColor = '#a0a0a0'
 }: SearchExpandProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -30,13 +36,15 @@ export function SearchExpand({
 
   return (
     <motion.div
-      className="flex items-center bg-surface-overlay border border-surface-border rounded-full overflow-hidden"
+      className="flex items-center rounded-full overflow-hidden"
+      style={{ backgroundColor, border: `1px solid ${borderColor}` }}
       animate={{ width: isOpen ? expandWidth : collapsedWidth }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       {/* Search Icon / Button */}
       <motion.button
-        className="flex-shrink-0 w-11 h-11 flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+        className="flex-shrink-0 w-11 h-11 flex items-center justify-center transition-colors"
+        style={{ color: iconColor }}
         onClick={() => setIsOpen(true)}
         whileTap={{ scale: 0.9 }}
       >

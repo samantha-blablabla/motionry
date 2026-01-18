@@ -7,11 +7,15 @@ import { User } from 'lucide-react';
 interface NameTagRevealProps {
   direction?: 'left' | 'right' | 'top' | 'bottom';
   name?: string;
+  tagBackground?: string;
+  tagTextColor?: string;
 }
 
-export function NameTagReveal({ 
+export function NameTagReveal({
   direction = 'right',
-  name = 'John Doe'
+  name = 'John Doe',
+  tagBackground = '#1a1a1e',
+  tagTextColor = '#ffffff'
 }: NameTagRevealProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -45,7 +49,7 @@ export function NameTagReveal({
   const animProps = getAnimationProps();
 
   return (
-    <div 
+    <div
       className="relative inline-flex items-center"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -77,8 +81,8 @@ export function NameTagReveal({
         animate={isHovered ? animProps.animate : animProps.initial}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
-        <div className="px-3 py-1.5 bg-surface-overlay border border-surface-border rounded-lg whitespace-nowrap">
-          <span className="text-sm font-medium text-text-primary">{name}</span>
+        <div className="px-3 py-1.5 rounded-lg whitespace-nowrap" style={{ backgroundColor: tagBackground, border: '1px solid rgba(255,255,255,0.1)' }}>
+          <span className="text-sm font-medium" style={{ color: tagTextColor }}>{name}</span>
         </div>
       </motion.div>
     </div>

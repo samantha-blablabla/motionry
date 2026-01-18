@@ -8,12 +8,16 @@ interface DelayedTooltipProps {
   delay?: number;
   offset?: number;
   content?: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
-export function DelayedTooltip({ 
-  delay = 500, 
+export function DelayedTooltip({
+  delay = 500,
   offset = 8,
-  content = 'This is a helpful tooltip!'
+  content = 'This is a helpful tooltip!',
+  backgroundColor = '#1a1a1e',
+  textColor = '#ffffff'
 }: DelayedTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,17 +52,18 @@ export function DelayedTooltip({
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-3 py-2 bg-surface-overlay border border-surface-border rounded-lg shadow-lg whitespace-nowrap z-10"
+            className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10"
+            style={{ backgroundColor, border: '1px solid rgba(255,255,255,0.1)' }}
             initial={{ opacity: 0, y: offset }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: offset }}
             transition={{ duration: 0.15 }}
           >
-            <span className="text-sm text-text-primary">{content}</span>
+            <span className="text-sm" style={{ color: textColor }}>{content}</span>
             {/* Arrow */}
             <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-px">
-              <div className="border-8 border-transparent border-t-surface-border" />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 border-[7px] border-transparent border-t-surface-overlay" />
+              <div className="border-8 border-transparent" style={{ borderTopColor: 'rgba(255,255,255,0.1)' }} />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 border-[7px] border-transparent" style={{ borderTopColor: backgroundColor }} />
             </div>
           </motion.div>
         )}
