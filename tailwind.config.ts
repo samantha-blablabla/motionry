@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,30 +10,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Neutral palette - sophisticated dark theme
+        // Dynamic theme colors using CSS variables
         surface: {
-          DEFAULT: '#0a0a0b',
-          raised: '#141416',
-          overlay: '#1c1c1f',
-          border: '#2a2a2e',
+          DEFAULT: 'var(--surface)',
+          raised: 'var(--surface-raised)',
+          overlay: 'var(--surface-overlay)',
+          border: 'var(--surface-border)',
         },
-        // Accent - electric blue with warmth
         accent: {
-          DEFAULT: '#6366f1',
-          hover: '#818cf8',
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
           muted: '#4f46e5',
           glow: 'rgba(99, 102, 241, 0.15)',
         },
-        // Text hierarchy
         text: {
-          primary: '#fafafa',
-          secondary: '#a1a1aa',
-          muted: '#71717a',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
         }
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['Consolas', 'Monaco', 'monospace'],
       },
       animation: {
         'shimmer': 'shimmer 2s linear infinite',

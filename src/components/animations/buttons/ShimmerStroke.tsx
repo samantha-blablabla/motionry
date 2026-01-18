@@ -21,7 +21,7 @@ export function ShimmerStroke({
     >
       {/* Rotating gradient border */}
       <motion.div
-        className="absolute inset-[-2px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute inset-[-2px] rounded-xl opacity-100"
         style={{
           background: `conic-gradient(from 0deg, transparent, ${color}, transparent 30%)`,
         }}

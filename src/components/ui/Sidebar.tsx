@@ -1,14 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { 
-  MousePointerClick, 
-  TextCursor, 
-  Loader, 
-  LayoutGrid, 
-  MessageSquare, 
-  Bell, 
-  Type, 
+import {
+  MousePointerClick,
+  TextCursor,
+  Loader,
+  LayoutGrid,
+  MessageSquare,
+  Bell,
+  Type,
   Menu,
   Sparkles
 } from 'lucide-react';
@@ -30,11 +30,12 @@ interface SidebarProps {
   categories: Category[];
   activeCategory: string | null;
   onCategoryChange: (categoryId: string | null) => void;
+  animationCounts?: Record<string, number>;
 }
 
-export function Sidebar({ categories, activeCategory, onCategoryChange }: SidebarProps) {
+export function Sidebar({ categories, activeCategory, onCategoryChange, animationCounts = {} }: SidebarProps) {
   return (
-    <aside className="w-64 h-screen sticky top-0 border-r border-surface-border bg-surface p-6 flex flex-col">
+    <aside className="hidden lg:flex w-64 h-screen sticky top-0 border-r border-surface-border bg-surface p-6 flex-col">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8">
         <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">
@@ -51,14 +52,17 @@ export function Sidebar({ categories, activeCategory, onCategoryChange }: Sideba
         <button
           onClick={() => onCategoryChange(null)}
           className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left',
+            'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left',
             activeCategory === null
               ? 'bg-accent/10 text-accent'
               : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
           )}
         >
           <LayoutGrid className="w-4 h-4" />
-          All Animations
+          <span className="flex-1">All Animations</span>
+          <span className="text-xs text-text-muted bg-surface px-1.5 py-0.5 rounded">
+            {Object.values(animationCounts).reduce((a, b) => a + b, 0)}
+          </span>
         </button>
 
         <div className="pt-4 pb-2">
@@ -69,7 +73,7 @@ export function Sidebar({ categories, activeCategory, onCategoryChange }: Sideba
 
         {categories.map((category) => {
           const Icon = iconMap[category.icon] || LayoutGrid;
-          
+
           return (
             <motion.button
               key={category.id}
@@ -84,7 +88,12 @@ export function Sidebar({ categories, activeCategory, onCategoryChange }: Sideba
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <Icon className="w-4 h-4" />
-              {category.name}
+              <span className="flex-1">{category.name}</span>
+              {animationCounts[category.id] && (
+                <span className="text-xs text-text-muted bg-surface px-1.5 py-0.5 rounded">
+                  {animationCounts[category.id]}
+                </span>
+              )}
             </motion.button>
           );
         })}

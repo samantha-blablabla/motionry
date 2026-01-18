@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/globals.css';
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Motionry - Micro Animation Library for UI/UX',
@@ -15,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className="min-h-screen bg-surface font-sans">
+    <html lang="en" className={`${plusJakarta.variable} dark`}>
+      <body className={`${plusJakarta.className} min-h-screen antialiased`}>
         {children}
       </body>
     </html>

@@ -55,7 +55,12 @@
       "name": "Jelly Bounce",
       "category": "buttons",
       "description": "A playful bounce effect that makes buttons feel tactile and fun",
-      "tags": ["hover", "playful", "bounce", "spring"],
+      "tags": [
+        "hover",
+        "playful",
+        "bounce",
+        "spring"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 600
@@ -81,6 +86,16 @@
           "min": 1.01,
           "max": 1.2,
           "step": 0.01
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
         }
       },
       "prompts": {
@@ -96,7 +111,13 @@
       "name": "Shimmer Stroke",
       "category": "buttons",
       "description": "An elegant light sweep effect along the border that adds premium feel",
-      "tags": ["hover", "elegant", "premium", "glow", "border"],
+      "tags": [
+        "hover",
+        "elegant",
+        "premium",
+        "glow",
+        "border"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 1500
@@ -128,7 +149,12 @@
       "name": "Magnetic Hover",
       "category": "buttons",
       "description": "Button subtly follows the cursor position within its bounds",
-      "tags": ["hover", "interactive", "cursor", "premium"],
+      "tags": [
+        "hover",
+        "interactive",
+        "cursor",
+        "premium"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 0
@@ -147,6 +173,16 @@
           "min": 0.05,
           "max": 0.3,
           "step": 0.01
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
         }
       },
       "prompts": {
@@ -162,7 +198,12 @@
       "name": "Toast Slide In",
       "category": "toasts",
       "description": "Smooth entry and exit for notification toasts with stacking support",
-      "tags": ["notification", "alert", "slide", "stack"],
+      "tags": [
+        "notification",
+        "alert",
+        "slide",
+        "stack"
+      ],
       "preview": {
         "trigger": "click",
         "duration": 3000
@@ -171,7 +212,12 @@
         "direction": {
           "label": "Slide Direction",
           "default": "right",
-          "options": ["top", "right", "bottom", "left"]
+          "options": [
+            "top",
+            "right",
+            "bottom",
+            "left"
+          ]
         },
         "stagger": {
           "label": "Stack Delay (ms)",
@@ -179,6 +225,21 @@
           "min": 50,
           "max": 300,
           "step": 10
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        },
+        "accentColor": {
+          "label": "Accent/Icon",
+          "default": "#22c55e",
+          "type": "color"
         }
       },
       "prompts": {
@@ -194,7 +255,12 @@
       "name": "Search Expand",
       "category": "inputs",
       "description": "Search input that elegantly expands on focus",
-      "tags": ["focus", "expand", "input", "search"],
+      "tags": [
+        "focus",
+        "expand",
+        "input",
+        "search"
+      ],
       "preview": {
         "trigger": "focus",
         "duration": 300
@@ -213,6 +279,21 @@
           "min": 40,
           "max": 100,
           "step": 4
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "borderColor": {
+          "label": "Border",
+          "default": "#2a2a2e",
+          "type": "color"
+        },
+        "iconColor": {
+          "label": "Icon Color",
+          "default": "#6366f1",
+          "type": "color"
         }
       },
       "prompts": {
@@ -228,7 +309,12 @@
       "name": "Progress Fill",
       "category": "loaders",
       "description": "Smooth animated progress bar with optional shimmer effect",
-      "tags": ["progress", "loading", "fill", "shimmer"],
+      "tags": [
+        "progress",
+        "loading",
+        "fill",
+        "shimmer"
+      ],
       "preview": {
         "trigger": "auto",
         "duration": 2000
@@ -245,6 +331,16 @@
           "label": "Enable Shimmer",
           "default": true,
           "type": "boolean"
+        },
+        "fillColor": {
+          "label": "Fill Color",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "trackColor": {
+          "label": "Track Color",
+          "default": "#2a2a2e",
+          "type": "color"
         }
       },
       "prompts": {
@@ -260,7 +356,12 @@
       "name": "Delayed Tooltip",
       "category": "tooltips",
       "description": "Tooltip that appears after a brief hover delay with smooth fade",
-      "tags": ["tooltip", "hover", "delay", "info"],
+      "tags": [
+        "tooltip",
+        "hover",
+        "delay",
+        "info"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 200
@@ -279,6 +380,16 @@
           "min": 4,
           "max": 20,
           "step": 2
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
         }
       },
       "prompts": {
@@ -294,7 +405,12 @@
       "name": "Card Swipe",
       "category": "cards",
       "description": "Tinder-style swipe gesture for card dismissal",
-      "tags": ["gesture", "swipe", "drag", "dismiss"],
+      "tags": [
+        "gesture",
+        "swipe",
+        "drag",
+        "dismiss"
+      ],
       "preview": {
         "trigger": "drag",
         "duration": 0
@@ -313,6 +429,16 @@
           "min": 0,
           "max": 30,
           "step": 1
+        },
+        "backgroundColor": {
+          "label": "Card Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "borderColor": {
+          "label": "Border",
+          "default": "#2a2a2e",
+          "type": "color"
         }
       },
       "prompts": {
@@ -328,7 +454,12 @@
       "name": "Text Hover Pop",
       "category": "text",
       "description": "Individual characters pop up on hover for playful interaction",
-      "tags": ["text", "hover", "character", "playful"],
+      "tags": [
+        "text",
+        "hover",
+        "character",
+        "playful"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 0
@@ -347,6 +478,16 @@
           "min": 0,
           "max": 100,
           "step": 5
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        },
+        "hoverColor": {
+          "label": "Hover Color",
+          "default": "#6366f1",
+          "type": "color"
         }
       },
       "prompts": {
@@ -362,7 +503,12 @@
       "name": "Name Tag Reveal",
       "category": "tooltips",
       "description": "Hover over avatar to reveal name with smooth slide animation",
-      "tags": ["hover", "reveal", "avatar", "profile"],
+      "tags": [
+        "hover",
+        "reveal",
+        "avatar",
+        "profile"
+      ],
       "preview": {
         "trigger": "hover",
         "duration": 200
@@ -371,7 +517,22 @@
         "direction": {
           "label": "Reveal Direction",
           "default": "right",
-          "options": ["left", "right", "top", "bottom"]
+          "options": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ]
+        },
+        "tagBackground": {
+          "label": "Tag Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "tagTextColor": {
+          "label": "Tag Text",
+          "default": "#ffffff",
+          "type": "color"
         }
       },
       "prompts": {

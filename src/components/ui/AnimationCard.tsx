@@ -31,8 +31,8 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
   return (
     <motion.div
       className={cn(
-        'group relative rounded-xl border border-surface-border bg-surface-raised overflow-hidden cursor-pointer',
-        'transition-colors hover:border-accent/30'
+        'group relative rounded-xl border border-surface-border bg-surface-raised overflow-hidden cursor-pointer card-glow',
+        'transition-all hover:border-accent/50'
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -41,19 +41,24 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
     >
       {/* Preview Area */}
-      <div className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden">
+      <div
+        className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {hasComponent && AnimationComponent ? (
-          <AnimationComponent />
+          <div className="w-full h-full flex items-center justify-center scale-[0.85] origin-center transform-gpu">
+            <AnimationComponent />
+          </div>
         ) : (
           <FallbackPreview animation={animation} isPlaying={isHovered} />
         )}
-        
+
         {/* Hover overlay with play indicator */}
         <div className={cn(
           'absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent',
           'opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none'
         )} />
-        
+
         {/* Play indicator */}
         <div className={cn(
           'absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-full text-xs',
@@ -66,41 +71,51 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
       </div>
 
       {/* Info Section */}
-      <div className="p-4 border-t border-surface-border">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h3 className="font-medium text-text-primary truncate">
+      <div className="p-4 border-t border-surface-border flex flex-col h-full bg-surface-raised/50">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-medium text-text-primary truncate text-base">
               {animation.name}
             </h3>
-            <p className="text-sm text-text-muted mt-0.5 line-clamp-2">
+            {/* Extended spacing between title and description */}
+            <p className="text-sm text-text-muted mt-2 line-clamp-2 h-10 leading-5">
               {animation.description}
             </p>
           </div>
-          
+
           {/* Quick Copy Button */}
           <motion.button
             onClick={handleQuickCopy}
             className={cn(
-              'flex-shrink-0 p-2 rounded-lg transition-colors',
-              'bg-surface hover:bg-accent/10 hover:text-accent'
+              'flex-shrink-0 p-2 rounded-lg transition-colors relative group/copy mt-0.5',
+              'bg-surface hover:bg-accent/10 hover:text-accent border border-surface-border/50'
             )}
             whileTap={{ scale: 0.95 }}
-            title="Copy code"
           >
-            {copied ? (
-              <Check className="w-4 h-4 text-green-500" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
+            {/* Tooltip */}
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-surface-overlay border border-surface-border rounded opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+              {copied ? 'Copied!' : 'Copy code'}
+            </span>
+            <motion.div
+              initial={false}
+              animate={copied ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 0.2 }}
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-green-500" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </motion.div>
           </motion.button>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mt-3">
+        {/* Tags with increased top spacing and consistent gap */}
+        <div className="flex flex-wrap gap-2 mt-4">
           {animation.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="px-2 py-0.5 text-xs rounded-full bg-surface text-text-muted"
+              className="px-2.5 py-1 text-xs rounded-md bg-surface text-text-secondary border border-surface-border/50 font-medium"
             >
               {tag}
             </span>
@@ -114,7 +129,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
 // Fallback preview for animations without registered components
 function FallbackPreview({ animation, isPlaying }: { animation: Animation; isPlaying: boolean }) {
   const baseClasses = "px-6 py-3 rounded-lg font-medium text-sm";
-  
+
   switch (animation.category) {
     case 'buttons':
       return (
@@ -126,7 +141,7 @@ function FallbackPreview({ animation, isPlaying }: { animation: Animation; isPla
           Hover me
         </motion.button>
       );
-    
+
     case 'loaders':
       return (
         <div className="w-full max-w-[200px] h-2 bg-surface-border rounded-full overflow-hidden">
@@ -137,7 +152,7 @@ function FallbackPreview({ animation, isPlaying }: { animation: Animation; isPla
           />
         </div>
       );
-    
+
     default:
       return (
         <motion.div
