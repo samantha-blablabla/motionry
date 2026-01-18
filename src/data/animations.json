@@ -1,0 +1,386 @@
+{
+  "categories": [
+    {
+      "id": "buttons",
+      "name": "Buttons",
+      "description": "Hover effects, click feedback, and state transitions",
+      "icon": "MousePointerClick"
+    },
+    {
+      "id": "inputs",
+      "name": "Inputs & Forms",
+      "description": "Focus states, validation feedback, and search interactions",
+      "icon": "TextCursor"
+    },
+    {
+      "id": "loaders",
+      "name": "Loaders & Progress",
+      "description": "Loading spinners, progress bars, and skeleton states",
+      "icon": "Loader"
+    },
+    {
+      "id": "cards",
+      "name": "Cards & Containers",
+      "description": "Swipe gestures, hover reveals, and expansion effects",
+      "icon": "LayoutGrid"
+    },
+    {
+      "id": "tooltips",
+      "name": "Tooltips & Popovers",
+      "description": "Delayed reveals, contextual information, and hover details",
+      "icon": "MessageSquare"
+    },
+    {
+      "id": "toasts",
+      "name": "Toasts & Notifications",
+      "description": "Alert animations, entry/exit transitions, and stacking",
+      "icon": "Bell"
+    },
+    {
+      "id": "text",
+      "name": "Text & Typography",
+      "description": "Character animations, hover effects, and reveals",
+      "icon": "Type"
+    },
+    {
+      "id": "navigation",
+      "name": "Navigation",
+      "description": "Menu transitions, tab switches, and breadcrumbs",
+      "icon": "Menu"
+    }
+  ],
+  "animations": [
+    {
+      "id": "jelly-bounce",
+      "name": "Jelly Bounce",
+      "category": "buttons",
+      "description": "A playful bounce effect that makes buttons feel tactile and fun",
+      "tags": ["hover", "playful", "bounce", "spring"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 600
+      },
+      "config": {
+        "stiffness": {
+          "label": "Stiffness",
+          "default": 400,
+          "min": 100,
+          "max": 1000,
+          "step": 50
+        },
+        "damping": {
+          "label": "Damping",
+          "default": 10,
+          "min": 5,
+          "max": 50,
+          "step": 1
+        },
+        "scale": {
+          "label": "Scale",
+          "default": 1.05,
+          "min": 1.01,
+          "max": 1.2,
+          "step": 0.01
+        }
+      },
+      "prompts": {
+        "beginner": "Make my button bounce like jelly when I hover over it. It should feel soft, playful, and satisfying - like poking a gummy bear. The bounce should be quick but noticeable.",
+        "pro": "Create a hover effect using Framer Motion spring physics:\n- type: 'spring'\n- stiffness: 400 (controls snap speed)\n- damping: 10 (controls oscillation)\n- Scale to 1.05 on hover\n- Use whileHover for state management"
+      },
+      "code": {
+        "framerMotion": "const buttonVariants = {\n  initial: { scale: 1 },\n  hover: { \n    scale: 1.05,\n    transition: {\n      type: 'spring',\n      stiffness: 400,\n      damping: 10\n    }\n  }\n};\n\n<motion.button\n  variants={buttonVariants}\n  initial=\"initial\"\n  whileHover=\"hover\"\n>\n  Click me\n</motion.button>"
+      }
+    },
+    {
+      "id": "shimmer-stroke",
+      "name": "Shimmer Stroke",
+      "category": "buttons",
+      "description": "An elegant light sweep effect along the border that adds premium feel",
+      "tags": ["hover", "elegant", "premium", "glow", "border"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 1500
+      },
+      "config": {
+        "duration": {
+          "label": "Duration (s)",
+          "default": 1.5,
+          "min": 0.5,
+          "max": 3,
+          "step": 0.1
+        },
+        "color": {
+          "label": "Glow Color",
+          "default": "#ffffff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Add a shiny light effect that travels around the border of my button when someone hovers over it. It should look premium and smooth, like light reflecting off a polished surface.",
+        "pro": "Implement a conic-gradient border animation:\n- Use pseudo-element with conic-gradient\n- Animate rotation on hover\n- Mask inner content to create border effect\n- Duration: 1.5s linear infinite\n- Consider using CSS @property for gradient animation"
+      },
+      "code": {
+        "css": ".shimmer-button {\n  position: relative;\n  background: #1a1a1a;\n  border: none;\n  padding: 12px 24px;\n  border-radius: 8px;\n  overflow: hidden;\n}\n\n.shimmer-button::before {\n  content: '';\n  position: absolute;\n  inset: -2px;\n  background: conic-gradient(\n    from 0deg,\n    transparent,\n    #fff,\n    transparent 30%\n  );\n  animation: rotate 1.5s linear infinite;\n  z-index: -1;\n  border-radius: inherit;\n}\n\n.shimmer-button::after {\n  content: '';\n  position: absolute;\n  inset: 2px;\n  background: #1a1a1a;\n  border-radius: 6px;\n  z-index: -1;\n}\n\n@keyframes rotate {\n  to { transform: rotate(360deg); }\n}"
+      }
+    },
+    {
+      "id": "magnetic-hover",
+      "name": "Magnetic Hover",
+      "category": "buttons",
+      "description": "Button subtly follows the cursor position within its bounds",
+      "tags": ["hover", "interactive", "cursor", "premium"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 0
+      },
+      "config": {
+        "strength": {
+          "label": "Magnetic Strength",
+          "default": 0.3,
+          "min": 0.1,
+          "max": 0.5,
+          "step": 0.05
+        },
+        "smoothing": {
+          "label": "Smoothing",
+          "default": 0.15,
+          "min": 0.05,
+          "max": 0.3,
+          "step": 0.01
+        }
+      },
+      "prompts": {
+        "beginner": "Make my button magically follow my cursor when I hover near it, like it's attracted to my mouse. It should feel smooth and subtle, not jumpy.",
+        "pro": "Track mouse position relative to button center:\n- Calculate offset from center on mousemove\n- Apply transform with dampened values (strength: 0.3)\n- Use spring animation for smooth return\n- Reset position on mouseleave\n- Consider using useMotionValue for performance"
+      },
+      "code": {
+        "framerMotion": "function MagneticButton({ children }) {\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n  const ref = useRef(null);\n\n  const handleMouse = (e) => {\n    const rect = ref.current.getBoundingClientRect();\n    const centerX = rect.left + rect.width / 2;\n    const centerY = rect.top + rect.height / 2;\n    x.set((e.clientX - centerX) * 0.3);\n    y.set((e.clientY - centerY) * 0.3);\n  };\n\n  const reset = () => {\n    x.set(0);\n    y.set(0);\n  };\n\n  return (\n    <motion.button\n      ref={ref}\n      style={{ x, y }}\n      onMouseMove={handleMouse}\n      onMouseLeave={reset}\n      transition={{ type: 'spring', stiffness: 150, damping: 15 }}\n    >\n      {children}\n    </motion.button>\n  );\n}"
+      }
+    },
+    {
+      "id": "toast-slide",
+      "name": "Toast Slide In",
+      "category": "toasts",
+      "description": "Smooth entry and exit for notification toasts with stacking support",
+      "tags": ["notification", "alert", "slide", "stack"],
+      "preview": {
+        "trigger": "click",
+        "duration": 3000
+      },
+      "config": {
+        "direction": {
+          "label": "Slide Direction",
+          "default": "right",
+          "options": ["top", "right", "bottom", "left"]
+        },
+        "stagger": {
+          "label": "Stack Delay (ms)",
+          "default": 100,
+          "min": 50,
+          "max": 300,
+          "step": 10
+        }
+      },
+      "prompts": {
+        "beginner": "Create a notification that slides in smoothly from the right side of the screen, stays for a moment, then slides back out. If there are multiple notifications, they should stack nicely.",
+        "pro": "AnimatePresence for exit animations:\n- Initial: { x: '100%', opacity: 0 }\n- Animate: { x: 0, opacity: 1 }\n- Exit: { x: '100%', opacity: 0 }\n- Use layout prop for smooth reordering\n- Stagger delay: 100ms between items"
+      },
+      "code": {
+        "framerMotion": "const toastVariants = {\n  initial: { x: '100%', opacity: 0 },\n  animate: { \n    x: 0, \n    opacity: 1,\n    transition: { type: 'spring', damping: 25 }\n  },\n  exit: { \n    x: '100%', \n    opacity: 0,\n    transition: { duration: 0.2 }\n  }\n};\n\n<AnimatePresence>\n  {toasts.map((toast, i) => (\n    <motion.div\n      key={toast.id}\n      variants={toastVariants}\n      initial=\"initial\"\n      animate=\"animate\"\n      exit=\"exit\"\n      layout\n      style={{ originY: 0 }}\n    >\n      {toast.message}\n    </motion.div>\n  ))}\n</AnimatePresence>"
+      }
+    },
+    {
+      "id": "search-expand",
+      "name": "Search Expand",
+      "category": "inputs",
+      "description": "Search input that elegantly expands on focus",
+      "tags": ["focus", "expand", "input", "search"],
+      "preview": {
+        "trigger": "focus",
+        "duration": 300
+      },
+      "config": {
+        "expandWidth": {
+          "label": "Expanded Width",
+          "default": 300,
+          "min": 200,
+          "max": 500,
+          "step": 10
+        },
+        "collapsedWidth": {
+          "label": "Collapsed Width",
+          "default": 44,
+          "min": 40,
+          "max": 100,
+          "step": 4
+        }
+      },
+      "prompts": {
+        "beginner": "Create a search bar that starts as a small icon button, then smoothly expands into a full input field when I click on it. It should feel fluid and natural.",
+        "pro": "Animate width with layout animation:\n- Collapsed: icon-only (44px)\n- Expanded: full width (300px)\n- Use layoutId for smooth morphing\n- Animate placeholder opacity\n- Auto-focus input on expand"
+      },
+      "code": {
+        "framerMotion": "function ExpandingSearch() {\n  const [isOpen, setIsOpen] = useState(false);\n  const inputRef = useRef(null);\n\n  useEffect(() => {\n    if (isOpen) inputRef.current?.focus();\n  }, [isOpen]);\n\n  return (\n    <motion.div\n      animate={{ width: isOpen ? 300 : 44 }}\n      transition={{ type: 'spring', stiffness: 300, damping: 30 }}\n      className=\"search-container\"\n    >\n      <Search onClick={() => setIsOpen(true)} />\n      <AnimatePresence>\n        {isOpen && (\n          <motion.input\n            ref={inputRef}\n            initial={{ opacity: 0 }}\n            animate={{ opacity: 1 }}\n            exit={{ opacity: 0 }}\n            onBlur={() => setIsOpen(false)}\n            placeholder=\"Search...\"\n          />\n        )}\n      </AnimatePresence>\n    </motion.div>\n  );\n}"
+      }
+    },
+    {
+      "id": "progress-fill",
+      "name": "Progress Fill",
+      "category": "loaders",
+      "description": "Smooth animated progress bar with optional shimmer effect",
+      "tags": ["progress", "loading", "fill", "shimmer"],
+      "preview": {
+        "trigger": "auto",
+        "duration": 2000
+      },
+      "config": {
+        "duration": {
+          "label": "Fill Duration (s)",
+          "default": 2,
+          "min": 0.5,
+          "max": 5,
+          "step": 0.5
+        },
+        "shimmer": {
+          "label": "Enable Shimmer",
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a progress bar that fills up smoothly from left to right. Add a shiny effect that moves across it to make it feel alive and premium.",
+        "pro": "Combine width animation with shimmer overlay:\n- Animate width from 0% to target\n- Use spring physics for natural feel\n- Overlay pseudo-element with gradient\n- Animate gradient position: -100% to 100%"
+      },
+      "code": {
+        "framerMotion": "function ProgressBar({ value, showShimmer = true }) {\n  return (\n    <div className=\"progress-track\">\n      <motion.div\n        className=\"progress-fill\"\n        initial={{ width: 0 }}\n        animate={{ width: `${value}%` }}\n        transition={{ \n          type: 'spring', \n          stiffness: 50, \n          damping: 15 \n        }}\n      >\n        {showShimmer && (\n          <motion.div\n            className=\"shimmer-overlay\"\n            animate={{ x: ['-100%', '100%'] }}\n            transition={{ \n              repeat: Infinity, \n              duration: 1.5,\n              ease: 'linear'\n            }}\n          />\n        )}\n      </motion.div>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "tooltip-delayed",
+      "name": "Delayed Tooltip",
+      "category": "tooltips",
+      "description": "Tooltip that appears after a brief hover delay with smooth fade",
+      "tags": ["tooltip", "hover", "delay", "info"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 200
+      },
+      "config": {
+        "delay": {
+          "label": "Show Delay (ms)",
+          "default": 500,
+          "min": 0,
+          "max": 1000,
+          "step": 50
+        },
+        "offset": {
+          "label": "Offset (px)",
+          "default": 8,
+          "min": 4,
+          "max": 20,
+          "step": 2
+        }
+      },
+      "prompts": {
+        "beginner": "Add a tooltip that appears when I hover over something, but only after waiting half a second. This way it won't pop up annoyingly when I'm just moving my mouse around.",
+        "pro": "Implement delayed tooltip with AnimatePresence:\n- Track hover state with setTimeout\n- Clear timeout on mouseleave\n- Animate: opacity 0→1, y offset\n- Use portal for proper stacking\n- Consider useFloating for positioning"
+      },
+      "code": {
+        "framerMotion": "function Tooltip({ content, delay = 500, children }) {\n  const [show, setShow] = useState(false);\n  const timeoutRef = useRef(null);\n\n  const handleEnter = () => {\n    timeoutRef.current = setTimeout(() => setShow(true), delay);\n  };\n\n  const handleLeave = () => {\n    clearTimeout(timeoutRef.current);\n    setShow(false);\n  };\n\n  return (\n    <div onMouseEnter={handleEnter} onMouseLeave={handleLeave}>\n      {children}\n      <AnimatePresence>\n        {show && (\n          <motion.div\n            initial={{ opacity: 0, y: 4 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: 4 }}\n            transition={{ duration: 0.15 }}\n            className=\"tooltip\"\n          >\n            {content}\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "card-swipe",
+      "name": "Card Swipe",
+      "category": "cards",
+      "description": "Tinder-style swipe gesture for card dismissal",
+      "tags": ["gesture", "swipe", "drag", "dismiss"],
+      "preview": {
+        "trigger": "drag",
+        "duration": 0
+      },
+      "config": {
+        "threshold": {
+          "label": "Swipe Threshold",
+          "default": 100,
+          "min": 50,
+          "max": 200,
+          "step": 10
+        },
+        "rotation": {
+          "label": "Max Rotation (deg)",
+          "default": 15,
+          "min": 0,
+          "max": 30,
+          "step": 1
+        }
+      },
+      "prompts": {
+        "beginner": "Create a card that I can swipe left or right to dismiss, like Tinder. It should rotate slightly as I drag and fly off the screen when I let go.",
+        "pro": "Implement drag gesture with rotation:\n- Use drag=\"x\" constraint\n- Map dragX to rotation (max 15deg)\n- Detect swipe direction on dragEnd\n- Animate exit based on velocity\n- Use useMotionValue for derived values"
+      },
+      "code": {
+        "framerMotion": "function SwipeCard({ onSwipe, children }) {\n  const x = useMotionValue(0);\n  const rotate = useTransform(x, [-200, 200], [-15, 15]);\n  const opacity = useTransform(x, [-200, 0, 200], [0.5, 1, 0.5]);\n\n  const handleDragEnd = (_, info) => {\n    if (Math.abs(info.offset.x) > 100) {\n      onSwipe(info.offset.x > 0 ? 'right' : 'left');\n    }\n  };\n\n  return (\n    <motion.div\n      style={{ x, rotate, opacity }}\n      drag=\"x\"\n      dragConstraints={{ left: 0, right: 0 }}\n      onDragEnd={handleDragEnd}\n      whileDrag={{ cursor: 'grabbing' }}\n    >\n      {children}\n    </motion.div>\n  );\n}"
+      }
+    },
+    {
+      "id": "text-pop",
+      "name": "Text Hover Pop",
+      "category": "text",
+      "description": "Individual characters pop up on hover for playful interaction",
+      "tags": ["text", "hover", "character", "playful"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 0
+      },
+      "config": {
+        "lift": {
+          "label": "Lift Height (px)",
+          "default": -8,
+          "min": -20,
+          "max": 0,
+          "step": 1
+        },
+        "stagger": {
+          "label": "Stagger (ms)",
+          "default": 30,
+          "min": 0,
+          "max": 100,
+          "step": 5
+        }
+      },
+      "prompts": {
+        "beginner": "Make each letter in my text jump up when I hover over it, like they're excited to be touched. The letters near my cursor should react too, creating a wave effect.",
+        "pro": "Split text into spans, track hover per character:\n- Map text to individual motion.span\n- whileHover: { y: -8 }\n- Use spring transition\n- Optional: affect neighboring characters\n- Consider performance with many characters"
+      },
+      "code": {
+        "framerMotion": "function PopText({ text }) {\n  return (\n    <span className=\"inline-flex\">\n      {text.split('').map((char, i) => (\n        <motion.span\n          key={i}\n          whileHover={{ y: -8 }}\n          transition={{ type: 'spring', stiffness: 500, damping: 15 }}\n          className=\"inline-block\"\n        >\n          {char === ' ' ? '\\u00A0' : char}\n        </motion.span>\n      ))}\n    </span>\n  );\n}"
+      }
+    },
+    {
+      "id": "name-tag-reveal",
+      "name": "Name Tag Reveal",
+      "category": "tooltips",
+      "description": "Hover over avatar to reveal name with smooth slide animation",
+      "tags": ["hover", "reveal", "avatar", "profile"],
+      "preview": {
+        "trigger": "hover",
+        "duration": 200
+      },
+      "config": {
+        "direction": {
+          "label": "Reveal Direction",
+          "default": "right",
+          "options": ["left", "right", "top", "bottom"]
+        }
+      },
+      "prompts": {
+        "beginner": "When I hover over a user's profile picture, smoothly reveal their name tag sliding out from behind the avatar. It should feel like peeking behind a curtain.",
+        "pro": "Use clipPath or width animation:\n- Container with overflow hidden\n- Name tag positioned adjacent\n- Animate width from 0 to auto\n- Or use clipPath: inset(0 100% 0 0) → inset(0)\n- Stagger avatar scale with name reveal"
+      },
+      "code": {
+        "framerMotion": "function AvatarWithName({ src, name }) {\n  const [hovered, setHovered] = useState(false);\n\n  return (\n    <div\n      className=\"flex items-center\"\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n    >\n      <motion.img\n        src={src}\n        animate={{ scale: hovered ? 1.1 : 1 }}\n        className=\"w-10 h-10 rounded-full\"\n      />\n      <motion.div\n        initial={{ width: 0, opacity: 0 }}\n        animate={{ \n          width: hovered ? 'auto' : 0,\n          opacity: hovered ? 1 : 0\n        }}\n        className=\"overflow-hidden ml-2\"\n      >\n        <span className=\"whitespace-nowrap px-3 py-1 bg-surface-overlay rounded\">\n          {name}\n        </span>\n      </motion.div>\n    </div>\n  );\n}"
+      }
+    }
+  ]
+}
