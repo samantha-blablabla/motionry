@@ -6,6 +6,7 @@ import { X, Copy, Check, Sparkles, Code2, ChevronLeft, ChevronRight, Sun, Moon, 
 import { cn, copyToClipboard } from '@/lib/utils';
 import { getAnimationComponent } from '@/registry';
 import { ColorPicker } from './ColorPicker';
+import { useToast } from './Toast';
 import type { Animation, ConfigValues } from '@/lib/types';
 
 interface AnimationModalProps {
@@ -25,6 +26,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
   const [configValues, setConfigValues] = useState<ConfigValues>({});
   const [copied, setCopied] = useState(false);
   const [previewMode, setPreviewMode] = useState<'dark' | 'light'>('dark');
+  const { showToast } = useToast();
 
   // Initialize config values when animation changes
   useEffect(() => {
@@ -96,6 +98,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
     const content = codeTab === 'beginner' ? getCustomizedPrompt() : getCustomizedCode();
     await copyToClipboard(content);
     setCopied(true);
+    showToast(codeTab === 'beginner' ? 'Prompt copied!' : 'Code copied!');
     setTimeout(() => setCopied(false), 2000);
   };
 

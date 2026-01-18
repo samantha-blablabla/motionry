@@ -6,6 +6,7 @@ import { Header } from '@/components/ui/Header';
 import { AnimationGrid } from '@/components/ui/AnimationGrid';
 import { AnimationModal } from '@/components/ui/AnimationModal';
 import { MobileMenu } from '@/components/ui/MobileMenu';
+import { ToastProvider } from '@/components/ui/Toast';
 import animationsData from '@/data/animations.json';
 import type { Animation, AnimationsData } from '@/lib/types';
 
@@ -77,50 +78,52 @@ export default function LibraryPage() {
     };
 
     return (
-        <div className="flex min-h-screen">
-            {/* Sidebar - Desktop only */}
-            <Sidebar
-                categories={data.categories}
-                activeCategory={activeCategory}
-                onCategoryChange={setActiveCategory}
-                animationCounts={animationCounts}
-            />
-
-            {/* Mobile Menu */}
-            <MobileMenu
-                isOpen={isMobileMenuOpen}
-                onClose={() => setIsMobileMenuOpen(false)}
-                categories={data.categories}
-                activeCategory={activeCategory}
-                onCategoryChange={setActiveCategory}
-                animationCounts={animationCounts}
-            />
-
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col">
-                <Header
-                    onSearch={setSearchQuery}
-                    totalCount={data.animations.length}
-                    filteredCount={filteredAnimations.length}
-                    onMenuToggle={() => setIsMobileMenuOpen(true)}
+        <ToastProvider>
+            <div className="flex min-h-screen">
+                {/* Sidebar - Desktop only */}
+                <Sidebar
+                    categories={data.categories}
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                    animationCounts={animationCounts}
                 />
 
-                <div className="flex-1 p-4 lg:p-6">
-                    <AnimationGrid
-                        animations={filteredAnimations}
-                        onSelect={handleSelectAnimation}
-                    />
-                </div>
-            </main>
+                {/* Mobile Menu */}
+                <MobileMenu
+                    isOpen={isMobileMenuOpen}
+                    onClose={() => setIsMobileMenuOpen(false)}
+                    categories={data.categories}
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                    animationCounts={animationCounts}
+                />
 
-            {/* Modal */}
-            <AnimationModal
-                animation={selectedAnimation}
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onNext={() => handleNavigateAnimation('next')}
-                onPrev={() => handleNavigateAnimation('prev')}
-            />
-        </div>
+                {/* Main Content */}
+                <main className="flex-1 flex flex-col">
+                    <Header
+                        onSearch={setSearchQuery}
+                        totalCount={data.animations.length}
+                        filteredCount={filteredAnimations.length}
+                        onMenuToggle={() => setIsMobileMenuOpen(true)}
+                    />
+
+                    <div className="flex-1 p-4 lg:p-6">
+                        <AnimationGrid
+                            animations={filteredAnimations}
+                            onSelect={handleSelectAnimation}
+                        />
+                    </div>
+                </main>
+
+                {/* Modal */}
+                <AnimationModal
+                    animation={selectedAnimation}
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onNext={() => handleNavigateAnimation('next')}
+                    onPrev={() => handleNavigateAnimation('prev')}
+                />
+            </div>
+        </ToastProvider>
     );
 }

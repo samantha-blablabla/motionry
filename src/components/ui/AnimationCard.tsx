@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Copy, Check, Play } from 'lucide-react';
 import { cn, copyToClipboard } from '@/lib/utils';
 import { getAnimationComponent, hasAnimationComponent } from '@/registry';
+import { useToast } from './Toast';
 import type { Animation } from '@/lib/types';
 
 interface AnimationCardProps {
@@ -15,12 +16,14 @@ interface AnimationCardProps {
 export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
 
   const handleQuickCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const code = animation.code.framerMotion || animation.code.css || '';
     await copyToClipboard(code);
     setCopied(true);
+    showToast(`Copied "${animation.name}" code!`);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -31,7 +34,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
   return (
     <motion.div
       className={cn(
-        'group relative rounded-xl border border-surface-border bg-surface-raised overflow-hidden cursor-pointer card-glow',
+        'group relative rounded-xl border border-surface-border bg-surface-raised cursor-pointer card-glow',
         'transition-all hover:border-accent/50'
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -42,7 +45,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
     >
       {/* Preview Area */}
       <div
-        className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden"
+        className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden rounded-t-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {hasComponent && AnimationComponent ? (
@@ -70,8 +73,8 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
         </div>
       </div>
 
-      {/* Info Section */}
-      <div className="p-4 border-t border-surface-border flex flex-col h-full bg-surface-raised/50">
+      {/* Info Section - overflow-visible to allow tooltip to show */}
+      <div className="p-4 border-t border-surface-border flex flex-col h-full bg-surface-raised/50 overflow-visible">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="font-medium text-text-primary truncate text-base">
@@ -92,8 +95,8 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
             )}
             whileTap={{ scale: 0.95 }}
           >
-            {/* Tooltip */}
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-surface-overlay border border-surface-border rounded opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+            {/* Custom Tooltip */}
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs bg-surface-overlay border border-surface-border rounded opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
               {copied ? 'Copied!' : 'Copy code'}
             </span>
             <motion.div
