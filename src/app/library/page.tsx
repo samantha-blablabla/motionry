@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/ui/Sidebar';
 import { Header } from '@/components/ui/Header';
 import { AnimationGrid } from '@/components/ui/AnimationGrid';
 import { AnimationModal } from '@/components/ui/AnimationModal';
+import { LibraryHero } from '@/components/ui/LibraryHero';
 import { MobileMenu } from '@/components/ui/MobileMenu';
 import { ToastProvider } from '@/components/ui/Toast';
 import { FloatingDonateButton } from '@/components/ui/FloatingDonateButton';
@@ -134,13 +135,16 @@ function LibraryContent() {
                 />
 
                 {/* Main Content */}
-                <main className="flex-1 flex flex-col">
+                <main className="flex-1 flex flex-col min-w-0">
                     <Header
                         onSearch={handleSearchChange}
                         totalCount={data.animations.length}
                         filteredCount={filteredAnimations.length}
                         onMenuToggle={() => setIsMobileMenuOpen(true)}
                     />
+
+                    {/* Hero Section - Only show when no search/filter is active */}
+                    {!searchQuery && !activeCategory && <LibraryHero />}
 
                     <div className="flex-1 p-4 lg:p-6">
                         <AnimationGrid
