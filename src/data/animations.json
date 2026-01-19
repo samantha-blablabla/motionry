@@ -572,6 +572,244 @@
       "code": {
         "framerMotion": "function AvatarWithName({ src, name }) {\n  const [hovered, setHovered] = useState(false);\n\n  return (\n    <div\n      className=\"flex items-center\"\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n    >\n      <motion.img\n        src={src}\n        animate={{ scale: hovered ? 1.1 : 1 }}\n        className=\"w-10 h-10 rounded-full\"\n      />\n      <motion.div\n        initial={{ width: 0, opacity: 0 }}\n        animate={{ \n          width: hovered ? 'auto' : 0,\n          opacity: hovered ? 1 : 0\n        }}\n        className=\"overflow-hidden ml-2\"\n      >\n        <span className=\"whitespace-nowrap px-3 py-1 bg-surface-overlay rounded\">\n          {name}\n        </span>\n      </motion.div>\n    </div>\n  );\n}"
       }
+    },
+    {
+      "id": "pulse-ring",
+      "name": "Pulse Ring",
+      "category": "loaders",
+      "description": "Animated rings pulsing outward from a center point, perfect for status indicators",
+      "tags": [
+        "loader",
+        "pulse",
+        "ring",
+        "status",
+        "indicator"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 2000
+      },
+      "config": {
+        "duration": {
+          "label": "Pulse Duration (s)",
+          "default": 2,
+          "min": 0.5,
+          "max": 4,
+          "step": 0.5
+        },
+        "ringCount": {
+          "label": "Ring Count",
+          "default": 3,
+          "min": 1,
+          "max": 5,
+          "step": 1
+        },
+        "color": {
+          "label": "Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a pulsing ring effect that radiates outward from a central dot, like ripples in water. Great for showing an active status or drawing attention to a location.",
+        "pro": "Implement pulse rings with staggered animations:\n- Multiple ring elements with scale animation\n- Stagger delay based on ring index\n- Animate scale 1→4 with opacity 0.8→0\n- Use repeat: Infinity for continuous pulse"
+      },
+      "code": {
+        "framerMotion": "function PulseRing({ color = '#6366f1', ringCount = 3 }) {\n  return (\n    <div className=\"relative w-20 h-20 flex items-center justify-center\">\n      <div className=\"absolute w-5 h-5 rounded-full\" style={{ background: color }} />\n      {Array.from({ length: ringCount }).map((_, i) => (\n        <motion.div\n          key={i}\n          className=\"absolute w-5 h-5 rounded-full\"\n          style={{ border: `2px solid ${color}` }}\n          animate={{ scale: [1, 4], opacity: [0.8, 0] }}\n          transition={{\n            duration: 2,\n            repeat: Infinity,\n            delay: i * (2 / ringCount),\n            ease: 'easeOut'\n          }}\n        />\n      ))}\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "flip-card",
+      "name": "3D Flip Card",
+      "category": "cards",
+      "description": "A card that flips to reveal content on the back, using 3D perspective transforms",
+      "tags": [
+        "card",
+        "flip",
+        "3d",
+        "hover",
+        "reveal"
+      ],
+      "preview": {
+        "trigger": "hover",
+        "duration": 600
+      },
+      "config": {
+        "direction": {
+          "label": "Flip Direction",
+          "default": "horizontal",
+          "options": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "frontBackground": {
+          "label": "Front Background",
+          "default": "linear-gradient(135deg, #6366f1, #8b5cf6)",
+          "type": "color"
+        },
+        "backBackground": {
+          "label": "Back Background",
+          "default": "linear-gradient(135deg, #ec4899, #f43f5e)",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a card that flips over when I hover on it, revealing different content on the back. It should flip smoothly like a playing card with a 3D effect.",
+        "pro": "Implement 3D card flip with CSS perspective:\n- Container with perspective: 1000px\n- Inner element with transform-style: preserve-3d\n- Front/back faces with backface-visibility: hidden\n- Animate rotateY (or rotateX) from 0 to 180deg\n- Back face pre-rotated 180deg"
+      },
+      "code": {
+        "framerMotion": "function FlipCard({ front, back }) {\n  const [flipped, setFlipped] = useState(false);\n\n  return (\n    <div\n      style={{ perspective: 1000 }}\n      onMouseEnter={() => setFlipped(true)}\n      onMouseLeave={() => setFlipped(false)}\n    >\n      <motion.div\n        style={{ transformStyle: 'preserve-3d' }}\n        animate={{ rotateY: flipped ? 180 : 0 }}\n        transition={{ duration: 0.6, type: 'spring' }}\n      >\n        <div style={{ backfaceVisibility: 'hidden' }}>{front}</div>\n        <div style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', position: 'absolute', inset: 0 }}>{back}</div>\n      </motion.div>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "typewriter",
+      "name": "Typewriter Effect",
+      "category": "text",
+      "description": "Text types itself out character by character with a blinking cursor",
+      "tags": [
+        "text",
+        "typewriter",
+        "typing",
+        "cursor",
+        "animate"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 3000
+      },
+      "config": {
+        "speed": {
+          "label": "Typing Speed (ms)",
+          "default": 100,
+          "min": 30,
+          "max": 300,
+          "step": 10
+        },
+        "loop": {
+          "label": "Loop Animation",
+          "default": true,
+          "type": "boolean"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        },
+        "cursorColor": {
+          "label": "Cursor Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Make my text appear as if someone is typing it out, one character at a time, with a blinking cursor at the end. It should feel like watching someone type in real-time.",
+        "pro": "Implement typewriter effect with state management:\n- Track current character index with useState\n- Use setTimeout/setInterval for character timing\n- Animate cursor blink with CSS or motion\n- Optional: delete and retype for loop mode\n- Consider varying speed for natural feel"
+      },
+      "code": {
+        "framerMotion": "function Typewriter({ text, speed = 100 }) {\n  const [displayed, setDisplayed] = useState('');\n\n  useEffect(() => {\n    if (displayed.length < text.length) {\n      const timeout = setTimeout(() => {\n        setDisplayed(text.slice(0, displayed.length + 1));\n      }, speed);\n      return () => clearTimeout(timeout);\n    }\n  }, [displayed, text, speed]);\n\n  return (\n    <span className=\"font-mono\">\n      {displayed}\n      <motion.span\n        animate={{ opacity: [1, 0] }}\n        transition={{ repeat: Infinity, duration: 0.5 }}\n      >\n        |\n      </motion.span>\n    </span>\n  );\n}"
+      }
+    },
+    {
+      "id": "floating-label",
+      "name": "Floating Label Input",
+      "category": "inputs",
+      "description": "Input field where the placeholder floats up to become a label on focus",
+      "tags": [
+        "input",
+        "form",
+        "label",
+        "focus",
+        "material"
+      ],
+      "preview": {
+        "trigger": "focus",
+        "duration": 300
+      },
+      "config": {
+        "activeColor": {
+          "label": "Active Color",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "inactiveColor": {
+          "label": "Inactive Color",
+          "default": "#6b7280",
+          "type": "color"
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#1c1c1f",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create an input field where the placeholder text smoothly floats up and becomes a label when I click on the input. It should look modern and clean like Material Design.",
+        "pro": "Implement floating label with conditional animation:\n- Track focus and value states\n- Label position: absolute, animates y and scale\n- Condition: float if focused OR has value\n- Animate color change on focus\n- Optional: underline animation on focus"
+      },
+      "code": {
+        "framerMotion": "function FloatingLabel({ label }) {\n  const [focused, setFocused] = useState(false);\n  const [value, setValue] = useState('');\n  const isActive = focused || value.length > 0;\n\n  return (\n    <div className=\"relative\">\n      <motion.label\n        className=\"absolute left-3 pointer-events-none\"\n        animate={{ y: isActive ? -24 : 12, scale: isActive ? 0.85 : 1 }}\n        transition={{ type: 'spring', stiffness: 300 }}\n      >\n        {label}\n      </motion.label>\n      <input\n        value={value}\n        onChange={(e) => setValue(e.target.value)}\n        onFocus={() => setFocused(true)}\n        onBlur={() => setFocused(false)}\n        className=\"px-3 py-3 border rounded-lg\"\n      />\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "slide-toggle",
+      "name": "Slide Toggle",
+      "category": "inputs",
+      "description": "iOS-style toggle switch with smooth spring animation",
+      "tags": [
+        "toggle",
+        "switch",
+        "input",
+        "boolean",
+        "ios"
+      ],
+      "preview": {
+        "trigger": "click",
+        "duration": 300
+      },
+      "config": {
+        "size": {
+          "label": "Size",
+          "default": "md",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "onColor": {
+          "label": "On Color",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "offColor": {
+          "label": "Off Color",
+          "default": "#3f3f46",
+          "type": "color"
+        },
+        "knobColor": {
+          "label": "Knob Color",
+          "default": "#ffffff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a toggle switch like the ones on iOS. When I tap it, the knob should slide smoothly from one side to the other and the background color should change.",
+        "pro": "Implement toggle with spring layout animation:\n- Track boolean state\n- Animate knob position with spring physics\n- Transition background color on state change\n- Use layoutId or x position animation\n- Add whileTap scale for tactile feedback"
+      },
+      "code": {
+        "framerMotion": "function SlideToggle({ onChange }) {\n  const [on, setOn] = useState(false);\n\n  const toggle = () => {\n    setOn(!on);\n    onChange?.(!on);\n  };\n\n  return (\n    <motion.button\n      onClick={toggle}\n      className=\"w-14 h-8 rounded-full relative\"\n      animate={{ background: on ? '#6366f1' : '#3f3f46' }}\n      whileTap={{ scale: 0.95 }}\n    >\n      <motion.div\n        className=\"w-6 h-6 bg-white rounded-full absolute top-1\"\n        animate={{ left: on ? 28 : 4 }}\n        transition={{ type: 'spring', stiffness: 500, damping: 30 }}\n      />\n    </motion.button>\n  );\n}"
+      }
     }
   ]
 }

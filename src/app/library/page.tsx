@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { Suspense, useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/ui/Sidebar';
 import { Header } from '@/components/ui/Header';
@@ -14,7 +14,7 @@ import type { Animation, AnimationsData } from '@/lib/types';
 
 const data = animationsData as unknown as AnimationsData;
 
-export default function LibraryPage() {
+function LibraryContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -165,3 +165,24 @@ export default function LibraryPage() {
         </ToastProvider>
     );
 }
+
+// Loading fallback for Suspense
+function LibraryLoading() {
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                <p className="text-text-muted text-sm">Loading library...</p>
+            </div>
+        </div>
+    );
+}
+
+export default function LibraryPage() {
+    return (
+        <Suspense fallback={<LibraryLoading />}>
+            <LibraryContent />
+        </Suspense>
+    );
+}
+

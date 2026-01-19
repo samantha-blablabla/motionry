@@ -13,6 +13,12 @@ import { DelayedTooltip } from '@/components/animations/tooltips/DelayedTooltip'
 import { CardSwipe } from '@/components/animations/cards/CardSwipe';
 import { TextPop } from '@/components/animations/text/TextPop';
 import { NameTagReveal } from '@/components/animations/tooltips/NameTagReveal';
+// New animations - Batch 1
+import { PulseRing } from '@/components/animations/loaders/PulseRing';
+import { FlipCard } from '@/components/animations/cards/FlipCard';
+import { Typewriter } from '@/components/animations/text/Typewriter';
+import { FloatingLabel } from '@/components/animations/inputs/FloatingLabel';
+import { SlideToggle } from '@/components/animations/inputs/SlideToggle';
 
 // Registry type
 type AnimationRegistry = {
@@ -31,6 +37,12 @@ export const animationRegistry: AnimationRegistry = {
   'card-swipe': CardSwipe,
   'text-pop': TextPop,
   'name-tag-reveal': NameTagReveal,
+  // New animations - Batch 1
+  'pulse-ring': PulseRing,
+  'flip-card': FlipCard,
+  'typewriter': Typewriter,
+  'floating-label': FloatingLabel,
+  'slide-toggle': SlideToggle,
 };
 
 // Helper to get component by ID
