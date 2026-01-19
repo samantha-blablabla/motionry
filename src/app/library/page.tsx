@@ -1,23 +1,58 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/ui/Sidebar';
 import { Header } from '@/components/ui/Header';
 import { AnimationGrid } from '@/components/ui/AnimationGrid';
 import { AnimationModal } from '@/components/ui/AnimationModal';
 import { MobileMenu } from '@/components/ui/MobileMenu';
 import { ToastProvider } from '@/components/ui/Toast';
+import { FloatingDonateButton } from '@/components/ui/FloatingDonateButton';
 import animationsData from '@/data/animations.json';
 import type { Animation, AnimationsData } from '@/lib/types';
 
 const data = animationsData as unknown as AnimationsData;
 
 export default function LibraryPage() {
-    const [activeCategory, setActiveCategory] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // Initialize from URL params
+    const [activeCategory, setActiveCategory] = useState<string | null>(
+        searchParams.get('category') || null
+    );
+    const [searchQuery, setSearchQuery] = useState(
+        searchParams.get('q') || ''
+    );
     const [selectedAnimation, setSelectedAnimation] = useState<Animation | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Sync URL when filters change
+    const updateURL = useCallback((category: string | null, query: string) => {
+        const params = new URLSearchParams();
+        if (category) params.set('category', category);
+        if (query.trim()) params.set('q', query);
+
+        const newPath = params.toString() ? `/library?${params.toString()}` : '/library';
+        router.replace(newPath, { scroll: false });
+    }, [router]);
+
+    // Update URL when category or search changes
+    useEffect(() => {
+        updateURL(activeCategory, searchQuery);
+    }, [activeCategory, searchQuery, updateURL]);
+
+    // Handle category change
+    const handleCategoryChange = (categoryId: string | null) => {
+        setActiveCategory(categoryId);
+    };
+
+    // Handle search change
+    const handleSearchChange = (query: string) => {
+        setSearchQuery(query);
+    };
 
     // Calculate animation counts per category
     const animationCounts = useMemo(() => {
@@ -84,7 +119,7 @@ export default function LibraryPage() {
                 <Sidebar
                     categories={data.categories}
                     activeCategory={activeCategory}
-                    onCategoryChange={setActiveCategory}
+                    onCategoryChange={handleCategoryChange}
                     animationCounts={animationCounts}
                 />
 
@@ -94,14 +129,14 @@ export default function LibraryPage() {
                     onClose={() => setIsMobileMenuOpen(false)}
                     categories={data.categories}
                     activeCategory={activeCategory}
-                    onCategoryChange={setActiveCategory}
+                    onCategoryChange={handleCategoryChange}
                     animationCounts={animationCounts}
                 />
 
                 {/* Main Content */}
                 <main className="flex-1 flex flex-col">
                     <Header
-                        onSearch={setSearchQuery}
+                        onSearch={handleSearchChange}
                         totalCount={data.animations.length}
                         filteredCount={filteredAnimations.length}
                         onMenuToggle={() => setIsMobileMenuOpen(true)}
@@ -123,6 +158,9 @@ export default function LibraryPage() {
                     onNext={() => handleNavigateAnimation('next')}
                     onPrev={() => handleNavigateAnimation('prev')}
                 />
+
+                {/* Floating Donate Button */}
+                <FloatingDonateButton />
             </div>
         </ToastProvider>
     );

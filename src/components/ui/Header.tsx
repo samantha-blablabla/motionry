@@ -16,6 +16,7 @@ export function Header({ onSearch, totalCount, filteredCount, onMenuToggle }: He
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // Keyboard shortcut: "/" to focus search
   useEffect(() => {
@@ -34,10 +35,29 @@ export function Header({ onSearch, totalCount, filteredCount, onMenuToggle }: He
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSearchFocused]);
 
+  // Debounced search
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    onSearch(value);
+
+    // Clear previous debounce
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // Debounce search call (300ms)
+    debounceRef.current = setTimeout(() => {
+      onSearch(value);
+    }, 300);
   };
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const clearSearch = () => {
     setSearchQuery('');
@@ -105,16 +125,30 @@ export function Header({ onSearch, totalCount, filteredCount, onMenuToggle }: He
           )}
         </motion.div>
 
-        {/* Right: GitHub */}
-        <a
-          href="https://github.com/samantha-blablabla/motionry"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors"
-        >
-          <Github className="w-4 h-4" />
-          <span className="hidden md:inline">GitHub</span>
-        </a>
+        {/* Right: Navigation + GitHub */}
+        <div className="hidden sm:flex items-center gap-1">
+          <a
+            href="/about"
+            className="px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors"
+          >
+            About
+          </a>
+          <a
+            href="/blog"
+            className="px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors"
+          >
+            Blog
+          </a>
+          <a
+            href="https://github.com/samantha-blablabla/motionry"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 transition-colors"
+          >
+            <Github className="w-4 h-4" />
+            <span className="hidden md:inline">Star on GitHub</span>
+          </a>
+        </div>
       </div>
     </header>
   );

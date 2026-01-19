@@ -46,7 +46,7 @@ export function MagneticHover({
     <motion.button
       ref={ref}
       className="px-6 py-3 rounded-xl font-medium text-sm"
-      style={{ x: springX, y: springY, backgroundColor, color: textColor }}
+      style={{ x: springX, y: springY, background: backgroundColor, color: textColor }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileTap={{ scale: 0.95 }}

@@ -37,7 +37,7 @@ export function SearchExpand({
   return (
     <motion.div
       className="flex items-center rounded-full overflow-hidden"
-      style={{ backgroundColor, border: `1px solid ${borderColor}` }}
+      style={{ background: backgroundColor, border: `1px solid ${borderColor}` }}
       animate={{ width: isOpen ? expandWidth : collapsedWidth }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >

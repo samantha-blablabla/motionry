@@ -81,7 +81,7 @@ export function NameTagReveal({
         animate={isHovered ? animProps.animate : animProps.initial}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
-        <div className="px-3 py-1.5 rounded-lg whitespace-nowrap" style={{ backgroundColor: tagBackground, border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="px-3 py-1.5 rounded-lg whitespace-nowrap" style={{ background: tagBackground, border: '1px solid rgba(255,255,255,0.1)' }}>
           <span className="text-sm font-medium" style={{ color: tagTextColor }}>{name}</span>
         </div>
       </motion.div>

@@ -8,5 +8,4 @@ export { Hero } from './Hero';
 export { ThemeToggle } from './ThemeToggle';
 export { ColorPicker, PresetSelector } from './ColorPicker';
 export { ToastProvider, useToast } from './Toast';
-
-
+export { FloatingDonateButton } from './FloatingDonateButton';

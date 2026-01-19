@@ -168,7 +168,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
 
           {/* Modal */}
           <motion.div
-            className="fixed inset-2 sm:inset-4 md:inset-[8%] border border-surface-border rounded-2xl z-50 flex flex-col shadow-2xl"
+            className="fixed inset-2 sm:inset-3 md:inset-4 lg:inset-[4%] xl:inset-[8%] border border-surface-border rounded-2xl z-50 flex flex-col shadow-2xl"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -193,21 +193,31 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
 
               {/* LEFT: Preview (Fixed) - Needs rounded bottom-left if on desktop */}
               <div className="md:w-[60%] relative flex items-center justify-center border-b md:border-b-0 md:border-r border-surface-border min-h-[200px] md:min-h-0 overflow-hidden md:rounded-bl-2xl">
-                {/* Background */}
+                {/* Background with Grid Dots */}
                 <div className={cn(
-                  'absolute inset-0 transition-colors duration-300',
+                  'absolute inset-0 transition-colors duration-300 pointer-events-none',
                   previewMode === 'dark' ? 'bg-[#0a0a0b]' : 'bg-white'
                 )} />
+                {/* Grid Dots Overlay */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: previewMode === 'dark'
+                      ? 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)'
+                      : 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
+                    backgroundSize: '20px 20px',
+                  }}
+                />
 
                 {/* Preview Mode Toggle */}
                 <div className="absolute top-3 right-3 z-10">
                   <button
                     onClick={() => setPreviewMode(prev => prev === 'dark' ? 'light' : 'dark')}
                     className={cn(
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors backdrop-blur-md',
                       previewMode === 'dark'
-                        ? 'bg-white/10 text-white hover:bg-white/20'
-                        : 'bg-black/10 text-gray-800 hover:bg-black/20'
+                        ? 'bg-[#1a1a1f] text-white hover:bg-[#252529] border border-white/10'
+                        : 'bg-white text-gray-800 hover:bg-gray-100 border border-black/10 shadow-sm'
                     )}
                   >
                     {previewMode === 'dark' ? (

@@ -28,7 +28,7 @@
 - [x] Update Modal Layout (60/40 Split)
 - [x] Add Framer Motion/CSS sub-tabs to Pro Code
 - [x] Enable Color Customization across all Animations
-- [ ] Fix Gradient color support for all animation cards (Solid works, Gradient pending)
+- [x] Fix Gradient color support for all animation cards
 - [ ] Add more animations to library
 - [ ] Animation preview on AnimationCard
 - [ ] Search improvements

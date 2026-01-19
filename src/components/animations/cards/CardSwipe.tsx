@@ -2,25 +2,29 @@
 
 import { useState } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { Heart, X, RotateCcw } from 'lucide-react';
+import { Heart, X, RotateCcw, ImageIcon } from 'lucide-react';
 
 interface CardSwipeProps {
   threshold?: number;
   rotation?: number;
-  cardColor?: string;
-  borderColor?: string;
+  cardBackground?: string;
+  titleColor?: string;
+  subtitleColor?: string;
+  accentColor?: string;
 }
 
 export function CardSwipe({
   threshold = 100,
   rotation = 15,
-  cardColor = 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-  borderColor = '#6366f1'
+  cardBackground = 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+  titleColor = '#ffffff',
+  subtitleColor = 'rgba(255,255,255,0.7)',
+  accentColor = '#6366f1'
 }: CardSwipeProps) {
   const [cards, setCards] = useState([
-    { id: 1, title: 'Card 1', color: 'from-violet-500 to-purple-500' },
-    { id: 2, title: 'Card 2', color: 'from-blue-500 to-cyan-500' },
-    { id: 3, title: 'Card 3', color: 'from-orange-500 to-red-500' },
+    { id: 1, title: 'Adventure', subtitle: 'Explore the world' },
+    { id: 2, title: 'Music', subtitle: 'Feel the rhythm' },
+    { id: 3, title: 'Nature', subtitle: 'Connect with earth' },
   ]);
   const [swipedCards, setSwipedCards] = useState<number[]>([]);
 
@@ -28,11 +32,11 @@ export function CardSwipe({
   const rotate = useTransform(x, [-200, 200], [-rotation, rotation]);
   const opacity = useTransform(x, [-200, 0, 200], [0.5, 1, 0.5]);
 
-  // Indicator colors
+  // Indicator opacities
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
   const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (Math.abs(info.offset.x) > threshold) {
       const direction = info.offset.x > 0 ? 'right' : 'left';
       handleSwipe(direction);
@@ -41,7 +45,6 @@ export function CardSwipe({
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (cards.length === 0) return;
-
     const currentCard = cards[cards.length - 1];
     setSwipedCards(prev => [...prev, currentCard.id]);
     setCards(prev => prev.slice(0, -1));
@@ -49,9 +52,9 @@ export function CardSwipe({
 
   const handleReset = () => {
     setCards([
-      { id: 1, title: 'Card 1', color: 'from-violet-500 to-purple-500' },
-      { id: 2, title: 'Card 2', color: 'from-blue-500 to-cyan-500' },
-      { id: 3, title: 'Card 3', color: 'from-orange-500 to-red-500' },
+      { id: 1, title: 'Adventure', subtitle: 'Explore the world' },
+      { id: 2, title: 'Music', subtitle: 'Feel the rhythm' },
+      { id: 3, title: 'Nature', subtitle: 'Connect with earth' },
     ]);
     setSwipedCards([]);
   };
@@ -59,7 +62,7 @@ export function CardSwipe({
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Card Stack */}
-      <div className="relative w-48 h-64">
+      <div className="relative w-48 h-72">
         {cards.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center text-text-muted text-sm">
             No more cards
@@ -71,8 +74,9 @@ export function CardSwipe({
             return (
               <motion.div
                 key={card.id}
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${card.color} shadow-lg cursor-grab active:cursor-grabbing`}
+                className="absolute inset-0 rounded-2xl shadow-xl cursor-grab active:cursor-grabbing overflow-hidden"
                 style={{
+                  background: cardBackground,
                   x: isTop ? x : 0,
                   rotate: isTop ? rotate : 0,
                   opacity: isTop ? opacity : 1,
@@ -85,23 +89,34 @@ export function CardSwipe({
                 onDragEnd={isTop ? handleDragEnd : undefined}
                 whileDrag={{ cursor: 'grabbing' }}
               >
-                {/* Card Content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                  <span className="text-lg font-bold">{card.title}</span>
-                  <span className="text-sm opacity-80">Swipe me!</span>
+                {/* Image Placeholder Area */}
+                <div className="h-[55%] flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-t-2xl">
+                  <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-white/50" />
+                  </div>
+                </div>
+
+                {/* Content Area */}
+                <div className="h-[45%] flex flex-col items-center justify-center p-4 text-center">
+                  <h3 className="text-xl font-bold mb-1" style={{ color: titleColor }}>
+                    {card.title}
+                  </h3>
+                  <p className="text-sm" style={{ color: subtitleColor }}>
+                    {card.subtitle}
+                  </p>
                 </div>
 
                 {/* Like/Nope Indicators */}
                 {isTop && (
                   <>
                     <motion.div
-                      className="absolute top-4 right-4 px-2 py-1 bg-green-500 rounded text-white text-xs font-bold"
+                      className="absolute top-3 right-3 px-2 py-1 bg-green-500 rounded text-white text-xs font-bold"
                       style={{ opacity: likeOpacity }}
                     >
                       LIKE
                     </motion.div>
                     <motion.div
-                      className="absolute top-4 left-4 px-2 py-1 bg-red-500 rounded text-white text-xs font-bold"
+                      className="absolute top-3 left-3 px-2 py-1 bg-red-500 rounded text-white text-xs font-bold"
                       style={{ opacity: nopeOpacity }}
                     >
                       NOPE
@@ -127,12 +142,13 @@ export function CardSwipe({
         </motion.button>
 
         <motion.button
-          className="p-2 rounded-full bg-surface-overlay text-text-muted border border-surface-border"
+          className="p-2 rounded-full text-text-muted border"
+          style={{ borderColor: accentColor, backgroundColor: `${accentColor}10` }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleReset}
         >
-          <RotateCcw className="w-4 h-4" />
+          <RotateCcw className="w-4 h-4" style={{ color: accentColor }} />
         </motion.button>
 
         <motion.button
@@ -148,3 +164,4 @@ export function CardSwipe({
     </div>
   );
 }
+

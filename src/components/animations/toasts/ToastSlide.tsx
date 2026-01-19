@@ -94,7 +94,7 @@ export function ToastSlide({
                 delay: index * (stagger / 1000)
               }}
               className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg"
-              style={{ backgroundColor, border: '1px solid rgba(255,255,255,0.1)' }}
+              style={{ background: backgroundColor, border: '1px solid rgba(255,255,255,0.1)' }}
             >
               <CheckCircle className="w-4 h-4" style={{ color: accentColor }} />
               <span className="text-sm whitespace-nowrap" style={{ color: textColor }}>{toast.message}</span>

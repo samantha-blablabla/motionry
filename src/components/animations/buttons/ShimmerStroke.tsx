@@ -20,7 +20,7 @@ export function ShimmerStroke({
   return (
     <motion.button
       className="relative px-6 py-3 rounded-xl font-medium text-sm overflow-hidden group"
-      style={{ backgroundColor, color: textColor }}
+      style={{ background: backgroundColor, color: textColor }}
       whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
     >
@@ -41,7 +41,7 @@ export function ShimmerStroke({
       {/* Inner background to create border effect */}
       <div
         className="absolute inset-[2px] rounded-[10px]"
-        style={{ backgroundColor }}
+        style={{ background: backgroundColor }}
       />
 
       {/* Content */}

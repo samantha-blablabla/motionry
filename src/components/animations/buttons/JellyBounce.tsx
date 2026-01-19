@@ -22,7 +22,7 @@ export function JellyBounce({
   return (
     <motion.button
       className="px-6 py-3 rounded-xl font-medium text-sm"
-      style={{ backgroundColor, color: textColor }}
+      style={{ background: backgroundColor, color: textColor }}
       whileHover={{ scale }}
       whileTap={{ scale: 0.95 }}
       transition={{

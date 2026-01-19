@@ -46,11 +46,11 @@ export function ProgressFill({
       {/* Progress Bar */}
       <div
         className="w-full h-3 rounded-full overflow-hidden"
-        style={{ backgroundColor: trackColor }}
+        style={{ background: trackColor }}
       >
         <motion.div
           className="h-full rounded-full relative overflow-hidden"
-          style={{ backgroundColor: fillColor }}
+          style={{ background: fillColor }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{

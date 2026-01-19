@@ -44,17 +44,41 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
     >
       {/* Preview Area */}
-      <div
+      <motion.div
         className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden rounded-t-xl"
         onClick={(e) => e.stopPropagation()}
+        animate={{
+          scale: isHovered ? 1.02 : 1,
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
+        {/* Grid Dots Background */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+          }}
+        />
+
         {hasComponent && AnimationComponent ? (
-          <div className="w-full h-full flex items-center justify-center scale-[0.85] origin-center transform-gpu">
+          <div className="w-full h-full flex items-center justify-center scale-[0.85] origin-center transform-gpu relative z-[1]">
             <AnimationComponent />
           </div>
         ) : (
           <FallbackPreview animation={animation} isPlaying={isHovered} />
         )}
+
+        {/* Animated glow ring on hover */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none rounded-t-xl"
+          animate={{
+            boxShadow: isHovered
+              ? 'inset 0 0 30px rgba(99, 102, 241, 0.15)'
+              : 'inset 0 0 0px rgba(99, 102, 241, 0)',
+          }}
+          transition={{ duration: 0.3 }}
+        />
 
         {/* Hover overlay with play indicator */}
         <div className={cn(
@@ -63,15 +87,19 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
         )} />
 
         {/* Play indicator */}
-        <div className={cn(
-          'absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-full text-xs',
-          'bg-surface-overlay/80 backdrop-blur-sm transition-opacity',
-          isHovered ? 'opacity-100' : 'opacity-0'
-        )}>
-          <Play className="w-3 h-3 fill-current" />
-          <span>Interactive</span>
-        </div>
-      </div>
+        <motion.div
+          className={cn(
+            'absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-full text-xs',
+            'bg-surface-overlay/80 backdrop-blur-sm'
+          )}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 5 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Play className="w-3 h-3 fill-current text-accent" />
+          <span className="text-accent font-medium">Interactive</span>
+        </motion.div>
+      </motion.div>
 
       {/* Info Section - overflow-visible to allow tooltip to show */}
       <div className="p-4 border-t border-surface-border flex flex-col h-full bg-surface-raised/50 overflow-visible">
