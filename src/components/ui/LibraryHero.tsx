@@ -55,31 +55,20 @@ export function LibraryHero() {
                 ))}
             </div>
 
-            {/* Content */}
+            {/* Content - Title Only */}
             <div className="relative z-10 container mx-auto px-4 text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="max-w-3xl mx-auto space-y-3"
+                    className="max-w-3xl mx-auto"
                 >
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <Sparkles className="w-4 h-4 text-accent" />
-                        <span className="text-xs font-medium text-accent uppercase tracking-wider">Community Library</span>
-                        <Sparkles className="w-4 h-4 text-accent" />
-                    </div>
-
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-text-primary">
-                        Discover community-made <br />
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-text-primary">
+                        Discover community-made{' '}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-purple-500 to-pink-500">
                             animations & components
                         </span>
                     </h1>
-
-                    <p className="text-base text-text-secondary max-w-xl mx-auto leading-relaxed">
-                        A curated collection of production-ready animations.
-                        Copy code, customize colors, and build faster.
-                    </p>
                 </motion.div>
             </div>
         </section>
