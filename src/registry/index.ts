@@ -20,10 +20,10 @@ import { Typewriter } from '@/components/animations/text/Typewriter';
 import { FloatingLabel } from '@/components/animations/inputs/FloatingLabel';
 import { SlideToggle } from '@/components/animations/inputs/SlideToggle';
 // New animations - Batch 2
-import { SkeletonLoader } from '@/components/animations/loaders/SkeletonLoader';
+import { SkeletonLoaderDemo } from '@/components/animations/loaders/SkeletonLoader';
 import { AccordionCollapse } from '@/components/animations/navigation/AccordionCollapse';
 import { RippleButton } from '@/components/animations/buttons/RippleButton';
-import { CountUp } from '@/components/animations/text/CountUp';
+import { CountUpDemo } from '@/components/animations/text/CountUp';
 import { ParallaxCard } from '@/components/animations/cards/ParallaxCard';
 
 // Registry type
@@ -50,10 +50,10 @@ export const animationRegistry: AnimationRegistry = {
   'floating-label': FloatingLabel,
   'slide-toggle': SlideToggle,
   // New animations - Batch 2
-  'skeleton-loader': SkeletonLoader,
+  'skeleton-loader': SkeletonLoaderDemo,
   'accordion-collapse': AccordionCollapse,
   'ripple-button': RippleButton,
-  'count-up': CountUp,
+  'count-up': CountUpDemo,
   'parallax-card': ParallaxCard,
 };
 

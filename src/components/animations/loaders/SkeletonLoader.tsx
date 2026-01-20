@@ -15,8 +15,8 @@ export function SkeletonLoader({
     width = '100%',
     height = '20px',
     borderRadius = '4px',
-    baseColor = '#e0e0e0',
-    shimmerColor = '#f5f5f5',
+    baseColor = 'rgba(255, 255, 255, 0.1)',
+    shimmerColor = 'rgba(255, 255, 255, 0.2)',
     className = '',
 }: SkeletonLoaderProps) {
     return (
@@ -32,6 +32,8 @@ export function SkeletonLoader({
             <motion.div
                 className="absolute inset-0"
                 style={{
+                    width: '100%',
+                    height: '100%',
                     background: `linear-gradient(90deg, transparent 0%, ${shimmerColor} 50%, transparent 100%)`,
                 }}
                 animate={{

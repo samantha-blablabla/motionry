@@ -56,7 +56,7 @@ export function ParallaxCard({
     return (
         <motion.div
             ref={cardRef}
-            className={`relative overflow-hidden rounded-xl p-6 cursor-pointer ${className}`}
+            className={`relative overflow-hidden rounded-xl p-4 cursor-pointer w-[260px] h-[160px] ${className}`}
             style={{
                 backgroundColor,
                 border: `1px solid ${borderColor}`,
@@ -78,9 +78,9 @@ export function ParallaxCard({
             <div style={{ transform: 'translateZ(30px)' }}>
                 {children || (
                     <div className="text-center">
-                        <div className="text-4xl mb-3">🎨</div>
-                        <h3 className="text-lg font-semibold text-white mb-2">Parallax Card</h3>
-                        <p className="text-gray-400 text-sm">
+                        <div className="text-3xl mb-2">🎨</div>
+                        <h3 className="text-base font-semibold text-white mb-1">Parallax Card</h3>
+                        <p className="text-gray-400 text-xs">
                             Move your mouse over this card to see the 3D tilt effect
                         </p>
                     </div>

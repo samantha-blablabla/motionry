@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   MousePointerClick,
   TextCursor,
@@ -10,7 +11,9 @@ import {
   Bell,
   Type,
   Menu,
-  Sparkles
+  Sparkles,
+  Compass,
+  AppWindow
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
@@ -20,10 +23,12 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   TextCursor,
   Loader,
   LayoutGrid,
+  AppWindow, // Cards
   MessageSquare,
   Bell,
   Type,
   Menu,
+  Compass, // Navigation
 };
 
 interface SidebarProps {
@@ -33,77 +38,122 @@ interface SidebarProps {
   animationCounts?: Record<string, number>;
 }
 
-export function Sidebar({ categories, activeCategory, onCategoryChange, animationCounts = {} }: SidebarProps) {
+interface SidebarItemProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+  count?: number;
+}
+
+function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarItemProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <aside className="hidden lg:flex w-64 h-screen sticky top-0 border-r border-surface-border bg-surface p-6 flex-col">
+    <div
+      className="relative flex items-center justify-center w-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.button
+        onClick={onClick}
+        className={cn(
+          'w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 relative',
+          isActive
+            ? 'bg-accent/15 text-accent'
+            : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
+        )}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Icon className="w-5 h-5" />
+      </motion.button>
+
+      {/* Name Tag Reveal Effect */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            className="absolute left-[calc(100%+8px)] z-50 flex items-center whitespace-nowrap overflow-visible pointer-events-none"
+            initial={{ width: 0, opacity: 0, x: -10 }}
+            animate={{ width: 'auto', opacity: 1, x: 0 }}
+            exit={{ width: 0, opacity: 0, x: -10 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            {/* Tooltip Content - Solid Background, no blur */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-surface-border shadow-xl">
+              <span className="text-sm font-medium text-text-primary">{label}</span>
+              {count !== undefined && count > 0 && (
+                <span className="text-[10px] text-text-muted bg-surface-raised px-1.5 py-0.5 rounded border border-surface-border">
+                  {count}
+                </span>
+              )}
+            </div>
+
+            {/* Left triangle pointer to connect with icon */}
+            <div
+              className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 border-l border-b border-surface-border bg-surface"
+              style={{ zIndex: -1 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export function Sidebar({ categories, activeCategory, onCategoryChange, animationCounts = {} }: SidebarProps) {
+  const totalAnimations = Object.values(animationCounts).reduce((a, b) => a + b, 0);
+
+  return (
+    <aside className="hidden lg:flex w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center">
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-accent" />
-        </div>
-        <div>
-          <h1 className="font-semibold text-text-primary">Motionry</h1>
-          <p className="text-xs text-text-muted">Micro Animations</p>
+      <div className="mb-8">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center shadow-lg shadow-accent/20">
+          <Sparkles className="w-5 h-5 text-white" />
         </div>
       </div>
 
-      {/* Category Navigation */}
-      <nav className="flex-1 space-y-1">
-        <button
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col gap-4 w-full items-center">
+        {/* All Animations */}
+        <SidebarItem
+          icon={LayoutGrid}
+          label="All Animations"
+          isActive={activeCategory === null}
           onClick={() => onCategoryChange(null)}
-          className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left',
-            activeCategory === null
-              ? 'bg-accent/10 text-accent'
-              : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
-          )}
-        >
-          <LayoutGrid className="w-4 h-4" />
-          <span className="flex-1">All Animations</span>
-          <span className="text-xs text-text-muted bg-surface px-1.5 py-0.5 rounded">
-            {Object.values(animationCounts).reduce((a, b) => a + b, 0)}
-          </span>
-        </button>
+          count={totalAnimations}
+        />
 
-        <div className="pt-4 pb-2">
-          <span className="px-3 text-xs font-medium text-text-muted uppercase tracking-wider">
-            Categories
-          </span>
+        <div className="w-8 h-[1px] bg-surface-border/50 my-2" />
+
+        {/* Categories */}
+        <div className="flex flex-col gap-3 w-full items-center">
+          {categories.map((category) => {
+            const Icon = iconMap[category.icon] || LayoutGrid;
+
+            return (
+              <SidebarItem
+                key={category.id}
+                icon={Icon}
+                label={category.name}
+                isActive={activeCategory === category.id}
+                onClick={() => onCategoryChange(category.id)}
+                count={animationCounts[category.id]}
+              />
+            );
+          })}
         </div>
-
-        {categories.map((category) => {
-          const Icon = iconMap[category.icon] || LayoutGrid;
-
-          return (
-            <motion.button
-              key={category.id}
-              onClick={() => onCategoryChange(category.id)}
-              className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left',
-                activeCategory === category.id
-                  ? 'bg-accent/10 text-accent'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
-              )}
-              whileHover={{ x: 4 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="flex-1">{category.name}</span>
-              {animationCounts[category.id] && (
-                <span className="text-xs text-text-muted bg-surface px-1.5 py-0.5 rounded">
-                  {animationCounts[category.id]}
-                </span>
-              )}
-            </motion.button>
-          );
-        })}
       </nav>
 
-      {/* Footer */}
-      <div className="pt-4 border-t border-surface-border">
-        <p className="text-xs text-text-muted">
-          Open source • Made with 💜
-        </p>
+      {/* Footer / Settings or Info */}
+      <div className="mt-auto pt-4 flex flex-col gap-2 items-center">
+        <div className="w-8 h-[1px] bg-surface-border/50 mb-2" />
+        <SidebarItem
+          icon={Menu}
+          label="More info"
+          isActive={false}
+          onClick={() => { }}
+        />
       </div>
     </aside>
   );

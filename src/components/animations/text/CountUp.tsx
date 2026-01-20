@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface CountUpProps {
     end: number;
@@ -25,14 +25,14 @@ export function CountUp({
     className = '',
 }: CountUpProps) {
     const [count, setCount] = useState(start);
+    const [key, setKey] = useState(0);
     const ref = useRef<HTMLSpanElement>(null);
-    const isInView = useInView(ref, { once: true, margin: '-50px' });
 
+    // Loop animation every (duration + pause) seconds
     useEffect(() => {
-        if (!isInView) return;
-
         let startTime: number | null = null;
         let animationFrame: number;
+        let timeoutId: NodeJS.Timeout;
 
         const animate = (timestamp: number) => {
             if (!startTime) startTime = timestamp;
@@ -46,13 +46,23 @@ export function CountUp({
 
             if (progress < 1) {
                 animationFrame = requestAnimationFrame(animate);
+            } else {
+                // Pause then restart
+                timeoutId = setTimeout(() => {
+                    setCount(start);
+                    startTime = null;
+                    setKey(k => k + 1);
+                }, 2000); // 2 second pause before restart
             }
         };
 
         animationFrame = requestAnimationFrame(animate);
 
-        return () => cancelAnimationFrame(animationFrame);
-    }, [isInView, start, end, duration]);
+        return () => {
+            cancelAnimationFrame(animationFrame);
+            clearTimeout(timeoutId);
+        };
+    }, [key, start, end, duration]);
 
     const formattedCount = count.toFixed(decimals);
 
@@ -61,9 +71,8 @@ export function CountUp({
             ref={ref}
             className={`font-bold text-4xl tabular-nums ${className}`}
             style={{ color: textColor }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
         >
             {prefix}
             {formattedCount}

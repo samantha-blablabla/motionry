@@ -22,7 +22,7 @@
       "id": "cards",
       "name": "Cards & Containers",
       "description": "Swipe gestures, hover reveals, and expansion effects",
-      "icon": "LayoutGrid"
+      "icon": "AppWindow"
     },
     {
       "id": "tooltips",
@@ -46,7 +46,7 @@
       "id": "navigation",
       "name": "Navigation",
       "description": "Menu transitions, tab switches, and breadcrumbs",
-      "icon": "Menu"
+      "icon": "Compass"
     }
   ],
   "animations": [

@@ -45,7 +45,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
     >
       {/* Preview Area */}
       <motion.div
-        className="aspect-[4/3] bg-surface flex items-center justify-center p-6 relative overflow-hidden rounded-t-xl"
+        className="aspect-[16/10] bg-surface flex items-center justify-center p-4 relative overflow-hidden rounded-t-xl"
         onClick={(e) => e.stopPropagation()}
         animate={{
           scale: isHovered ? 1.02 : 1,
@@ -62,7 +62,11 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
         />
 
         {hasComponent && AnimationComponent ? (
-          <div className="w-full h-full flex items-center justify-center scale-[0.85] origin-center transform-gpu relative z-[1]">
+          <div className={cn(
+            "w-full h-full flex items-center justify-center origin-center transform-gpu relative z-[1]",
+            animation.category === 'navigation' ? 'scale-[0.75]' :
+              animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
+          )}>
             <AnimationComponent />
           </div>
         ) : (

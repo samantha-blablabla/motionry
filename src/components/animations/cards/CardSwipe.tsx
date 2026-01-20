@@ -60,9 +60,9 @@ export function CardSwipe({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Card Stack */}
-      <div className="relative w-48 h-72">
+    <div className="flex flex-col items-center gap-3">
+      {/* Card Stack - Horizontal orientation */}
+      <div className="relative w-56 h-36">
         {cards.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center text-text-muted text-sm">
             No more cards
@@ -74,14 +74,14 @@ export function CardSwipe({
             return (
               <motion.div
                 key={card.id}
-                className="absolute inset-0 rounded-2xl shadow-xl cursor-grab active:cursor-grabbing overflow-hidden"
+                className="absolute inset-0 rounded-xl shadow-xl cursor-grab active:cursor-grabbing overflow-hidden"
                 style={{
                   background: cardBackground,
                   x: isTop ? x : 0,
                   rotate: isTop ? rotate : 0,
                   opacity: isTop ? opacity : 1,
                   scale: 1 - (cards.length - 1 - index) * 0.05,
-                  y: (cards.length - 1 - index) * 8,
+                  y: (cards.length - 1 - index) * 6,
                   zIndex: index,
                 }}
                 drag={isTop ? 'x' : false}
@@ -89,34 +89,37 @@ export function CardSwipe({
                 onDragEnd={isTop ? handleDragEnd : undefined}
                 whileDrag={{ cursor: 'grabbing' }}
               >
-                {/* Image Placeholder Area */}
-                <div className="h-[55%] flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-t-2xl">
-                  <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-white/50" />
+                {/* Horizontal Layout: Image left, Content right */}
+                <div className="flex h-full">
+                  {/* Image Placeholder */}
+                  <div className="w-[35%] h-full flex items-center justify-center bg-black/20 backdrop-blur-sm">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                      <ImageIcon className="w-5 h-5 text-white/50" />
+                    </div>
                   </div>
-                </div>
 
-                {/* Content Area */}
-                <div className="h-[45%] flex flex-col items-center justify-center p-4 text-center">
-                  <h3 className="text-xl font-bold mb-1" style={{ color: titleColor }}>
-                    {card.title}
-                  </h3>
-                  <p className="text-sm" style={{ color: subtitleColor }}>
-                    {card.subtitle}
-                  </p>
+                  {/* Content Area */}
+                  <div className="flex-1 flex flex-col items-start justify-center p-3">
+                    <h3 className="text-base font-bold mb-0.5" style={{ color: titleColor }}>
+                      {card.title}
+                    </h3>
+                    <p className="text-xs" style={{ color: subtitleColor }}>
+                      {card.subtitle}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Like/Nope Indicators */}
                 {isTop && (
                   <>
                     <motion.div
-                      className="absolute top-3 right-3 px-2 py-1 bg-green-500 rounded text-white text-xs font-bold"
+                      className="absolute top-2 right-2 px-1.5 py-0.5 bg-green-500 rounded text-white text-[10px] font-bold"
                       style={{ opacity: likeOpacity }}
                     >
                       LIKE
                     </motion.div>
                     <motion.div
-                      className="absolute top-3 left-3 px-2 py-1 bg-red-500 rounded text-white text-xs font-bold"
+                      className="absolute top-2 left-2 px-1.5 py-0.5 bg-red-500 rounded text-white text-[10px] font-bold"
                       style={{ opacity: nopeOpacity }}
                     >
                       NOPE

@@ -41,8 +41,8 @@ export function FlipCard({
         <div
             className="relative cursor-pointer"
             style={{
-                width: 200,
-                height: 120,
+                width: 240,
+                height: 140,
                 perspective: 1000,
             }}
             onClick={handleInteraction}
