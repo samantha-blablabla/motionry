@@ -58,7 +58,7 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
       <motion.button
         onClick={onClick}
         className={cn(
-          'w-9 h-9 xl:w-12 xl:h-12 rounded-lg xl:rounded-xl flex items-center justify-center transition-all duration-300 relative',
+          'w-8 h-8 xl:w-12 xl:h-12 rounded-lg xl:rounded-xl flex items-center justify-center transition-all duration-300 relative',
           isActive
             ? 'bg-accent/15 text-accent'
             : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
@@ -105,16 +105,16 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
   const totalAnimations = Object.values(animationCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-4 xl:py-6 flex-col items-center overflow-y-auto no-scrollbar">
+    <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-3 xl:py-6 flex-col items-center overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* Logo */}
-      <div className="mb-6 xl:mb-8 shrink-0">
+      <div className="mb-4 xl:mb-8 shrink-0">
         <div className="w-8 h-8 xl:w-10 xl:h-10 rounded-lg xl:rounded-xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center shadow-lg shadow-accent/20">
           <Sparkles className="w-4 h-4 xl:w-5 xl:h-5 text-white" />
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 flex flex-col gap-2 xl:gap-4 w-full items-center min-h-min">
+      <nav className="flex-1 flex flex-col gap-1.5 xl:gap-4 w-full items-center min-h-min">
         {/* All Animations */}
         <SidebarItem
           icon={LayoutGrid}
@@ -124,10 +124,10 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
           count={totalAnimations}
         />
 
-        <div className="w-8 h-[1px] bg-surface-border/50 my-2 shrink-0" />
+        <div className="w-8 h-[1px] bg-surface-border/50 my-1.5 xl:my-2 shrink-0" />
 
         {/* Categories */}
-        <div className="flex flex-col gap-2 xl:gap-3 w-full items-center pb-4">
+        <div className="flex flex-col gap-1.5 xl:gap-3 w-full items-center pb-4">
           {categories.map((category) => {
             const Icon = iconMap[category.icon] || LayoutGrid;
 
@@ -146,8 +146,8 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
       </nav>
 
       {/* Footer / Settings or Info */}
-      <div className="mt-auto pt-4 flex flex-col gap-2 items-center shrink-0">
-        <div className="w-8 h-[1px] bg-surface-border/50 mb-2" />
+      <div className="mt-auto pt-2 xl:pt-4 flex flex-col gap-1.5 xl:gap-2 items-center shrink-0">
+        <div className="w-8 h-[1px] bg-surface-border/50 mb-1.5 xl:mb-2" />
         <SidebarItem
           icon={Menu}
           label="More info"
