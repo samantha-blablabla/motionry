@@ -16,21 +16,19 @@ export function TextReveal({
     delay = 0,
     duration = 0.5,
 }: TextRevealProps) {
-    // Split text into words for word-by-word reveal, or simple block reveal
-    // For this component, let's do simple block reveal for elegance
-
     return (
-        <div className={cn("overflow-hidden", className)}>
+        <div className={cn("overflow-hidden inline-block", className)}>
             <motion.div
+                className="text-2xl font-bold text-text-primary"
                 initial={{ y: "100%" }}
-                animate={{ y: 0 }}
+                animate={{ y: ["100%", "0%", "0%", "-100%"] }}
                 transition={{
-                    duration: duration,
+                    duration: duration * 4,
                     delay: delay,
-                    ease: [0.33, 1, 0.68, 1],
+                    ease: "easeInOut",
                     repeat: Infinity,
-                    repeatDelay: 2,
-                    repeatType: "reverse"
+                    repeatDelay: 1,
+                    times: [0, 0.25, 0.75, 1]
                 }}
             >
                 {text}

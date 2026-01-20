@@ -21,36 +21,40 @@ export function BorderBeam({
     colorTo = "#9c40ff",
 }: BorderBeamProps) {
     return (
-        <div className={cn("relative rounded-xl", className)}>
-            {/* Animated gradient border */}
-            <div
-                className="absolute inset-0 rounded-xl overflow-hidden"
-                style={{ padding: borderWidth }}
-            >
-                <motion.div
-                    className="absolute inset-[-50%] w-[200%] h-[200%]"
-                    style={{
-                        background: `conic-gradient(from 0deg at 50% 50%, ${colorFrom}, ${colorTo}, ${colorFrom})`,
-                    }}
-                    animate={{ rotate: 360 }}
-                    transition={{
-                        duration: duration,
-                        repeat: Infinity,
-                        ease: "linear"
-                    }}
-                />
-            </div>
+        <div className={cn("relative p-[3px] rounded-xl overflow-hidden", className)} style={{ padding: borderWidth }}>
+            {/* Rotating gradient background */}
+            <motion.div
+                className="absolute inset-0"
+                style={{
+                    background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, ${colorFrom} 60deg, ${colorTo} 120deg, transparent 180deg)`,
+                }}
+                animate={{ rotate: 360 }}
+                transition={{
+                    duration: duration,
+                    repeat: Infinity,
+                    ease: "linear"
+                }}
+            />
 
-            {/* Inner content container */}
-            <div className="relative z-10 bg-surface rounded-xl">
+            {/* Static gradient for base glow */}
+            <div
+                className="absolute inset-0 opacity-30"
+                style={{
+                    background: `conic-gradient(from 180deg at 50% 50%, ${colorFrom}, ${colorTo}, ${colorFrom})`,
+                }}
+            />
+
+            {/* Inner content container - covers the gradient except at edges */}
+            <div className="relative z-10 bg-surface rounded-lg">
                 {children || (
-                    <div className="p-8">
-                        <h3 className="text-xl font-semibold text-text-primary mb-2">Border Beam</h3>
-                        <p className="text-text-secondary">A glowing beam travels along the border.</p>
+                    <div className="p-6">
+                        <h3 className="text-lg font-semibold text-text-primary mb-1">Border Beam</h3>
+                        <p className="text-text-secondary text-sm">A glowing beam travels along the border.</p>
                     </div>
                 )}
             </div>
         </div>
     );
 }
+
 

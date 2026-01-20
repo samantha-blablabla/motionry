@@ -41,7 +41,7 @@ export function AccordionCollapse({
     accentColor = '#6366f1',
     className = '',
 }: AccordionCollapseProps) {
-    const [openItems, setOpenItems] = useState<string[]>([]);
+    const [openItems, setOpenItems] = useState<string[]>(['1']); // Auto-open first item
 
     const toggleItem = (id: string) => {
         if (allowMultiple) {
