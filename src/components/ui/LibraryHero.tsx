@@ -63,14 +63,28 @@ const starPositions = [
 
 function TechIcon({ tech, index }: { tech: typeof techStacks[0]; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const handleMouseEnter = () => {
+        timeoutRef.current = setTimeout(() => {
+            setIsHovered(true);
+        }, 150); // 150ms delay to prevent accidental triggers
+    };
+
+    const handleMouseLeave = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        setIsHovered(false);
+    };
 
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: index * 0.08 }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             className="relative"
         >
             {/* Star particles on hover */}
@@ -103,7 +117,7 @@ function TechIcon({ tech, index }: { tech: typeof techStacks[0]; index: number }
             <div
                 className={`
                     flex items-center h-11 rounded-xl border backdrop-blur-sm cursor-pointer
-                    transition-all duration-200 ease-out overflow-hidden
+                    transition-all duration-300 ease-out overflow-hidden
                     ${isHovered
                         ? 'bg-accent/15 border-accent/40 px-3 gap-2'
                         : 'bg-white/5 border-white/10 w-11 justify-center'
