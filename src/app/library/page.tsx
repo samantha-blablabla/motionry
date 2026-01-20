@@ -141,6 +141,12 @@ function LibraryContent() {
                         totalCount={data.animations.length}
                         filteredCount={filteredAnimations.length}
                         onMenuToggle={() => setIsMobileMenuOpen(true)}
+                        title={activeCategory
+                            ? data.categories.find(c => c.id === activeCategory)?.name
+                            : "Animation Library"}
+                        description={activeCategory
+                            ? data.categories.find(c => c.id === activeCategory)?.description
+                            : undefined}
                     />
 
                     {/* Hero Section - Only show when no search/filter is active */}

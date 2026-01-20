@@ -10,9 +10,18 @@ interface HeaderProps {
   totalCount: number;
   filteredCount: number;
   onMenuToggle?: () => void;
+  title?: string;
+  description?: string;
 }
 
-export function Header({ onSearch, totalCount, filteredCount, onMenuToggle }: HeaderProps) {
+export function Header({
+  onSearch,
+  totalCount,
+  filteredCount,
+  onMenuToggle,
+  title = "Animation Library",
+  description
+}: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -81,13 +90,13 @@ export function Header({ onSearch, totalCount, filteredCount, onMenuToggle }: He
           )}
           <div className="hidden sm:block">
             <h2 className="text-lg font-semibold text-text-primary">
-              Animation Library
+              {title}
             </h2>
             <p className="text-sm text-text-muted">
-              {filteredCount === totalCount
+              {description || (filteredCount === totalCount
                 ? `${totalCount} animations`
                 : `${filteredCount} of ${totalCount} animations`
-              }
+              )}
             </p>
           </div>
         </div>

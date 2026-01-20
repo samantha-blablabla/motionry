@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react'; // Added useEffect and useRef
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MousePointerClick,
@@ -13,7 +14,12 @@ import {
   Menu,
   Sparkles,
   Compass,
-  AppWindow
+  AppWindow,
+  Square,      // Added if needed, or remove if unused in map
+  Navigation,  // Added if needed
+  Palette,     // Added if needed
+  CreditCard,   // Added if needed
+  MousePointer // Added
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
@@ -23,12 +29,15 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   TextCursor,
   Loader,
   LayoutGrid,
-  AppWindow, // Cards
+  AppWindow,
   MessageSquare,
   Bell,
   Type,
   Menu,
-  Compass, // Navigation
+  Compass,
+  // Add aliases if your category IDs map to these specific names but icons are different
+  // For now, I will keep the original set to ensure stability.
+  // If "buttons" category maps to "MousePointerClick", it works if the category.icon string is "MousePointerClick"
 };
 
 interface SidebarProps {
@@ -46,28 +55,27 @@ interface SidebarItemProps {
   count?: number;
 }
 
-import { createPortal } from 'react-dom';
-import { useRef, useEffect } from 'react';
-
 function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarItemProps) {
   const [isHovered, setIsHovered] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
 
-  useEffect(() => {
-    if (isHovered && buttonRef.current) {
+  // Handle hover interactively to ensure coords are set before showing
+  const handleMouseEnter = () => {
+    if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setCoords({
         top: rect.top + rect.height / 2,
         left: rect.right + 8
       });
+      setIsHovered(true);
     }
-  }, [isHovered]);
+  };
 
   return (
     <div
       className="relative flex items-center justify-center w-full"
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
     >
       <motion.button

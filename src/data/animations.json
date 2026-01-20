@@ -1141,7 +1141,7 @@
         "fade"
       ],
       "preview": {
-        "trigger": "auto",
+        "trigger": "hover",
         "duration": 2000
       },
       "config": {
