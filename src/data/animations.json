@@ -965,6 +965,186 @@
       "code": {
         "framerMotion": "function ParallaxCard({ children }) {\n  const [rotate, setRotate] = useState({ x: 0, y: 0 });\n\n  const handleMouseMove = (e) => {\n    const rect = e.target.getBoundingClientRect();\n    const x = (e.clientY - rect.top - rect.height/2) / 10;\n    const y = (e.clientX - rect.left - rect.width/2) / 10;\n    setRotate({ x: -x, y });\n  };\n\n  return (\n    <motion.div\n      onMouseMove={handleMouseMove}\n      onMouseLeave={() => setRotate({ x: 0, y: 0 })}\n      animate={{ rotateX: rotate.x, rotateY: rotate.y }}\n      style={{ transformStyle: 'preserve-3d' }}\n    >\n      {children}\n    </motion.div>\n  );\n}"
       }
+    },
+    {
+      "id": "gradient-text",
+      "name": "Gradient Text",
+      "category": "text",
+      "description": "Text with a continuously flowing color gradient background",
+      "tags": [
+        "text",
+        "gradient",
+        "color",
+        "flow",
+        "heading"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 5000
+      },
+      "config": {
+        "duration": {
+          "label": "Duration (s)",
+          "default": 8,
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      },
+      "prompts": {
+        "beginner": "Create a headline where the text color is actually a moving rainbow gradient. It should flow smoothly from left to right forever.",
+        "pro": "Implement gradient text:\n- bg-clip-text + text-transparent\n- background-size: 200%\n- Animate background-position using Motion\n- Linear easing, infinite loop"
+      },
+      "code": {
+        "framerMotion": "function GradientText({ text }) {\n  return (\n    <motion.h1\n      style={{\n        backgroundImage: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',\n        backgroundSize: '200% auto',\n        backgroundClip: 'text',\n        WebkitBackgroundClip: 'text',\n        color: 'transparent'\n      }}\n      animate={{ backgroundPosition: ['0% center', '-200% center'] }}\n      transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}\n    >\n      {text}\n    </motion.h1>\n  );\n}"
+      }
+    },
+    {
+      "id": "spotlight-card",
+      "name": "Spotlight Card",
+      "category": "cards",
+      "description": "Card with a mouse-following radial gradient spotlight",
+      "tags": [
+        "card",
+        "spotlight",
+        "mouse",
+        "hover",
+        "gleam"
+      ],
+      "preview": {
+        "trigger": "hover",
+        "duration": 0
+      },
+      "config": {
+        "spotlightColor": {
+          "label": "Spotlight Color",
+          "default": "rgba(255, 255, 255, 0.15)",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a card where a soft light follows my mouse cursor as I move over it, revealing the background texture or just adding a cool glow.",
+        "pro": "Track mouse position on container:\n- onMouseMove to get coordinates\n- Update MotionValues\n- Use useMotionTemplate for radial-gradient(circle at x y, ...)\n- Apply as background to overlay div"
+      },
+      "code": {
+        "framerMotion": "function SpotlightCard({ children }) {\n  const mouseX = useMotionValue(0);\n  const mouseY = useMotionValue(0);\n\n  function handleMouseMove({ currentTarget, clientX, clientY }) {\n    const { left, top } = currentTarget.getBoundingClientRect();\n    mouseX.set(clientX - left);\n    mouseY.set(clientY - top);\n  }\n\n  return (\n    <div \n      className=\"relative overflow-hidden rounded-xl border bg-zinc-900 group\"\n      onMouseMove={handleMouseMove}\n    >\n      <motion.div\n        className=\"pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100\"\n        style={{\n          background: useMotionTemplate`\n            radial-gradient(\n              650px circle at ${mouseX}px ${mouseY}px,\n              rgba(255,255,255,0.15),\n              transparent 80%\n            )\n          `\n        }}\n      />\n      <div className=\"relative\">{children}</div>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "border-beam",
+      "name": "Border Beam",
+      "category": "cards",
+      "description": "A glowing beam of light that travels along the border of the container",
+      "tags": [
+        "card",
+        "border",
+        "glow",
+        "beam",
+        "neon"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 4000
+      },
+      "config": {
+        "duration": {
+          "label": "Duration (s)",
+          "default": 8,
+          "min": 2,
+          "max": 15,
+          "step": 1
+        },
+        "borderWidth": {
+          "label": "Border Width",
+          "default": 1.5,
+          "min": 1,
+          "max": 4,
+          "step": 0.5
+        },
+        "colorFrom": {
+          "label": "Color Start",
+          "default": "#ffaa40",
+          "type": "color"
+        },
+        "colorTo": {
+          "label": "Color End",
+          "default": "#9c40ff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Make a cool neon light travel around the border of my card. It should look like energy flowing through a wire.",
+        "pro": "Create border beam with conic gradient rotation:\n- Parent with relative positioning\n- Absolute child with large conic-gradient\n- Rotate child 360deg infinitely\n- Mask or overlay to show only border area\n- Use mask-composite for calculating border path (advanced)"
+      },
+      "code": {
+        "framerMotion": "function BorderBeam({ children }) {\n  return (\n    <div className=\"relative rounded-xl overflow-hidden bg-slate-900 border border-slate-800\">\n      <div className=\"absolute inset-0\">\n        <motion.div\n          className=\"absolute inset-[-100%] opacity-50\"\n          style={{ \n            background: 'conic-gradient(from 0deg, transparent 0 340deg, #ffaa40 360deg)'\n          }}\n          animate={{ rotate: 360 }}\n          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}\n        />\n      </div>\n      <div className=\"absolute inset-[1px] bg-slate-900 rounded-[10px] z-0\" />\n      <div className=\"relative z-10 p-4\">{children}</div>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "staggered-menu",
+      "name": "Staggered Menu",
+      "category": "navigation",
+      "description": "Menu items animate in sequentially for a smooth visual flow",
+      "tags": [
+        "menu",
+        "stagger",
+        "list",
+        "fade",
+        "slide"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 2000
+      },
+      "config": {
+        "staggerDelay": {
+          "label": "Delay per Item (s)",
+          "default": 0.1,
+          "min": 0.05,
+          "max": 0.5,
+          "step": 0.05
+        }
+      },
+      "prompts": {
+        "beginner": "Create a vertical menu where the items don't just appear all at once, but slide in one after another from the left. It feels much smoother and more polite.",
+        "pro": "Use Framer Motion variants with staggerChildren:\n- Container variants: transition: { staggerChildren: 0.1 }\n- Item variants: hidden { opacity: 0, x: -20 }, show { opacity: 1, x: 0 }\n- Nest items inside container motion.ul"
+      },
+      "code": {
+        "framerMotion": "const container = {\n  hidden: { opacity: 0 },\n  show: {\n    opacity: 1,\n    transition: { staggerChildren: 0.1 }\n  }\n};\n\nconst item = {\n  hidden: { opacity: 0, x: -20 },\n  show: { opacity: 1, x: 0 }\n};\n\nfunction Menu({ items }) {\n  return (\n    <motion.ul\n      variants={container}\n      initial=\"hidden\"\n      animate=\"show\"\n    >\n      {items.map((label, i) => (\n        <motion.li key={i} variants={item}>\n          {label}\n        </motion.li>\n      ))}\n    </motion.ul>\n  );\n}"
+      }
+    },
+    {
+      "id": "text-reveal",
+      "name": "Text Reveal",
+      "category": "text",
+      "description": "Text elegantly slides up from a masked container",
+      "tags": [
+        "text",
+        "reveal",
+        "mask",
+        "slide",
+        "fade"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 2000
+      },
+      "config": {
+        "duration": {
+          "label": "Duration (s)",
+          "default": 0.5,
+          "min": 0.2,
+          "max": 1.5,
+          "step": 0.1
+        }
+      },
+      "prompts": {
+        "beginner": "Make my text slide up into view from nothing, like it's coming out of an invisible box. It looks very clean and professional for headlines.",
+        "pro": "Use overflow: hidden parent with y-transform child:\n- Parent div with overflow-hidden\n- Child motion.div starts at y: '100%'\n- Animate to y: 0\n- Use ease: [0.33, 1, 0.68, 1] for premium feel"
+      },
+      "code": {
+        "framerMotion": "function TextReveal({ text }) {\n  return (\n    <div className=\"overflow-hidden\">\n      <motion.div\n        initial={{ y: '100%' }}\n        animate={{ y: 0 }}\n        transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}\n      >\n        {text}\n      </motion.div>\n    </div>\n  );\n}"
+      }
     }
   ]
 }

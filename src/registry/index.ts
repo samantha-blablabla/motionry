@@ -25,6 +25,12 @@ import { AccordionCollapse } from '@/components/animations/navigation/AccordionC
 import { RippleButton } from '@/components/animations/buttons/RippleButton';
 import { CountUpDemo } from '@/components/animations/text/CountUp';
 import { ParallaxCard } from '@/components/animations/cards/ParallaxCard';
+// New animations - Batch 3
+import { GradientText } from '@/components/animations/text/GradientText';
+import { SpotlightCard } from '@/components/animations/cards/SpotlightCard';
+import { BorderBeam } from '@/components/animations/cards/BorderBeam';
+import { StaggeredMenu } from '@/components/animations/navigation/StaggeredMenu';
+import { TextReveal } from '@/components/animations/text/TextReveal';
 
 // Registry type
 type AnimationRegistry = {
@@ -55,6 +61,12 @@ export const animationRegistry: AnimationRegistry = {
   'ripple-button': RippleButton,
   'count-up': CountUpDemo,
   'parallax-card': ParallaxCard,
+  // New animations - Batch 3
+  'gradient-text': GradientText,
+  'spotlight-card': SpotlightCard,
+  'border-beam': BorderBeam,
+  'staggered-menu': StaggeredMenu,
+  'text-reveal': TextReveal,
 };
 
 // Helper to get component by ID
