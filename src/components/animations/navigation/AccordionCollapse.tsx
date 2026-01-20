@@ -41,7 +41,7 @@ export function AccordionCollapse({
     accentColor = '#6366f1',
     className = '',
 }: AccordionCollapseProps) {
-    const [openItems, setOpenItems] = useState<string[]>(['1']); // Auto-open first item
+    const [openItems, setOpenItems] = useState<string[]>([]);
 
     const toggleItem = (id: string) => {
         if (allowMultiple) {
@@ -56,7 +56,7 @@ export function AccordionCollapse({
     const isOpen = (id: string) => openItems.includes(id);
 
     return (
-        <div className={`w-full max-w-md ${className}`}>
+        <div className={`w-full min-w-[320px] ${className}`}>
             {items.map((item) => (
                 <div
                     key={item.id}
@@ -67,7 +67,7 @@ export function AccordionCollapse({
                         className="w-full flex items-center justify-between py-4 px-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                     >
                         <span
-                            className="font-medium"
+                            className="font-medium flex-1 text-left"
                             style={{ color: isOpen(item.id) ? accentColor : undefined }}
                         >
                             {item.title}
