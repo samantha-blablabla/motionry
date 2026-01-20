@@ -35,6 +35,11 @@ export function MagneticHover({
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    // Fallback: ensure rect exists if onMouseEnter didn't fire (e.g. fast movement)
+    if (!rectRef.current && ref.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+    }
+
     if (!rectRef.current) return;
 
     const { left, top, width, height } = rectRef.current;
