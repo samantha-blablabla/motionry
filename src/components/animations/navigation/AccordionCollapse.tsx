@@ -56,7 +56,7 @@ export function AccordionCollapse({
     const isOpen = (id: string) => openItems.includes(id);
 
     return (
-        <div className={`w-full min-w-[320px] ${className}`}>
+        <div className={`w-full max-w-md ${className}`}>
             {items.map((item) => (
                 <div
                     key={item.id}
