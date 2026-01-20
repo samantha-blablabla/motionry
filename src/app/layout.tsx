@@ -59,15 +59,15 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Motionry - Micro Animation Library for UI/UX',
-    description: 'A curated collection of 20+ micro-animations with AI-friendly prompts.',
+    title: 'Motionry - Modern UI Components',
+    description: 'A beautiful library of modern UI components and animations built with Next.js, Tailwind CSS, and Framer Motion.',
     images: ['/og-image.png'],
     creator: '@motionry',
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
   },
   manifest: '/site.webmanifest',
 };

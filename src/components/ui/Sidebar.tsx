@@ -46,8 +46,23 @@ interface SidebarItemProps {
   count?: number;
 }
 
+import { createPortal } from 'react-dom';
+import { useRef, useEffect } from 'react';
+
 function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarItemProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (isHovered && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top + rect.height / 2,
+        left: rect.right + 8
+      });
+    }
+  }, [isHovered]);
 
   return (
     <div
@@ -56,6 +71,7 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
       onMouseLeave={() => setIsHovered(false)}
     >
       <motion.button
+        ref={buttonRef}
         onClick={onClick}
         className={cn(
           'w-8 h-8 xl:w-12 xl:h-12 rounded-lg xl:rounded-xl flex items-center justify-center transition-all duration-300 relative',
@@ -70,17 +86,22 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
         <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
       </motion.button>
 
-      {/* Name Tag Reveal Effect */}
+      {/* Name Tag Reveal Effect - Portaled to avoid overflow clipping */}
       <AnimatePresence>
-        {isHovered && (
+        {isHovered && typeof document !== 'undefined' && createPortal(
           <motion.div
-            className="absolute left-[calc(100%+8px)] z-50 flex items-center whitespace-nowrap overflow-visible pointer-events-none"
-            initial={{ width: 0, opacity: 0, x: -10 }}
-            animate={{ width: 'auto', opacity: 1, x: 0 }}
-            exit={{ width: 0, opacity: 0, x: -10 }}
+            className="fixed z-[9999] flex items-center whitespace-nowrap pointer-events-none"
+            style={{
+              top: coords.top,
+              left: coords.left,
+              transform: 'translateY(-50%)'
+            }}
+            initial={{ opacity: 0, x: -10, y: "-50%" }}
+            animate={{ opacity: 1, x: 0, y: "-50%" }}
+            exit={{ opacity: 0, x: -10, y: "-50%" }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            {/* Tooltip Content - Solid Background, no blur */}
+            {/* Tooltip Content */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-surface-border shadow-xl">
               <span className="text-sm font-medium text-text-primary">{label}</span>
               {count !== undefined && count > 0 && (
@@ -90,12 +111,13 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
               )}
             </div>
 
-            {/* Left triangle pointer to connect with icon */}
+            {/* Left triangle pointer */}
             <div
               className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 border-l border-b border-surface-border bg-surface"
               style={{ zIndex: -1 }}
             />
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
     </div>
