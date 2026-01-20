@@ -66,10 +66,14 @@ export function DelayedTooltip({
           >
             <span className="text-sm" style={{ color: textColor }}>{content}</span>
             {/* Arrow */}
-            <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-px">
-              <div className="border-8 border-transparent" style={{ borderTopColor: 'rgba(255,255,255,0.1)' }} />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 border-[7px] border-transparent" style={{ borderTopColor: backgroundColor }} />
-            </div>
+            <div
+              className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 w-2.5 h-2.5 bg-inherit border-r border-b"
+              style={{
+                borderColor: 'rgba(255,255,255,0.1)',
+                backgroundColor: backgroundColor,
+                transform: 'translate(-50%, -50%) rotate(45deg)'
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

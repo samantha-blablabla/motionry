@@ -64,14 +64,7 @@ export function FloatingLabel({
                 }}
             />
 
-            {/* Focus ring indicator */}
-            <motion.div
-                className="absolute bottom-0 left-1/2 h-[2px] -translate-x-1/2"
-                style={{ background: activeColor }}
-                initial={{ width: 0 }}
-                animate={{ width: isFocused ? '100%' : 0 }}
-                transition={{ duration: 0.3 }}
-            />
+
         </div>
     );
 }

@@ -26,12 +26,20 @@ export function MagneticHover({
   const springX = useSpring(x, { stiffness: smoothing, damping: 15 });
   const springY = useSpring(y, { stiffness: smoothing, damping: 15 });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+  const rectRef = useRef<DOMRect | null>(null);
 
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    if (ref.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!rectRef.current) return;
+
+    const { left, top, width, height } = rectRef.current;
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
 
     x.set((e.clientX - centerX) * strength);
     y.set((e.clientY - centerY) * strength);
@@ -40,6 +48,7 @@ export function MagneticHover({
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    rectRef.current = null;
   };
 
   return (
@@ -47,6 +56,7 @@ export function MagneticHover({
       ref={ref}
       className="px-6 py-3 rounded-xl font-medium text-sm"
       style={{ x: springX, y: springY, background: backgroundColor, color: textColor }}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileTap={{ scale: 0.95 }}

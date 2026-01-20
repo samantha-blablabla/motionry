@@ -89,24 +89,14 @@ export function CardSwipe({
                 onDragEnd={isTop ? handleDragEnd : undefined}
                 whileDrag={{ cursor: 'grabbing' }}
               >
-                {/* Horizontal Layout: Image left, Content right */}
-                <div className="flex h-full">
-                  {/* Image Placeholder */}
-                  <div className="w-[35%] h-full flex items-center justify-center bg-black/20 backdrop-blur-sm">
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                      <ImageIcon className="w-5 h-5 text-white/50" />
-                    </div>
-                  </div>
-
-                  {/* Content Area */}
-                  <div className="flex-1 flex flex-col items-start justify-center p-3">
-                    <h3 className="text-base font-bold mb-0.5" style={{ color: titleColor }}>
-                      {card.title}
-                    </h3>
-                    <p className="text-xs" style={{ color: subtitleColor }}>
-                      {card.subtitle}
-                    </p>
-                  </div>
+                {/* Content Only Layout */}
+                <div className="flex flex-col items-center justify-center p-6 text-center h-full">
+                  <h3 className="text-xl font-bold mb-2" style={{ color: titleColor }}>
+                    {card.title}
+                  </h3>
+                  <p className="text-sm opacity-90" style={{ color: subtitleColor }}>
+                    {card.subtitle}
+                  </p>
                 </div>
 
                 {/* Like/Nope Indicators */}

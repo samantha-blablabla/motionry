@@ -100,39 +100,41 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
       </motion.button>
 
       {/* Name Tag Reveal Effect - Portaled to avoid overflow clipping */}
-      <AnimatePresence>
-        {mounted && isHovered && createPortal(
-          <motion.div
-            className="fixed z-[9999] flex items-center whitespace-nowrap pointer-events-none"
-            style={{
-              top: coords.top,
-              left: coords.left,
-              transform: 'translateY(-50%)'
-            }}
-            initial={{ opacity: 0, x: -10, y: "-50%" }}
-            animate={{ opacity: 1, x: 0, y: "-50%" }}
-            exit={{ opacity: 0, x: -10, y: "-50%" }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          >
-            {/* Tooltip Content */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-surface-border shadow-xl">
-              <span className="text-sm font-medium text-text-primary">{label}</span>
-              {count !== undefined && count > 0 && (
-                <span className="text-[10px] text-text-muted bg-surface-raised px-1.5 py-0.5 rounded border border-surface-border">
-                  {count}
-                </span>
-              )}
-            </div>
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              className="fixed z-[9999] flex items-center whitespace-nowrap pointer-events-none"
+              style={{
+                top: coords.top,
+                left: coords.left,
+                transform: 'translateY(-50%)'
+              }}
+              initial={{ opacity: 0, x: -10, y: "-50%" }}
+              animate={{ opacity: 1, x: 0, y: "-50%" }}
+              exit={{ opacity: 0, x: -10, y: "-50%" }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            >
+              {/* Tooltip Content */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-surface-border shadow-xl">
+                <span className="text-sm font-medium text-text-primary">{label}</span>
+                {count !== undefined && count > 0 && (
+                  <span className="text-[10px] text-text-muted bg-surface-raised px-1.5 py-0.5 rounded border border-surface-border">
+                    {count}
+                  </span>
+                )}
+              </div>
 
-            {/* Left triangle pointer */}
-            <div
-              className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 border-l border-b border-surface-border bg-surface"
-              style={{ zIndex: -1 }}
-            />
-          </motion.div>,
-          document.body
-        )}
-      </AnimatePresence>
+              {/* Left triangle pointer */}
+              <div
+                className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 border-l border-b border-surface-border bg-surface"
+                style={{ zIndex: -1 }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
