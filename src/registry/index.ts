@@ -19,6 +19,12 @@ import { FlipCard } from '@/components/animations/cards/FlipCard';
 import { Typewriter } from '@/components/animations/text/Typewriter';
 import { FloatingLabel } from '@/components/animations/inputs/FloatingLabel';
 import { SlideToggle } from '@/components/animations/inputs/SlideToggle';
+// New animations - Batch 2
+import { SkeletonLoader } from '@/components/animations/loaders/SkeletonLoader';
+import { AccordionCollapse } from '@/components/animations/navigation/AccordionCollapse';
+import { RippleButton } from '@/components/animations/buttons/RippleButton';
+import { CountUp } from '@/components/animations/text/CountUp';
+import { ParallaxCard } from '@/components/animations/cards/ParallaxCard';
 
 // Registry type
 type AnimationRegistry = {
@@ -43,6 +49,12 @@ export const animationRegistry: AnimationRegistry = {
   'typewriter': Typewriter,
   'floating-label': FloatingLabel,
   'slide-toggle': SlideToggle,
+  // New animations - Batch 2
+  'skeleton-loader': SkeletonLoader,
+  'accordion-collapse': AccordionCollapse,
+  'ripple-button': RippleButton,
+  'count-up': CountUp,
+  'parallax-card': ParallaxCard,
 };
 
 // Helper to get component by ID

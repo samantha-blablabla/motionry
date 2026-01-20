@@ -810,6 +810,161 @@
       "code": {
         "framerMotion": "function SlideToggle({ onChange }) {\n  const [on, setOn] = useState(false);\n\n  const toggle = () => {\n    setOn(!on);\n    onChange?.(!on);\n  };\n\n  return (\n    <motion.button\n      onClick={toggle}\n      className=\"w-14 h-8 rounded-full relative\"\n      animate={{ background: on ? '#6366f1' : '#3f3f46' }}\n      whileTap={{ scale: 0.95 }}\n    >\n      <motion.div\n        className=\"w-6 h-6 bg-white rounded-full absolute top-1\"\n        animate={{ left: on ? 28 : 4 }}\n        transition={{ type: 'spring', stiffness: 500, damping: 30 }}\n      />\n    </motion.button>\n  );\n}"
       }
+    },
+    {
+      "id": "skeleton-loader",
+      "name": "Skeleton Loader",
+      "description": "Loading placeholder with shimmer animation",
+      "category": "loaders",
+      "difficulty": "beginner",
+      "tags": [
+        "loading",
+        "placeholder",
+        "shimmer",
+        "skeleton"
+      ],
+      "config": {
+        "baseColor": {
+          "label": "Base Color",
+          "default": "#e0e0e0",
+          "type": "color"
+        },
+        "shimmerColor": {
+          "label": "Shimmer Color",
+          "default": "#f5f5f5",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a skeleton loading placeholder that shows a shimmering effect while content is loading, like you see on Facebook or LinkedIn.",
+        "pro": "Implement skeleton loader with infinite shimmer:\n- Create base element with configurable dimensions\n- Animate gradient overlay from left to right\n- Use x translate animation with infinite repeat\n- Support different shapes (rectangle, circle)\n- Add Demo wrapper showing card-like layout"
+      },
+      "code": {
+        "framerMotion": "function SkeletonLoader({ width, height }) {\n  return (\n    <div className=\"overflow-hidden\" style={{ width, height, background: '#e0e0e0' }}>\n      <motion.div\n        style={{ background: 'linear-gradient(90deg, transparent, #f5f5f5, transparent)' }}\n        animate={{ x: ['-100%', '100%'] }}\n        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}\n      />\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "accordion-collapse",
+      "name": "Accordion Collapse",
+      "description": "Expandable sections with smooth height animation",
+      "category": "navigation",
+      "difficulty": "intermediate",
+      "tags": [
+        "accordion",
+        "collapse",
+        "expand",
+        "faq"
+      ],
+      "config": {
+        "accentColor": {
+          "label": "Accent Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create an accordion component where clicking on a section header expands its content smoothly, and clicking again collapses it.",
+        "pro": "Implement accordion with AnimatePresence:\n- Track open items in state array\n- Use AnimatePresence for enter/exit animations\n- Animate height from 0 to 'auto' with overflow hidden\n- Rotate chevron icon based on open state\n- Support single or multiple open sections"
+      },
+      "code": {
+        "framerMotion": "function AccordionItem({ title, content, isOpen, onToggle }) {\n  return (\n    <div>\n      <button onClick={onToggle}>\n        {title}\n        <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>\n          <ChevronDown />\n        </motion.div>\n      </button>\n      <AnimatePresence>\n        {isOpen && (\n          <motion.div\n            initial={{ height: 0, opacity: 0 }}\n            animate={{ height: 'auto', opacity: 1 }}\n            exit={{ height: 0, opacity: 0 }}\n          >\n            {content}\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "ripple-button",
+      "name": "Ripple Button",
+      "description": "Material Design ripple effect on click",
+      "category": "buttons",
+      "difficulty": "intermediate",
+      "tags": [
+        "ripple",
+        "material",
+        "click",
+        "feedback"
+      ],
+      "config": {
+        "rippleColor": {
+          "label": "Ripple Color",
+          "default": "rgba(255, 255, 255, 0.5)",
+          "type": "color"
+        },
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "textColor": {
+          "label": "Text Color",
+          "default": "#ffffff",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a button that shows a ripple effect expanding from where you click, like Material Design buttons.",
+        "pro": "Implement ripple effect with dynamic positioning:\n- Track click coordinates relative to button\n- Create ripple element at click position\n- Animate scale from 0 to full size covering button\n- Fade out ripple opacity during expansion\n- Use AnimatePresence to cleanup ripples after animation"
+      },
+      "code": {
+        "framerMotion": "function RippleButton({ children, onClick }) {\n  const [ripples, setRipples] = useState([]);\n\n  const handleClick = (e) => {\n    const rect = e.target.getBoundingClientRect();\n    const x = e.clientX - rect.left;\n    const y = e.clientY - rect.top;\n    setRipples([...ripples, { x, y, id: Date.now() }]);\n    onClick?.();\n  };\n\n  return (\n    <button onClick={handleClick} className=\"relative overflow-hidden\">\n      {children}\n      {ripples.map(ripple => (\n        <motion.span\n          key={ripple.id}\n          initial={{ scale: 0, opacity: 1 }}\n          animate={{ scale: 1, opacity: 0 }}\n          style={{ left: ripple.x, top: ripple.y }}\n        />\n      ))}\n    </button>\n  );\n}"
+      }
+    },
+    {
+      "id": "count-up",
+      "name": "Count Up",
+      "description": "Animated number counting effect",
+      "category": "text",
+      "difficulty": "intermediate",
+      "tags": [
+        "counter",
+        "number",
+        "statistics",
+        "scroll"
+      ],
+      "config": {
+        "textColor": {
+          "label": "Text Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a number that counts up from 0 to a target value when it comes into view, like statistics on websites.",
+        "pro": "Implement count-up with scroll trigger:\n- Use useInView hook to detect visibility\n- Animate number using requestAnimationFrame\n- Apply easing function for smooth progression\n- Support prefix, suffix, and decimal places\n- Trigger animation once when scrolled into view"
+      },
+      "code": {
+        "framerMotion": "function CountUp({ end, duration = 2 }) {\n  const [count, setCount] = useState(0);\n  const ref = useRef();\n  const isInView = useInView(ref, { once: true });\n\n  useEffect(() => {\n    if (!isInView) return;\n    let start = 0;\n    const animate = (timestamp) => {\n      const progress = Math.min((timestamp - start) / (duration * 1000), 1);\n      setCount(end * progress);\n      if (progress < 1) requestAnimationFrame(animate);\n    };\n    requestAnimationFrame(animate);\n  }, [isInView]);\n\n  return <span ref={ref}>{Math.round(count)}</span>;\n}"
+      }
+    },
+    {
+      "id": "parallax-card",
+      "name": "Parallax Card",
+      "description": "3D tilt effect following mouse movement",
+      "category": "cards",
+      "difficulty": "advanced",
+      "tags": [
+        "3d",
+        "tilt",
+        "parallax",
+        "mouse"
+      ],
+      "config": {
+        "backgroundColor": {
+          "label": "Background",
+          "default": "#1f2937",
+          "type": "color"
+        },
+        "borderColor": {
+          "label": "Border Color",
+          "default": "rgba(255, 255, 255, 0.1)",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a card that tilts in 3D following the mouse cursor, with a glare effect like a holographic card.",
+        "pro": "Implement 3D parallax card:\n- Track mouse position relative to card center\n- Calculate rotateX and rotateY based on mouse offset\n- Apply perspective transform with spring animation\n- Add glare overlay positioned at mouse location\n- Reset rotation smoothly on mouse leave"
+      },
+      "code": {
+        "framerMotion": "function ParallaxCard({ children }) {\n  const [rotate, setRotate] = useState({ x: 0, y: 0 });\n\n  const handleMouseMove = (e) => {\n    const rect = e.target.getBoundingClientRect();\n    const x = (e.clientY - rect.top - rect.height/2) / 10;\n    const y = (e.clientX - rect.left - rect.width/2) / 10;\n    setRotate({ x: -x, y });\n  };\n\n  return (\n    <motion.div\n      onMouseMove={handleMouseMove}\n      onMouseLeave={() => setRotate({ x: 0, y: 0 })}\n      animate={{ rotateX: rotate.x, rotateY: rotate.y }}\n      style={{ transformStyle: 'preserve-3d' }}\n    >\n      {children}\n    </motion.div>\n  );\n}"
+      }
     }
   ]
 }
