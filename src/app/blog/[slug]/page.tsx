@@ -307,6 +307,98 @@ export async function generateStaticParams() {
     return Object.keys(posts).map((slug) => ({ slug }));
 }
 
+// Custom Markdown Parser Component
+function MarkdownRenderer({ content }: { content: string }) {
+    const lines = content.split(/\r?\n/);
+    const elements = [];
+    let inCodeBlock = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // Code Blocks
+        if (line.trim().startsWith('```')) {
+            inCodeBlock = !inCodeBlock;
+            continue;
+        }
+        if (inCodeBlock) {
+            elements.push(
+                <div key={i} className="bg-surface-raised border border-surface-border p-3 rounded-lg font-mono text-sm text-accent my-2 overflow-x-auto">
+                    {line}
+                </div>
+            );
+            continue;
+        }
+
+        // Headers
+        if (line.startsWith('## ')) {
+            elements.push(
+                <h2 key={i} className="text-2xl md:text-3xl font-bold text-text-primary mt-10 mb-6 flex items-center gap-2">
+                    <span className="w-1.5 h-6 bg-accent rounded-full mb-1"></span>
+                    {parseInline(line.replace('## ', ''))}
+                </h2>
+            );
+            continue;
+        }
+        if (line.startsWith('### ')) {
+            elements.push(
+                <h3 key={i} className="text-xl font-semibold text-text-primary mt-8 mb-4">
+                    {parseInline(line.replace('### ', ''))}
+                </h3>
+            );
+            continue;
+        }
+
+        // Lists
+        if (line.trim().startsWith('- ')) {
+            elements.push(
+                <li key={i} className="ml-6 list-disc text-text-secondary pl-2 mb-2 marker:text-accent">
+                    {parseInline(line.replace('- ', ''))}
+                </li>
+            );
+            continue;
+        }
+
+        // Empty lines (spacing)
+        if (!line.trim()) {
+            elements.push(<div key={i} className="h-4" />);
+            continue;
+        }
+
+        // Paragraphs
+        elements.push(
+            <p key={i} className="text-text-secondary leading-7 mb-4 text-base md:text-lg">
+                {parseInline(line)}
+            </p>
+        );
+    }
+
+    return <div className="space-y-1">{elements}</div>;
+}
+
+// Helper for BOLD and INLINE CODE parsing
+function parseInline(text: string) {
+    // Regex matches: **bold** OR `code`
+    const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
+    return parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return (
+                <strong key={index} className="text-text-primary font-semibold">
+                    {part.slice(2, -2)}
+                </strong>
+            );
+        }
+        if (part.startsWith('`') && part.endsWith('`')) {
+            return (
+                <code key={index} className="bg-surface-raised px-1.5 py-0.5 rounded text-accent font-mono text-sm border border-surface-border">
+                    {part.slice(1, -1)}
+                </code>
+            );
+        }
+        return part;
+    });
+}
+
 export default function BlogPostPage({ params }: Props) {
     const post = posts[params.slug];
 
@@ -321,9 +413,9 @@ export default function BlogPostPage({ params }: Props) {
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
                     <Link
                         href="/blog"
-                        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+                        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors group"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span>Back to Blog</span>
                     </Link>
 
@@ -339,68 +431,41 @@ export default function BlogPostPage({ params }: Props) {
             <article className="py-12 px-4">
                 <div className="max-w-3xl mx-auto">
                     {/* Header */}
-                    <header className="mb-8">
-                        <div className="flex items-center gap-3 mb-4">
+                    <header className="mb-10">
+                        <div className="flex items-center gap-3 mb-6">
                             <span className="px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
                                 {post.category}
                             </span>
                         </div>
 
-                        <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+                        <h1 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 leading-tight">
                             {post.title}
                         </h1>
 
-                        <p className="text-lg text-text-secondary mb-6">
+                        <p className="text-xl text-text-secondary mb-8 leading-relaxed border-l-4 border-surface-border pl-4 dark:border-surface-raised">
                             {post.excerpt}
                         </p>
 
-                        <div className="flex items-center gap-4 text-sm text-text-muted pb-6 border-b border-surface-border">
-                            <span className="flex items-center gap-1.5">
-                                <Calendar className="w-4 h-4" />
+                        <div className="flex items-center gap-6 text-sm text-text-muted pb-8 border-b border-surface-border">
+                            <span className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-accent" />
                                 {post.date}
                             </span>
-                            <span className="flex items-center gap-1.5">
-                                <Clock className="w-4 h-4" />
+                            <span className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-accent" />
                                 {post.readTime} read
                             </span>
                         </div>
                     </header>
 
-                    {/* Content */}
-                    <div className="prose prose-invert prose-lg max-w-none
-            prose-headings:text-text-primary prose-headings:font-semibold
-            prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-            prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-            prose-p:text-text-secondary prose-p:leading-relaxed
-            prose-strong:text-text-primary prose-strong:font-semibold
-            prose-code:text-accent prose-code:bg-surface-raised prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-            prose-pre:bg-surface-raised prose-pre:border prose-pre:border-surface-border prose-pre:rounded-xl
-            prose-ul:text-text-secondary prose-li:marker:text-accent
-            prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-          ">
-                        {post.content.split('\n').map((line, i) => {
-                            if (line.startsWith('## ')) {
-                                return <h2 key={i}>{line.replace('## ', '')}</h2>;
-                            }
-                            if (line.startsWith('### ')) {
-                                return <h3 key={i}>{line.replace('### ', '')}</h3>;
-                            }
-                            if (line.startsWith('- ')) {
-                                return <li key={i}>{line.replace('- ', '')}</li>;
-                            }
-                            if (line.startsWith('```')) {
-                                return null; // Skip code block markers for now
-                            }
-                            if (line.trim()) {
-                                return <p key={i}>{line}</p>;
-                            }
-                            return null;
-                        })}
+                    {/* Content using Custom Markdown Renderer */}
+                    <div className="max-w-none">
+                        <MarkdownRenderer content={post.content} />
                     </div>
 
                     {/* Share */}
-                    <div className="mt-12 pt-8 border-t border-surface-border">
-                        <p className="text-sm text-text-muted mb-4">Share this article</p>
+                    <div className="mt-16 pt-8 border-t border-surface-border">
+                        <p className="text-sm text-text-muted mb-4 font-medium uppercase tracking-wider">Share this article</p>
                         <div className="flex items-center gap-3">
                             <a
                                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://motionry.vercel.app/blog/${params.slug}`)}`}
@@ -426,7 +491,7 @@ export default function BlogPostPage({ params }: Props) {
             </article>
 
             {/* Footer */}
-            <footer className="py-8 px-4 border-t border-surface-border">
+            <footer className="py-8 px-4 border-t border-surface-border mt-12 bg-surface-raised/30">
                 <div className="max-w-3xl mx-auto text-center text-sm text-text-muted">
                     <p>Motionry • Open Source • Made with 💜</p>
                 </div>
