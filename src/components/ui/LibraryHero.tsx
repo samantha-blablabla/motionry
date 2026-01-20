@@ -63,7 +63,7 @@ const starPositions = [
 
 function TechIcon({ tech, index }: { tech: typeof techStacks[0]; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<any>(null);
 
     const handleMouseEnter = () => {
         timeoutRef.current = setTimeout(() => {

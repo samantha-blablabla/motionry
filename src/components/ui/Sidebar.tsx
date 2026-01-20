@@ -57,8 +57,13 @@ interface SidebarItemProps {
 
 function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarItemProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Handle hover interactively to ensure coords are set before showing
   const handleMouseEnter = () => {
@@ -96,7 +101,7 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
 
       {/* Name Tag Reveal Effect - Portaled to avoid overflow clipping */}
       <AnimatePresence>
-        {isHovered && typeof document !== 'undefined' && createPortal(
+        {mounted && isHovered && createPortal(
           <motion.div
             className="fixed z-[9999] flex items-center whitespace-nowrap pointer-events-none"
             style={{
