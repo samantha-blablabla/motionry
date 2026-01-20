@@ -410,20 +410,6 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
                                 </div>
                               )}
 
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className={cn(
-                                  "px-2 py-0.5 text-xs font-medium rounded",
-                                  (proMode === 'framer' && animation.code.framerMotion)
-                                    ? "bg-purple-500/20 text-purple-400"
-                                    : "bg-blue-500/20 text-blue-400"
-                                )}>
-                                  {proMode === 'framer' && animation.code.framerMotion
-                                    ? 'Framer Motion'
-                                    : (proMode === 'css' && animation.code.css
-                                      ? 'CSS'
-                                      : 'No code available')}
-                                </span>
-                              </div>
                               <pre className="p-4 bg-surface rounded-lg border border-surface-border overflow-x-auto text-xs">
                                 <code className="text-text-primary font-mono whitespace-pre">
                                   {getCustomizedCode()}
