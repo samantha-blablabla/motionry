@@ -1,8 +1,5 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { ArrowLeft, Github, Twitter, Mail, Sparkles, Code2, Palette, Zap, Heart, Coffee } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowLeft, Github, Twitter, Mail, Sparkles, Code2, Palette, Zap, Heart, Coffee } from 'lucide-react';
 
 const techStack = [
     { name: 'Next.js 14', icon: '▲', description: 'React Framework' },
@@ -12,11 +9,18 @@ const techStack = [
 ];
 
 const features = [
-    { icon: Sparkles, title: 'AI-Friendly Prompts', description: 'Copy prompts directly to your AI tool' },
-    { icon: Code2, title: 'Production Ready', description: 'Framer Motion & CSS code snippets' },
-    { icon: Palette, title: 'Customizable', description: 'Adjust colors and parameters live' },
-    { icon: Zap, title: 'Performance First', description: 'Optimized for smooth 60fps animations' },
+    { icon: 'sparkles', title: 'AI-Friendly Prompts', description: 'Copy prompts directly to your AI tool' },
+    { icon: 'code', title: 'Production Ready', description: 'Framer Motion & CSS code snippets' },
+    { icon: 'palette', title: 'Customizable', description: 'Adjust colors and parameters live' },
+    { icon: 'zap', title: 'Performance First', description: 'Optimized for smooth 60fps animations' },
 ];
+
+const iconComponents: Record<string, typeof Sparkles> = {
+    sparkles: Sparkles,
+    code: Code2,
+    palette: Palette,
+    zap: Zap,
+};
 
 export default function AboutPage() {
     return (
@@ -50,11 +54,7 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent" />
 
                 <div className="max-w-4xl mx-auto text-center relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                    <div className="animate-fade-in">
                         <div className="flex justify-center mb-6">
                             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center shadow-lg">
                                 <Sparkles className="w-8 h-8 text-white" />
@@ -68,19 +68,14 @@ export default function AboutPage() {
                             A curated collection of micro-animations designed for developers and designers.
                             Copy AI-friendly prompts or production-ready code in seconds.
                         </p>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
             {/* Mission Section */}
             <section className="py-12 px-4">
                 <div className="max-w-4xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="p-6 md:p-8 rounded-2xl bg-surface-raised border border-surface-border"
-                    >
+                    <div className="p-6 md:p-8 rounded-2xl bg-surface-raised border border-surface-border">
                         <h2 className="text-2xl font-semibold text-text-primary mb-4 flex items-center gap-3">
                             <Heart className="w-6 h-6 text-red-500" />
                             Why I Built This
@@ -100,7 +95,7 @@ export default function AboutPage() {
                                 This is a passion project built with 💜 — completely free and open source.
                             </p>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -111,20 +106,20 @@ export default function AboutPage() {
                         Key Features
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {features.map((feature, index) => (
-                            <motion.div
-                                key={feature.title}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="p-5 rounded-xl bg-surface-raised border border-surface-border hover:border-accent/50 transition-colors"
-                            >
-                                <feature.icon className="w-6 h-6 text-accent mb-3" />
-                                <h3 className="font-semibold text-text-primary mb-1">{feature.title}</h3>
-                                <p className="text-sm text-text-muted">{feature.description}</p>
-                            </motion.div>
-                        ))}
+                        {features.map((feature, index) => {
+                            const IconComponent = iconComponents[feature.icon] || Sparkles;
+                            return (
+                                <div
+                                    key={feature.title}
+                                    className="p-5 rounded-xl bg-surface-raised border border-surface-border hover:border-accent/50 transition-colors"
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                    <IconComponent className="w-6 h-6 text-accent mb-3" />
+                                    <h3 className="font-semibold text-text-primary mb-1">{feature.title}</h3>
+                                    <p className="text-sm text-text-muted">{feature.description}</p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -137,20 +132,17 @@ export default function AboutPage() {
                     </h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         {techStack.map((tech, index) => (
-                            <motion.div
+                            <div
                                 key={tech.name}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-raised border border-surface-border"
+                                style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <span className="text-xl">{tech.icon}</span>
                                 <div>
                                     <p className="font-medium text-text-primary text-sm">{tech.name}</p>
                                     <p className="text-xs text-text-muted">{tech.description}</p>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -159,20 +151,11 @@ export default function AboutPage() {
             {/* Support Section */}
             <section className="py-12 px-4">
                 <div className="max-w-4xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-center"
-                    >
+                    <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-center">
                         <div className="flex justify-center mb-4">
-                            <motion.div
-                                animate={{ y: [0, -4, 0] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg"
-                            >
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg animate-bounce">
                                 <Coffee className="w-7 h-7 text-white" />
-                            </motion.div>
+                            </div>
                         </div>
                         <h2 className="text-2xl font-semibold text-text-primary mb-2">
                             Support This Project
@@ -190,7 +173,7 @@ export default function AboutPage() {
                             <Coffee className="w-5 h-5" />
                             <span>Buy me a coffee</span>
                         </a>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 

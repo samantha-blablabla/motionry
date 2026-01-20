@@ -1,8 +1,5 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, Tag, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowLeft, Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
 // Sample blog posts - in real app, this would come from CMS/markdown
 const posts = [
@@ -72,30 +69,24 @@ export default function BlogPage() {
             {/* Header */}
             <section className="py-12 px-4">
                 <div className="max-w-4xl mx-auto text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                    <div className="animate-fade-in">
                         <h1 className="text-4xl font-bold text-text-primary mb-3">Blog</h1>
                         <p className="text-text-secondary">Tips, tutorials, and updates about micro-animations</p>
-                    </motion.div>
+                    </div>
 
                     {/* Category Pills */}
                     <div className="flex flex-wrap justify-center gap-2 mt-8">
                         {categories.map((cat, index) => (
-                            <motion.button
+                            <button
                                 key={cat}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
                                 className={`px-4 py-1.5 rounded-full text-sm transition-colors ${cat === 'All'
-                                        ? 'bg-accent text-white'
-                                        : 'bg-surface-raised border border-surface-border text-text-secondary hover:text-text-primary hover:border-accent/50'
+                                    ? 'bg-accent text-white'
+                                    : 'bg-surface-raised border border-surface-border text-text-secondary hover:text-text-primary hover:border-accent/50'
                                     }`}
+                                style={{ animationDelay: `${index * 50}ms` }}
                             >
                                 {cat}
-                            </motion.button>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -105,11 +96,7 @@ export default function BlogPage() {
             {posts.filter(p => p.featured).map(post => (
                 <section key={post.id} className="px-4 mb-8">
                     <div className="max-w-4xl mx-auto">
-                        <motion.article
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-purple-500/10 border border-accent/20"
-                        >
+                        <article className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-purple-500/10 border border-accent/20">
                             <div className="flex items-center gap-2 text-accent text-sm mb-3">
                                 <Sparkles className="w-4 h-4" />
                                 <span className="font-medium">Featured</span>
@@ -137,7 +124,7 @@ export default function BlogPage() {
                                 Read more
                                 <ArrowRight className="w-4 h-4" />
                             </Link>
-                        </motion.article>
+                        </article>
                     </div>
                 </section>
             ))}
@@ -147,12 +134,10 @@ export default function BlogPage() {
                 <div className="max-w-4xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {posts.filter(p => !p.featured).map((post, index) => (
-                            <motion.article
+                            <article
                                 key={post.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
                                 className="p-5 rounded-xl bg-surface-raised border border-surface-border hover:border-accent/50 transition-colors"
+                                style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="px-2 py-0.5 rounded-full text-xs bg-surface text-text-secondary border border-surface-border">
@@ -178,7 +163,7 @@ export default function BlogPage() {
                                         <ArrowRight className="w-3 h-3" />
                                     </Link>
                                 </div>
-                            </motion.article>
+                            </article>
                         ))}
                     </div>
                 </div>
