@@ -312,28 +312,58 @@ function MarkdownRenderer({ content }: { content: string }) {
     const lines = content.split(/\r?\n/);
     const elements = [];
     let inCodeBlock = false;
+    let codeBuffer: string[] = [];
+    let codeLanguage = '';
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
-        // Code Blocks
+        // Code Blocks Logic
         if (line.trim().startsWith('```')) {
-            inCodeBlock = !inCodeBlock;
+            if (inCodeBlock) {
+                // End of block -> Render accumulated buffer
+                elements.push(
+                    <div key={`code-${i}`} className="relative group my-6 overflow-hidden rounded-xl border border-surface-border bg-[#0d0d0d] shadow-xl">
+                        {/* Header with dots and language */}
+                        <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/5">
+                            <div className="flex gap-1.5">
+                                <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                                <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+                            </div>
+                            {codeLanguage && (
+                                <span className="ml-auto text-xs text-zinc-500 font-medium uppercase font-mono tracking-wider">
+                                    {codeLanguage}
+                                </span>
+                            )}
+                        </div>
+                        {/* Code Content */}
+                        <div className="p-4 overflow-x-auto">
+                            <pre className="font-mono text-sm leading-relaxed text-zinc-300">
+                                <code>{codeBuffer.join('\n')}</code>
+                            </pre>
+                        </div>
+                    </div>
+                );
+                codeBuffer = [];
+                inCodeBlock = false;
+            } else {
+                // Start of block
+                inCodeBlock = true;
+                codeLanguage = line.trim().replace('```', '');
+            }
             continue;
         }
+
         if (inCodeBlock) {
-            elements.push(
-                <div key={i} className="bg-surface-raised border border-surface-border p-3 rounded-lg font-mono text-sm text-accent my-2 overflow-x-auto">
-                    {line}
-                </div>
-            );
+            codeBuffer.push(line);
             continue;
         }
 
         // Headers
         if (line.startsWith('## ')) {
             elements.push(
-                <h2 key={i} className="text-2xl md:text-3xl font-bold text-text-primary mt-10 mb-6 flex items-center gap-2">
+                <h2 key={i} className="text-2xl md:text-3xl font-bold text-text-primary mt-12 mb-6 flex items-center gap-2">
                     <span className="w-1.5 h-6 bg-accent rounded-full mb-1"></span>
                     {parseInline(line.replace('## ', ''))}
                 </h2>
@@ -370,6 +400,15 @@ function MarkdownRenderer({ content }: { content: string }) {
             <p key={i} className="text-text-secondary leading-7 mb-4 text-base md:text-lg">
                 {parseInline(line)}
             </p>
+        );
+    }
+
+    // Handle case where code block might not be closed (optional safety)
+    if (inCodeBlock && codeBuffer.length > 0) {
+        elements.push(
+            <div key="code-incomplete" className="bg-surface-raised border border-surface-border p-4 rounded-xl font-mono text-sm text-text-secondary my-4 overflow-x-auto whitespace-pre">
+                {codeBuffer.join('\n')}
+            </div>
         );
     }
 
