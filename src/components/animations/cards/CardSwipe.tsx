@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { Heart, X, RotateCcw, ImageIcon } from 'lucide-react';
+import { Heart, X, RotateCcw } from 'lucide-react';
 
 interface CardSwipeProps {
   threshold?: number;
