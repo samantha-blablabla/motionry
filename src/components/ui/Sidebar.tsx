@@ -65,6 +65,7 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        aria-label={label}
       >
         <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
       </motion.button>

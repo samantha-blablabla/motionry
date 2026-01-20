@@ -147,6 +147,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
               exit={{ opacity: 0, x: -20 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Previous animation"
             >
               <ChevronLeft className="w-6 h-6" />
             </motion.button>
@@ -161,6 +162,7 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
               exit={{ opacity: 0, x: 20 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Next animation"
             >
               <ChevronRight className="w-6 h-6" />
             </motion.button>
@@ -168,21 +170,31 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
 
           {/* Modal */}
           <motion.div
-            className="fixed inset-2 sm:inset-3 md:inset-4 lg:inset-[4%] xl:inset-[8%] border border-surface-border rounded-2xl z-50 flex flex-col shadow-2xl"
+            className="fixed inset-2 sm:inset-3 md:inset-4 lg:inset-[4%] xl:inset-[8%] border border-surface-border rounded-2xl z-50 flex flex-col shadow-2xl bg-surface"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.2 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 100) onClose();
+            }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-surface-border bg-surface-raised rounded-t-2xl">
-              <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-surface-border bg-surface-raised rounded-t-2xl relative">
+              {/* Mobile Drag Handle */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-surface-border rounded-full md:hidden" />
+
+              <div className="flex-1 min-w-0 pt-2 md:pt-0">
                 <h2 className="text-lg md:text-xl font-semibold text-text-primary truncate">{animation.name}</h2>
                 <p className="text-xs md:text-sm text-text-muted mt-0.5 truncate">{animation.description}</p>
               </div>
               <button
                 onClick={onClose}
                 className="ml-4 p-2 rounded-lg hover:bg-surface transition-colors flex-shrink-0"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
