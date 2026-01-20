@@ -105,16 +105,16 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
   const totalAnimations = Object.values(animationCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <aside className="hidden lg:flex w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center">
+    <aside className="hidden lg:flex w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center overflow-y-auto no-scrollbar">
       {/* Logo */}
-      <div className="mb-8">
+      <div className="mb-8 shrink-0">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center shadow-lg shadow-accent/20">
           <Sparkles className="w-5 h-5 text-white" />
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 flex flex-col gap-4 w-full items-center">
+      <nav className="flex-1 flex flex-col gap-4 w-full items-center min-h-min">
         {/* All Animations */}
         <SidebarItem
           icon={LayoutGrid}
@@ -124,10 +124,10 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
           count={totalAnimations}
         />
 
-        <div className="w-8 h-[1px] bg-surface-border/50 my-2" />
+        <div className="w-8 h-[1px] bg-surface-border/50 my-2 shrink-0" />
 
         {/* Categories */}
-        <div className="flex flex-col gap-3 w-full items-center">
+        <div className="flex flex-col gap-3 w-full items-center pb-4">
           {categories.map((category) => {
             const Icon = iconMap[category.icon] || LayoutGrid;
 
@@ -146,7 +146,7 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
       </nav>
 
       {/* Footer / Settings or Info */}
-      <div className="mt-auto pt-4 flex flex-col gap-2 items-center">
+      <div className="mt-auto pt-4 flex flex-col gap-2 items-center shrink-0">
         <div className="w-8 h-[1px] bg-surface-border/50 mb-2" />
         <SidebarItem
           icon={Menu}
