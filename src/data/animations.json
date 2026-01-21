@@ -47,6 +47,12 @@
       "name": "Navigation",
       "description": "Menu transitions, tab switches, and breadcrumbs",
       "icon": "Compass"
+    },
+    {
+      "id": "backgrounds",
+      "name": "Backgrounds",
+      "description": "Full-page background effects and patterns",
+      "icon": "Layers"
     }
   ],
   "animations": [
@@ -1164,6 +1170,161 @@
       "code": {
         "framerMotion": "function TextReveal({ text }) {\n  return (\n    <div className=\"overflow-hidden\">\n      <motion.div\n        initial={{ y: '100%' }}\n        animate={{ y: 0 }}\n        transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}\n      >\n        {text}\n      </motion.div>\n    </div>\n  );\n}",
         "css": ".text-reveal {\n  overflow: hidden;\n  display: inline-block;\n}\n\n.text-reveal span {\n  display: inline-block;\n  animation: reveal 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;\n}\n\n@keyframes reveal {\n  0% { transform: translateY(100%); }\n  100% { transform: translateY(0); }\n}\n\n/* For looping effect */\n.text-reveal-loop span {\n  animation: reveal-loop 3s ease-in-out infinite;\n}\n\n@keyframes reveal-loop {\n  0%, 25% { transform: translateY(100%); }\n  35%, 65% { transform: translateY(0); }\n  75%, 100% { transform: translateY(-100%); }\n}"
+      }
+    },
+    {
+      "id": "aurora-background",
+      "name": "Aurora Background",
+      "category": "backgrounds",
+      "description": "Ethereal northern lights effect with animated colorful blobs",
+      "tags": [
+        "background",
+        "aurora",
+        "gradient",
+        "animated",
+        "hero"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 8000
+      },
+      "config": {
+        "speed": {
+          "label": "Speed (s)",
+          "default": 8,
+          "min": 3,
+          "max": 15,
+          "step": 1
+        },
+        "blur": {
+          "label": "Blur",
+          "default": 100,
+          "min": 50,
+          "max": 200,
+          "step": 10
+        },
+        "color1": {
+          "label": "Color 1",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "color2": {
+          "label": "Color 2",
+          "default": "#8b5cf6",
+          "type": "color"
+        },
+        "color3": {
+          "label": "Color 3",
+          "default": "#06b6d4",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a beautiful aurora borealis background effect with colorful moving lights, like the northern lights in the sky. Perfect for hero sections.",
+        "pro": "Implement aurora background with multiple animated blobs:\\n- 3+ radial-gradient circles with blur filter\\n- Animate position, scale with different durations\\n- Use mix-blend-mode for color blending\\n- Container with overflow: hidden"
+      },
+      "code": {
+        "framerMotion": "function AuroraBackground({ children }) {\n  return (\n    <div className=\"relative overflow-hidden bg-black\">\n      <div className=\"absolute inset-0\" style={{ filter: 'blur(100px)' }}>\n        <motion.div\n          className=\"absolute w-[60%] h-[60%] rounded-full opacity-50\"\n          style={{ background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)', left: '10%', top: '20%' }}\n          animate={{ x: [0, 100, 50, 0], y: [0, 50, 100, 0], scale: [1, 1.2, 0.9, 1] }}\n          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}\n        />\n        <motion.div\n          className=\"absolute w-[50%] h-[50%] rounded-full opacity-40\"\n          style={{ background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)', right: '10%', top: '10%' }}\n          animate={{ x: [0, -80, -40, 0], y: [0, 80, 40, 0] }}\n          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}\n        />\n      </div>\n      <div className=\"relative z-10\">{children}</div>\n    </div>\n  );\n}",
+        "css": ".aurora {\n  position: relative;\n  overflow: hidden;\n  background: #000;\n}\n\n.aurora-blob {\n  position: absolute;\n  width: 60%;\n  height: 60%;\n  border-radius: 50%;\n  filter: blur(100px);\n  animation: aurora-move 8s ease-in-out infinite;\n}\n\n.aurora-blob:nth-child(1) {\n  background: radial-gradient(circle, #6366f1 0%, transparent 70%);\n  left: 10%;\n  top: 20%;\n}\n\n.aurora-blob:nth-child(2) {\n  background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);\n  right: 10%;\n  top: 10%;\n  animation-delay: -2s;\n  animation-duration: 10s;\n}\n\n@keyframes aurora-move {\n  0%, 100% { transform: translate(0, 0) scale(1); }\n  33% { transform: translate(50px, 30px) scale(1.1); }\n  66% { transform: translate(25px, 60px) scale(0.95); }\n}"
+      }
+    },
+    {
+      "id": "grid-pattern",
+      "name": "Grid Pattern",
+      "category": "backgrounds",
+      "description": "Clean grid lines background with radial fade effect",
+      "tags": [
+        "background",
+        "grid",
+        "pattern",
+        "minimal",
+        "tech"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 1000
+      },
+      "config": {
+        "size": {
+          "label": "Grid Size",
+          "default": 40,
+          "min": 20,
+          "max": 80,
+          "step": 5
+        },
+        "opacity": {
+          "label": "Opacity",
+          "default": 0.15,
+          "min": 0.05,
+          "max": 0.4,
+          "step": 0.05
+        },
+        "color": {
+          "label": "Line Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a subtle grid pattern background like you see on modern tech websites. The lines should fade out towards the edges.",
+        "pro": "Implement grid pattern with CSS:\\n- Use linear-gradient for horizontal and vertical lines\\n- backgroundSize controls grid spacing\\n- Add radial-gradient overlay for edge fade\\n- Adjust opacity for subtlety"
+      },
+      "code": {
+        "framerMotion": "function GridPattern({ size = 40, color = '#6366f1', opacity = 0.15, children }) {\n  return (\n    <div className=\"relative overflow-hidden bg-black\">\n      <div\n        className=\"absolute inset-0\"\n        style={{\n          backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,\n          backgroundSize: `${size}px ${size}px`,\n          opacity: opacity\n        }}\n      />\n      <div\n        className=\"absolute inset-0\"\n        style={{ background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%)' }}\n      />\n      <div className=\"relative z-10\">{children}</div>\n    </div>\n  );\n}",
+        "css": ".grid-pattern {\n  position: relative;\n  overflow: hidden;\n  background: #000;\n}\n\n.grid-pattern::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background-image:\n    linear-gradient(#6366f1 1px, transparent 1px),\n    linear-gradient(90deg, #6366f1 1px, transparent 1px);\n  background-size: 40px 40px;\n  opacity: 0.15;\n}\n\n.grid-pattern::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: radial-gradient(\n    ellipse at center,\n    transparent 0%,\n    rgba(0,0,0,0.8) 100%\n  );\n}"
+      }
+    },
+    {
+      "id": "dot-pattern",
+      "name": "Dot Pattern",
+      "category": "backgrounds",
+      "description": "Minimalist dot matrix background with fade effect",
+      "tags": [
+        "background",
+        "dots",
+        "pattern",
+        "minimal",
+        "retro"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 1000
+      },
+      "config": {
+        "size": {
+          "label": "Spacing",
+          "default": 24,
+          "min": 12,
+          "max": 48,
+          "step": 4
+        },
+        "dotSize": {
+          "label": "Dot Size",
+          "default": 2,
+          "min": 1,
+          "max": 4,
+          "step": 0.5
+        },
+        "opacity": {
+          "label": "Opacity",
+          "default": 0.3,
+          "min": 0.1,
+          "max": 0.6,
+          "step": 0.05
+        },
+        "color": {
+          "label": "Dot Color",
+          "default": "#6366f1",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Create a dot pattern background with evenly spaced dots that fade out towards the edges. Very clean and modern looking.",
+        "pro": "Implement dot pattern with CSS:\\n- Use radial-gradient for dots\\n- backgroundSize controls spacing\\n- Add radial-gradient overlay for vignette\\n- Adjust dot size within gradient"
+      },
+      "code": {
+        "framerMotion": "function DotPattern({ size = 24, dotSize = 2, color = '#6366f1', opacity = 0.3, children }) {\n  return (\n    <div className=\"relative overflow-hidden bg-black\">\n      <div\n        className=\"absolute inset-0\"\n        style={{\n          backgroundImage: `radial-gradient(${color} ${dotSize}px, transparent ${dotSize}px)`,\n          backgroundSize: `${size}px ${size}px`,\n          opacity: opacity\n        }}\n      />\n      <div\n        className=\"absolute inset-0\"\n        style={{ background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%)' }}\n      />\n      <div className=\"relative z-10\">{children}</div>\n    </div>\n  );\n}",
+        "css": ".dot-pattern {\n  position: relative;\n  overflow: hidden;\n  background: #000;\n}\n\n.dot-pattern::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background-image: radial-gradient(#6366f1 2px, transparent 2px);\n  background-size: 24px 24px;\n  opacity: 0.3;\n}\n\n.dot-pattern::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: radial-gradient(\n    ellipse at center,\n    transparent 0%,\n    rgba(0,0,0,0.8) 100%\n  );\n}"
       }
     }
   ]

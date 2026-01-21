@@ -31,6 +31,10 @@ import { SpotlightCard } from '@/components/animations/cards/SpotlightCard';
 import { BorderBeam } from '@/components/animations/cards/BorderBeam';
 import { StaggeredMenu } from '@/components/animations/navigation/StaggeredMenu';
 import { TextReveal } from '@/components/animations/text/TextReveal';
+// Backgrounds
+import { AuroraBackground } from '@/components/animations/backgrounds/AuroraBackground';
+import { GridPattern } from '@/components/animations/backgrounds/GridPattern';
+import { DotPattern } from '@/components/animations/backgrounds/DotPattern';
 
 // Registry type
 type AnimationRegistry = {
@@ -67,6 +71,10 @@ export const animationRegistry: AnimationRegistry = {
   'border-beam': BorderBeam,
   'staggered-menu': StaggeredMenu,
   'text-reveal': TextReveal,
+  // Backgrounds
+  'aurora-background': AuroraBackground,
+  'grid-pattern': GridPattern,
+  'dot-pattern': DotPattern,
 };
 
 // Helper to get component by ID

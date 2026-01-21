@@ -19,7 +19,8 @@ import {
   Navigation,  // Added if needed
   Palette,     // Added if needed
   CreditCard,   // Added if needed
-  MousePointer // Added
+  MousePointer, // Added
+  Layers       // Added for backgrounds
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
@@ -35,6 +36,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Type,
   Menu,
   Compass,
+  Layers,
   // Add aliases if your category IDs map to these specific names but icons are different
   // For now, I will keep the original set to ensure stability.
   // If "buttons" category maps to "MousePointerClick", it works if the category.icon string is "MousePointerClick"
