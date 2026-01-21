@@ -9,6 +9,7 @@ import { AnimationModal } from '@/components/ui/AnimationModal';
 import { LibraryHero } from '@/components/ui/LibraryHero';
 import { MobileMenu } from '@/components/ui/MobileMenu';
 import { ToastProvider } from '@/components/ui/Toast';
+import { CategoryTabs } from '@/components/ui/CategoryTabs';
 import { FloatingDonateButton } from '@/components/ui/FloatingDonateButton';
 import animationsData from '@/data/animations.json';
 import type { Animation, AnimationsData } from '@/lib/types';
@@ -20,6 +21,7 @@ function LibraryContent() {
     const searchParams = useSearchParams();
 
     // Initialize from URL params
+    const [activeGroup, setActiveGroup] = useState<'components' | 'design'>('components');
     const [activeCategory, setActiveCategory] = useState<string | null>(
         searchParams.get('category') || null
     );
@@ -55,7 +57,15 @@ function LibraryContent() {
         setSearchQuery(query);
     };
 
-    // Calculate animation counts per category
+    // Calculate animation counts
+    const groupCounts = useMemo(() => {
+        return {
+            components: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group !== 'design').length,
+            design: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group === 'design').length
+        };
+    }, []);
+
+    // Calculate animation counts per category (for MobileMenu)
     const animationCounts = useMemo(() => {
         const counts: Record<string, number> = {};
         data.animations.forEach(a => {
@@ -64,9 +74,26 @@ function LibraryContent() {
         return counts;
     }, []);
 
+    // Filter categories based on group
+    const filteredCategories = useMemo(() => {
+        return data.categories.filter(c => {
+            if (activeGroup === 'design') {
+                return c.group === 'design';
+            }
+            return c.group !== 'design'; // Default to components
+        });
+    }, [activeGroup]);
+
     // Filter animations based on category and search
     const filteredAnimations = useMemo(() => {
         let result = data.animations;
+
+        // Filter by group first
+        result = result.filter(a => {
+            const category = data.categories.find(c => c.id === a.category);
+            if (activeGroup === 'design') return category?.group === 'design';
+            return category?.group !== 'design';
+        });
 
         // Filter by category
         if (activeCategory) {
@@ -118,10 +145,12 @@ function LibraryContent() {
             <div className="flex min-h-screen">
                 {/* Sidebar - Desktop only */}
                 <Sidebar
-                    categories={data.categories}
-                    activeCategory={activeCategory}
-                    onCategoryChange={handleCategoryChange}
-                    animationCounts={animationCounts}
+                    activeGroup={activeGroup}
+                    onGroupChange={(group) => {
+                        setActiveGroup(group);
+                        setActiveCategory(null); // Reset category when switching groups
+                    }}
+                    counts={groupCounts}
                 />
 
                 {/* Mobile Menu */}
@@ -153,6 +182,15 @@ function LibraryContent() {
                     {!searchQuery && !activeCategory && <LibraryHero />}
 
                     <div className="flex-1 p-4 lg:p-6">
+                        {/* Category Tabs */}
+                        <div className="mb-6">
+                            <CategoryTabs
+                                categories={filteredCategories}
+                                activeCategory={activeCategory}
+                                onCategoryChange={handleCategoryChange}
+                            />
+                        </div>
+
                         <AnimationGrid
                             animations={filteredAnimations}
                             onSelect={handleSelectAnimation}

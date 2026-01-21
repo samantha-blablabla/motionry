@@ -34,6 +34,7 @@ export interface Category {
   name: string;
   description: string;
   icon: string;
+  group?: 'components' | 'design';
 }
 
 export interface AnimationsData {

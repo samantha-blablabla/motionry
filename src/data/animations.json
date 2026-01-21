@@ -4,55 +4,64 @@
       "id": "buttons",
       "name": "Buttons",
       "description": "Hover effects, click feedback, and state transitions",
-      "icon": "MousePointerClick"
+      "icon": "MousePointerClick",
+      "group": "components"
     },
     {
       "id": "inputs",
       "name": "Inputs & Forms",
       "description": "Focus states, validation feedback, and search interactions",
-      "icon": "TextCursor"
+      "icon": "TextCursor",
+      "group": "components"
     },
     {
       "id": "loaders",
       "name": "Loaders & Progress",
       "description": "Loading spinners, progress bars, and skeleton states",
-      "icon": "Loader"
+      "icon": "Loader",
+      "group": "components"
     },
     {
       "id": "cards",
       "name": "Cards & Containers",
       "description": "Swipe gestures, hover reveals, and expansion effects",
-      "icon": "AppWindow"
+      "icon": "AppWindow",
+      "group": "components"
     },
     {
       "id": "tooltips",
       "name": "Tooltips & Popovers",
       "description": "Delayed reveals, contextual information, and hover details",
-      "icon": "MessageSquare"
+      "icon": "MessageSquare",
+      "group": "components"
     },
     {
       "id": "toasts",
       "name": "Toasts & Notifications",
       "description": "Alert animations, entry/exit transitions, and stacking",
-      "icon": "Bell"
+      "icon": "Bell",
+      "group": "components"
     },
     {
       "id": "text",
       "name": "Text & Typography",
       "description": "Character animations, hover effects, and reveals",
-      "icon": "Type"
+      "icon": "Type",
+      "group": "components"
     },
     {
       "id": "navigation",
       "name": "Navigation",
       "description": "Menu transitions, tab switches, and breadcrumbs",
-      "icon": "Compass"
+      "icon": "Compass",
+      "group": "components"
     },
     {
       "id": "backgrounds",
       "name": "Backgrounds",
       "description": "Full-page background effects and patterns",
-      "icon": "Layers"
+      "icon": "Layers",
+      "group": "design"
     }
   ],
   "animations": [

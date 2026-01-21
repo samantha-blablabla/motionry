@@ -3,51 +3,14 @@
 import { useState, useRef, useEffect } from 'react'; // Added useEffect and useRef
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+// ... imports
 import {
-  MousePointerClick,
-  TextCursor,
-  Loader,
-  LayoutGrid,
-  MessageSquare,
-  Bell,
-  Type,
-  Menu,
   Sparkles,
-  Compass,
-  AppWindow,
-  Square,      // Added if needed, or remove if unused in map
-  Navigation,  // Added if needed
-  Palette,     // Added if needed
-  CreditCard,   // Added if needed
-  MousePointer, // Added
-  Layers       // Added for backgrounds
+  LayoutGrid,
+  Layers,
+  Menu, // Added Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Category } from '@/lib/types';
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  MousePointerClick,
-  TextCursor,
-  Loader,
-  LayoutGrid,
-  AppWindow,
-  MessageSquare,
-  Bell,
-  Type,
-  Menu,
-  Compass,
-  Layers,
-  // Add aliases if your category IDs map to these specific names but icons are different
-  // For now, I will keep the original set to ensure stability.
-  // If "buttons" category maps to "MousePointerClick", it works if the category.icon string is "MousePointerClick"
-};
-
-interface SidebarProps {
-  categories: Category[];
-  activeCategory: string | null;
-  onCategoryChange: (categoryId: string | null) => void;
-  animationCounts?: Record<string, number>;
-}
 
 interface SidebarItemProps {
   icon: React.ComponentType<{ className?: string }>;
@@ -67,7 +30,6 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
     setMounted(true);
   }, []);
 
-  // Handle hover interactively to ensure coords are set before showing
   const handleMouseEnter = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -101,7 +63,6 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
         <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
       </motion.button>
 
-      {/* Name Tag Reveal Effect - Portaled to avoid overflow clipping */}
       {mounted && createPortal(
         <AnimatePresence>
           {isHovered && (
@@ -117,7 +78,6 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
               exit={{ opacity: 0, x: -10, y: "-50%" }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             >
-              {/* Tooltip Content */}
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-surface-border shadow-xl">
                 <span className="text-sm font-medium text-text-primary">{label}</span>
                 {count !== undefined && count > 0 && (
@@ -126,8 +86,6 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
                   </span>
                 )}
               </div>
-
-              {/* Left triangle pointer */}
               <div
                 className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 rotate-45 border-l border-b border-surface-border bg-surface"
                 style={{ zIndex: -1 }}
@@ -141,8 +99,13 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
   );
 }
 
-export function Sidebar({ categories, activeCategory, onCategoryChange, animationCounts = {} }: SidebarProps) {
-  const totalAnimations = Object.values(animationCounts).reduce((a, b) => a + b, 0);
+interface SidebarProps {
+  activeGroup: 'components' | 'design';
+  onGroupChange: (group: 'components' | 'design') => void;
+  counts?: { components: number; design: number };
+}
+
+export function Sidebar({ activeGroup, onGroupChange, counts }: SidebarProps) {
 
   return (
     <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-3 xl:py-6 flex-col items-center overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -153,39 +116,30 @@ export function Sidebar({ categories, activeCategory, onCategoryChange, animatio
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation Groups */}
       <nav className="flex-1 flex flex-col gap-1.5 xl:gap-4 w-full items-center min-h-min">
-        {/* All Animations */}
+        {/* Group 1: Micro-animations (Components) */}
         <SidebarItem
           icon={LayoutGrid}
-          label="All Animations"
-          isActive={activeCategory === null}
-          onClick={() => onCategoryChange(null)}
-          count={totalAnimations}
+          label="Micro-animations"
+          isActive={activeGroup === 'components'}
+          onClick={() => onGroupChange('components')}
+          count={counts?.components}
         />
 
         <div className="w-8 h-[1px] bg-surface-border/50 my-1.5 xl:my-2 shrink-0" />
 
-        {/* Categories */}
-        <div className="flex flex-col gap-1.5 xl:gap-3 w-full items-center pb-4">
-          {categories.map((category) => {
-            const Icon = iconMap[category.icon] || LayoutGrid;
-
-            return (
-              <SidebarItem
-                key={category.id}
-                icon={Icon}
-                label={category.name}
-                isActive={activeCategory === category.id}
-                onClick={() => onCategoryChange(category.id)}
-                count={animationCounts[category.id]}
-              />
-            );
-          })}
-        </div>
+        {/* Group 2: Design Sources */}
+        <SidebarItem
+          icon={Layers}
+          label="Design Sources"
+          isActive={activeGroup === 'design'}
+          onClick={() => onGroupChange('design')}
+          count={counts?.design}
+        />
       </nav>
 
-      {/* Footer / Settings or Info */}
+      {/* Footer / Settings */}
       <div className="mt-auto pt-2 xl:pt-4 flex flex-col gap-1.5 xl:gap-2 items-center shrink-0">
         <div className="w-8 h-[1px] bg-surface-border/50 mb-1.5 xl:mb-2" />
         <SidebarItem
