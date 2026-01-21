@@ -62,9 +62,393 @@
       "description": "Full-page background effects and patterns",
       "icon": "Layers",
       "group": "design"
+    },
+    {
+      "id": "video-assets",
+      "name": "Video Assets",
+      "description": "High-quality looped video backgrounds for hero sections",
+      "icon": "Video",
+      "group": "videos"
     }
   ],
   "animations": [
+    {
+      "id": "video-hls-stream",
+      "name": "Enchanted Forest",
+      "category": "video-assets",
+      "description": "Magical forest scene with HLS high-quality streaming",
+      "tags": [
+        "video",
+        "hls",
+        "streaming",
+        "4k"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/74cb72d57c6a6d6d7807693d02e6707b/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/74cb72d57c6a6d6d7807693d02e6707b/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-cosmic-flow",
+      "name": "Cosmic Flow",
+      "category": "video-assets",
+      "description": "Nebula-like swirling colors in deep space",
+      "tags": [
+        "video",
+        "space",
+        "abstract",
+        "purple"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/04c4b640a3098538bb75404089025993/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/04c4b640a3098538bb75404089025993/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-neon-horizon",
+      "name": "Neon Horizon",
+      "category": "video-assets",
+      "description": "Cyberpunk city lights reflecting on wet pavement",
+      "tags": [
+        "video",
+        "cyberpunk",
+        "city",
+        "neon"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/257c7359efd4b4aaebcc03aa8fc78a36/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/257c7359efd4b4aaebcc03aa8fc78a36/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-liquid-dream",
+      "name": "Liquid Dream",
+      "category": "video-assets",
+      "description": "Smooth golden liquid flowing in slow motion",
+      "tags": [
+        "video",
+        "abstract",
+        "gold",
+        "liquid"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/6571025a2e02041c8b85dbd43210fa3a/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/6571025a2e02041c8b85dbd43210fa3a/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-digital-zen",
+      "name": "Digital Zen",
+      "category": "video-assets",
+      "description": "Minimalist geometric patterns breathing calmly",
+      "tags": [
+        "video",
+        "minimalist",
+        "geometry",
+        "white"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/592747c6820f3774a1ce343ef4782769/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/592747c6820f3774a1ce343ef4782769/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-velvet-smoke",
+      "name": "Velvet Smoke",
+      "category": "video-assets",
+      "description": "Soft purple smoke billowing in darkness",
+      "tags": [
+        "video",
+        "smoke",
+        "abstract",
+        "dark"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/697945ca6b876878dba3b23fbd2f1561/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/697945ca6b876878dba3b23fbd2f1561/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-crystal-rain",
+      "name": "Crystal Rain",
+      "category": "video-assets",
+      "description": "Shimmering particles falling like digital rain",
+      "tags": [
+        "video",
+        "particles",
+        "rain",
+        "blue"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/c9ddd33ac3d964e5d33b31ce849e8f95/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/c9ddd33ac3d964e5d33b31ce849e8f95/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-cyber-pulse",
+      "name": "Cyber Pulse",
+      "category": "video-assets",
+      "description": "Futuristic data streams pulsating with energy",
+      "tags": [
+        "video",
+        "tech",
+        "data",
+        "future"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/136a8a211c6c3b1cc1fd7b1c7d836c58/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/136a8a211c6c3b1cc1fd7b1c7d836c58/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-ethereal-mist",
+      "name": "Ethereal Mist",
+      "category": "video-assets",
+      "description": "Mysterious fog rolling over a dark landscape",
+      "tags": [
+        "video",
+        "nature",
+        "fog",
+        "mystery"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/e923e67d71fed3e0853ec57f0348451e/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/e923e67d71fed3e0853ec57f0348451e/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-golden-hour",
+      "name": "Golden Hour",
+      "category": "video-assets",
+      "description": "Warm sunlight filtering through moving leaves",
+      "tags": [
+        "video",
+        "nature",
+        "sun",
+        "warm"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/dd17599dfa77f41517133fa7a4967535/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/dd17599dfa77f41517133fa7a4967535/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-deep-ocean",
+      "name": "Deep Ocean",
+      "category": "video-assets",
+      "description": "Underwater view with light rays piercing through",
+      "tags": [
+        "video",
+        "water",
+        "ocean",
+        "blue"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/408ad52e3f15bc8f01ae69d194a8cf3a/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/408ad52e3f15bc8f01ae69d194a8cf3a/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-starlight-drift",
+      "name": "Starlight Drift",
+      "category": "video-assets",
+      "description": "Slow moving starfield, peaceful and vast",
+      "tags": [
+        "video",
+        "space",
+        "stars",
+        "calm"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/df176a2fb2ea2b64bd21ae1c10d3af6a/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/df176a2fb2ea2b64bd21ae1c10d3af6a/manifest/video.m3u8' />"
+      }
+    },
+    {
+      "id": "video-quantum-wave",
+      "name": "Quantum Wave",
+      "category": "video-assets",
+      "description": "Complex mathematical waves visualizing data",
+      "tags": [
+        "video",
+        "science",
+        "wave",
+        "abstract"
+      ],
+      "config": {
+        "src": {
+          "label": "Source",
+          "default": "https://customer-cbeadsgr09pnsezs.cloudflarestream.com/a940caf2032208575cdc25ec662fb3cc/manifest/video.m3u8",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Opacity",
+          "default": 0.0,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        }
+      },
+      "code": {
+        "framerMotion": "<VideoBackground src='https://customer-cbeadsgr09pnsezs.cloudflarestream.com/a940caf2032208575cdc25ec662fb3cc/manifest/video.m3u8' />"
+      }
+    },
     {
       "id": "jelly-bounce",
       "name": "Jelly Bounce",
@@ -1334,6 +1718,129 @@
       "code": {
         "framerMotion": "function DotPattern({ size = 24, dotSize = 2, color = '#6366f1', opacity = 0.3, children }) {\n  return (\n    <div className=\"relative overflow-hidden bg-black\">\n      <div\n        className=\"absolute inset-0\"\n        style={{\n          backgroundImage: `radial-gradient(${color} ${dotSize}px, transparent ${dotSize}px)`,\n          backgroundSize: `${size}px ${size}px`,\n          opacity: opacity\n        }}\n      />\n      <div\n        className=\"absolute inset-0\"\n        style={{ background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%)' }}\n      />\n      <div className=\"relative z-10\">{children}</div>\n    </div>\n  );\n}",
         "css": ".dot-pattern {\n  position: relative;\n  overflow: hidden;\n  background: #000;\n}\n\n.dot-pattern::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background-image: radial-gradient(#6366f1 2px, transparent 2px);\n  background-size: 24px 24px;\n  opacity: 0.3;\n}\n\n.dot-pattern::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: radial-gradient(\n    ellipse at center,\n    transparent 0%,\n    rgba(0,0,0,0.8) 100%\n  );\n}"
+      }
+    },
+    {
+      "id": "video-background",
+      "name": "Video Background",
+      "category": "backgrounds",
+      "description": "Immersive video background with overlay control and poster support",
+      "tags": [
+        "background",
+        "video",
+        "hero",
+        "immersive"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 0
+      },
+      "config": {
+        "src": {
+          "label": "Video Source",
+          "default": "https://files.vidstack.io/sprite-fight/720p.mp4",
+          "type": "string"
+        },
+        "overlayOpacity": {
+          "label": "Overlay Opacity",
+          "default": 0.5,
+          "min": 0,
+          "max": 0.9,
+          "step": 0.1
+        },
+        "overlayColor": {
+          "label": "Overlay Color",
+          "default": "#000000",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Add a video background that plays automatically behind my content. It should have a dark overlay so text stays readable.",
+        "pro": "Implement responsive video background:\\n- Use absolute positioning with object-cover\\n- Add overlay div with configurable opacity\\n- Support src and poster props\\n- Optimize with playsInline, muted, loop, autoPlay"
+      },
+      "code": {
+        "framerMotion": "function VideoBackground({ \n  src = 'https://assets.mixkit.co/videos/preview/mixkit-abstract-video-of-ink-in-water-2234-large.mp4', \n  overlayOpacity = 0.5 \n}) {\n  return (\n    <div className=\"relative w-full h-full overflow-hidden bg-black\">\n      <video\n        className=\"absolute inset-0 w-full h-full object-cover\"\n        src={src}\n        autoPlay\n        muted\n        loop\n        playsInline\n      />\n      <div \n        className=\"absolute inset-0 pointer-events-none\"\n        style={{ backgroundColor: `rgba(0,0,0,${overlayOpacity})` }}\n      />\n      <div className=\"relative z-10 w-full h-full\">\n        {children}\n      </div>\n    </div>\n  );\n}"
+      }
+    },
+    {
+      "id": "shooting-stars",
+      "name": "Shooting Stars",
+      "category": "backgrounds",
+      "description": "Starry night sky with random shooting star trails used for hero sections",
+      "tags": [
+        "background",
+        "canvas",
+        "stars",
+        "space",
+        "particles"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 0
+      },
+      "config": {
+        "starColor": {
+          "label": "Star Color",
+          "default": "#9E00FF",
+          "type": "color"
+        },
+        "minDelay": {
+          "label": "Max Freq (ms)",
+          "default": 400,
+          "min": 100,
+          "max": 1000,
+          "step": 100
+        },
+        "maxDelay": {
+          "label": "Min Freq (ms)",
+          "default": 1500,
+          "min": 1000,
+          "max": 5000,
+          "step": 500
+        }
+      },
+      "prompts": {
+        "beginner": "Create a space-themed background with shooting stars that randomly fly across the screen. It should look magical and deep.",
+        "pro": "Implement Canvas-based shooting stars:\\n- Use requestAnimationFrame for game loop\\n- Manage star array with position, speed, angle\\n- Draw gradients for trails\\n- Optimize with ResizeObserver"
+      },
+      "code": {
+        "framerMotion": "// Complex Canvas implementation - see component source"
+      }
+    },
+    {
+      "id": "geometric-shapes",
+      "name": "Geometric Shapes",
+      "category": "backgrounds",
+      "description": "Abstract floating 3D shapes with soft gradients and blur effects",
+      "tags": [
+        "background",
+        "abstract",
+        "shapes",
+        "3d",
+        "modern"
+      ],
+      "preview": {
+        "trigger": "auto",
+        "duration": 0
+      },
+      "config": {
+        "color1": {
+          "label": "Primary Color",
+          "default": "#6366f1",
+          "type": "color"
+        },
+        "color2": {
+          "label": "Secondary Color",
+          "default": "#ec4899",
+          "type": "color"
+        }
+      },
+      "prompts": {
+        "beginner": "Add a background with floating 3D shapes (circles, squares) that drift slowly. They should be blurry and colorful to create a depth effect.",
+        "pro": "Implement floating shapes with Framer Motion:\\n- Generate random array of shapes\\n- Animate x, y, rotate, scale\\n- Use massive duration (10-20s) with infinite repeat\\n- Apply heavy blur and mix-blend-mode: screen"
+      },
+      "code": {
+        "framerMotion": "function GeometricShapes({ color1 = '#6366f1', color2 = '#ec4899' }) {\n  return (\n    <div className=\"relative w-full h-full bg-black overflow-hidden\">\n      {[...Array(6)].map((_, i) => (\n        <motion.div\n          key={i}\n          className=\"absolute opacity-20 blur-xl mix-blend-screen\"\n          style={{\n            background: `linear-gradient(135deg, ${color1}, ${color2})`,\n            left: `${Math.random() * 80 + 10}%`,\n            top: `${Math.random() * 80 + 10}%`,\n            width: Math.random() * 100 + 50,\n            height: Math.random() * 100 + 50,\n            borderRadius: i % 2 === 0 ? '50%' : '1rem'\n          }}\n          animate={{\n            y: [0, -40, 0],\n            rotate: [0, 90, 0]\n          }}\n          transition={{\n            duration: Math.random() * 10 + 10,\n            repeat: Infinity,\n            ease: \"easeInOut\"\n          }}\n        />\n      ))}\n    </div>\n  );\n}"
       }
     }
   ]

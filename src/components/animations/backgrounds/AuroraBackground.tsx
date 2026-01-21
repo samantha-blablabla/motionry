@@ -1,101 +1,79 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface AuroraBackgroundProps {
     className?: string;
+    children?: React.ReactNode;
+    showRadialGradient?: boolean;
     color1?: string;
     color2?: string;
     color3?: string;
     speed?: number;
     blur?: number;
-    children?: React.ReactNode;
 }
 
 export function AuroraBackground({
     className,
-    color1 = '#6366f1',
-    color2 = '#8b5cf6',
-    color3 = '#06b6d4',
-    speed = 8,
-    blur = 100,
     children,
+    showRadialGradient = true,
+    color1 = '#2a8af6',
+    color2 = '#a853ba',
+    color3 = '#e92a67',
+    speed = 20,
+    blur = 80,
 }: AuroraBackgroundProps) {
     return (
-        <div className={cn('relative overflow-hidden bg-black', className)}>
-            {/* Aurora blobs */}
-            <div
-                className="absolute inset-0"
-                style={{ filter: `blur(${blur}px)` }}
-            >
+        <div
+            className={cn(
+                'relative flex flex-col items-center justify-center bg-black transition-bg overflow-hidden w-full h-full',
+                className
+            )}
+        >
+            <div className="absolute inset-0 overflow-hidden">
+                {/* Simple Gradient Overlay Fallback if complex CSS fails or customization needed */}
                 <motion.div
-                    className="absolute w-[60%] h-[60%] rounded-full opacity-50"
+                    className="absolute -inset-[10%] opacity-40"
                     style={{
-                        background: `radial-gradient(circle, ${color1} 0%, transparent 70%)`,
-                        left: '10%',
-                        top: '20%',
+                        backgroundImage: `conic-gradient(from 180deg at 50% 50%, ${color1} 0deg, ${color2} 180deg, ${color3} 360deg)`,
+                        filter: `blur(${blur}px)`
                     }}
                     animate={{
-                        x: [0, 100, 50, 0],
-                        y: [0, 50, 100, 0],
-                        scale: [1, 1.2, 0.9, 1],
+                        transform: ['rotate(0deg)', 'rotate(360deg)'],
                     }}
                     transition={{
                         duration: speed,
                         repeat: Infinity,
-                        ease: 'easeInOut',
+                        ease: "linear"
                     }}
                 />
+
                 <motion.div
-                    className="absolute w-[50%] h-[50%] rounded-full opacity-40"
+                    className="absolute -inset-[10%] opacity-40"
                     style={{
-                        background: `radial-gradient(circle, ${color2} 0%, transparent 70%)`,
-                        right: '10%',
-                        top: '10%',
+                        backgroundImage: `conic-gradient(from 0deg at 50% 50%, ${color1} 0deg, ${color2} 180deg, ${color3} 360deg)`,
+                        mixBlendMode: 'overlay',
+                        filter: `blur(${blur}px)`
                     }}
                     animate={{
-                        x: [0, -80, -40, 0],
-                        y: [0, 80, 40, 0],
-                        scale: [1, 0.9, 1.1, 1],
+                        transform: ['rotate(360deg)', 'rotate(0deg)'],
                     }}
                     transition={{
-                        duration: speed * 1.2,
+                        duration: speed * 1.25,
                         repeat: Infinity,
-                        ease: 'easeInOut',
-                    }}
-                />
-                <motion.div
-                    className="absolute w-[40%] h-[40%] rounded-full opacity-30"
-                    style={{
-                        background: `radial-gradient(circle, ${color3} 0%, transparent 70%)`,
-                        left: '30%',
-                        bottom: '10%',
-                    }}
-                    animate={{
-                        x: [0, 60, -30, 0],
-                        y: [0, -60, -30, 0],
-                        scale: [1, 1.1, 0.95, 1],
-                    }}
-                    transition={{
-                        duration: speed * 0.9,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
+                        ease: "linear"
                     }}
                 />
             </div>
 
-            {/* Content */}
-            {children && (
-                <div className="relative z-10">
-                    {children}
-                </div>
+            {showRadialGradient && (
+                <div className="absolute inset-0 bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
             )}
 
-            {/* Default demo content */}
-            {!children && (
-                <div className="relative z-10 flex items-center justify-center min-h-[200px]">
-                    <h2 className="text-2xl font-bold text-white">Aurora Background</h2>
+            {children && (
+                <div className="relative z-10 w-full h-full">
+                    {children}
                 </div>
             )}
         </div>

@@ -1,56 +1,50 @@
 'use client';
 
+import { useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface GridPatternProps {
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
     className?: string;
     size?: number;
     color?: string;
-    opacity?: number;
     children?: React.ReactNode;
+    [key: string]: any;
 }
 
 export function GridPattern({
+    width = 40,
+    height = 40,
+    x = 0,
+    y = 0,
     className,
     size = 40,
-    color = '#6366f1',
-    opacity = 0.15,
+    color = 'rgba(255,255,255,0.4)',
     children,
+    ...props
 }: GridPatternProps) {
+    const id = useId();
+
     return (
-        <div className={cn('relative overflow-hidden bg-black', className)}>
-            {/* Grid pattern */}
+        <div className={cn("w-full h-full relative bg-black overflow-hidden", className)}>
             <div
                 className="absolute inset-0"
                 style={{
-                    backgroundImage: `
-                        linear-gradient(${color} 1px, transparent 1px),
-                        linear-gradient(90deg, ${color} 1px, transparent 1px)
-                    `,
+                    backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(to right, ${color} 1px, transparent 1px)`,
                     backgroundSize: `${size}px ${size}px`,
-                    opacity: opacity,
                 }}
             />
 
-            {/* Radial fade overlay */}
-            <div
-                className="absolute inset-0"
-                style={{
-                    background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%)',
-                }}
-            />
+            {/* Radial Gradient Fade - Made lighter for visibility */}
+            <div className="absolute inset-0 bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black_80%)]" />
 
             {/* Content */}
             {children && (
-                <div className="relative z-10">
+                <div className="relative z-10 w-full h-full">
                     {children}
-                </div>
-            )}
-
-            {/* Default demo content */}
-            {!children && (
-                <div className="relative z-10 flex items-center justify-center min-h-[200px]">
-                    <h2 className="text-2xl font-bold text-white">Grid Pattern</h2>
                 </div>
             )}
         </div>

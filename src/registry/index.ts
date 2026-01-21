@@ -35,6 +35,9 @@ import { TextReveal } from '@/components/animations/text/TextReveal';
 import { AuroraBackground } from '@/components/animations/backgrounds/AuroraBackground';
 import { GridPattern } from '@/components/animations/backgrounds/GridPattern';
 import { DotPattern } from '@/components/animations/backgrounds/DotPattern';
+import { VideoBackground } from '@/components/animations/backgrounds/VideoBackground';
+import { ShootingStars } from '@/components/animations/backgrounds/ShootingStars';
+import { GeometricShapes } from '@/components/animations/backgrounds/GeometricShapes';
 
 // Registry type
 type AnimationRegistry = {
@@ -75,6 +78,27 @@ export const animationRegistry: AnimationRegistry = {
   'aurora-background': AuroraBackground,
   'grid-pattern': GridPattern,
   'dot-pattern': DotPattern,
+  'video-background': VideoBackground,
+  'video-abstract-ink': VideoBackground,
+  'video-gradient-loop': VideoBackground,
+  'video-neon-city': VideoBackground,
+  'video-nature-forest': VideoBackground,
+  'video-tech-digital': VideoBackground,
+  'video-hls-stream': VideoBackground,
+  'video-cosmic-flow': VideoBackground,
+  'video-neon-horizon': VideoBackground,
+  'video-liquid-dream': VideoBackground,
+  'video-digital-zen': VideoBackground,
+  'video-velvet-smoke': VideoBackground,
+  'video-crystal-rain': VideoBackground,
+  'video-cyber-pulse': VideoBackground,
+  'video-ethereal-mist': VideoBackground,
+  'video-golden-hour': VideoBackground,
+  'video-deep-ocean': VideoBackground,
+  'video-starlight-drift': VideoBackground,
+  'video-quantum-wave': VideoBackground,
+  'shooting-stars': ShootingStars,
+  'geometric-shapes': GeometricShapes,
 };
 
 // Helper to get component by ID

@@ -15,12 +15,12 @@ export function DotPattern({
     className,
     size = 24,
     dotSize = 2,
-    color = '#6366f1',
-    opacity = 0.3,
+    color = '#818cf8',
+    opacity = 0.5,
     children,
 }: DotPatternProps) {
     return (
-        <div className={cn('relative overflow-hidden bg-black', className)}>
+        <div className={cn('relative w-full h-full overflow-hidden bg-black', className)}>
             {/* Dot pattern */}
             <div
                 className="absolute inset-0"
@@ -31,25 +31,18 @@ export function DotPattern({
                 }}
             />
 
-            {/* Radial fade overlay */}
+            {/* Radial fade overlay - Reduced intensity for visibility */}
             <div
                 className="absolute inset-0"
                 style={{
-                    background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%)',
+                    background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.6) 100%)',
                 }}
             />
 
             {/* Content */}
             {children && (
-                <div className="relative z-10">
+                <div className="relative z-10 w-full h-full">
                     {children}
-                </div>
-            )}
-
-            {/* Default demo content */}
-            {!children && (
-                <div className="relative z-10 flex items-center justify-center min-h-[200px]">
-                    <h2 className="text-2xl font-bold text-white">Dot Pattern</h2>
                 </div>
             )}
         </div>

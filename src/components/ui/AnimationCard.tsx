@@ -31,6 +31,14 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
   const AnimationComponent = getAnimationComponent(animation.id);
   const hasComponent = hasAnimationComponent(animation.id);
 
+  // Extract default props from config
+  const defaultProps = animation.config
+    ? Object.entries(animation.config).reduce((acc, [key, value]) => {
+      acc[key] = value.default;
+      return acc;
+    }, {} as Record<string, any>)
+    : {};
+
   return (
     <motion.div
       className={cn(
@@ -53,21 +61,28 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
         {/* Grid Dots Background */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        />
+        {!['backgrounds', 'video-assets'].includes(animation.category) && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
+              backgroundSize: '20px 20px',
+            }}
+          />
+        )}
 
         {hasComponent && AnimationComponent ? (
           <div className={cn(
-            "w-full h-full flex items-center justify-center origin-center transform-gpu relative z-[1]",
-            animation.category === 'navigation' ? 'scale-[0.75]' :
-              animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
+            "w-full h-full origin-center transform-gpu relative z-[1]",
+            ['backgrounds', 'video-assets'].includes(animation.category)
+              ? "absolute inset-0 !scale-100"
+              : "flex items-center justify-center",
+            !['backgrounds', 'video-assets'].includes(animation.category) && (
+              animation.category === 'navigation' ? 'scale-[0.75]' :
+                animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
+            )
           )}>
-            <AnimationComponent />
+            <AnimationComponent {...defaultProps} />
           </div>
         ) : (
           <FallbackPreview animation={animation} isPlaying={isHovered} />
@@ -120,7 +135,25 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
 
           {/* Quick Copy Button */}
           <motion.button
-            onClick={handleQuickCopy}
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (animation.category === 'video-assets') {
+                // Copy URL logic
+                const src = animation.config?.src?.default;
+                if (typeof src === 'string') {
+                  await copyToClipboard(src);
+                  setCopied(true);
+                  showToast(`Copied video URL!`);
+                }
+              } else {
+                // Existing Copy Code logic
+                const code = animation.code.framerMotion || animation.code.css || '';
+                await copyToClipboard(code);
+                setCopied(true);
+                showToast(`Copied "${animation.name}" code!`);
+              }
+              setTimeout(() => setCopied(false), 2000);
+            }}
             className={cn(
               'flex-shrink-0 p-2 rounded-lg transition-colors relative group/copy mt-0.5',
               'bg-surface hover:bg-accent/10 hover:text-accent border border-surface-border/50'
@@ -129,7 +162,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
           >
             {/* Custom Tooltip */}
             <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs bg-surface-overlay border border-surface-border rounded opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-lg">
-              {copied ? 'Copied!' : 'Copy code'}
+              {copied ? 'Copied!' : (animation.category === 'video-assets' ? 'Copy URL' : 'Copy code')}
             </span>
             <motion.div
               initial={false}
@@ -139,7 +172,13 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
               {copied ? (
                 <Check className="w-4 h-4 text-green-500" />
               ) : (
-                <Copy className="w-4 h-4" />
+                animation.category === 'video-assets' ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-bold">URL</span>
+                  </div>
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )
               )}
             </motion.div>
           </motion.button>

@@ -205,82 +205,93 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
 
               {/* LEFT: Preview (Fixed) - Needs rounded bottom-left if on desktop */}
               <div className="md:w-[60%] relative flex items-center justify-center border-b md:border-b-0 md:border-r border-surface-border min-h-[200px] md:min-h-0 overflow-hidden md:rounded-bl-2xl">
-                {/* Background with Grid Dots */}
-                <div className={cn(
-                  'absolute inset-0 transition-colors duration-300 pointer-events-none',
-                  previewMode === 'dark' ? 'bg-[#0a0a0b]' : 'bg-white'
-                )} />
-                {/* Grid Dots Overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage: previewMode === 'dark'
-                      ? 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)'
-                      : 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
-                    backgroundSize: '20px 20px',
-                  }}
-                />
+                {/* Background with Grid Dots - Hide for backgrounds/videos */}
+                {!['backgrounds', 'video-assets'].includes(animation.category) && (
+                  <>
+                    <div className={cn(
+                      'absolute inset-0 transition-colors duration-300 pointer-events-none',
+                      previewMode === 'dark' ? 'bg-[#0a0a0b]' : 'bg-white'
+                    )} />
+                    {/* Grid Dots Overlay */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        backgroundImage: previewMode === 'dark'
+                          ? 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)'
+                          : 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
+                        backgroundSize: '20px 20px',
+                      }}
+                    />
+                  </>
+                )}
 
-                {/* Preview Mode Toggle */}
-                <div className="absolute top-3 right-3 z-10">
-                  <button
-                    onClick={() => setPreviewMode(prev => prev === 'dark' ? 'light' : 'dark')}
-                    className={cn(
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors backdrop-blur-md',
-                      previewMode === 'dark'
-                        ? 'bg-[#1a1a1f] text-white hover:bg-[#252529] border border-white/10'
-                        : 'bg-white text-gray-800 hover:bg-gray-100 border border-black/10 shadow-sm'
-                    )}
-                  >
-                    {previewMode === 'dark' ? (
-                      <><Moon className="w-3.5 h-3.5" /> Dark</>
-                    ) : (
-                      <><Sun className="w-3.5 h-3.5" /> Light</>
-                    )}
-                  </button>
-                </div>
+                {/* Preview Mode Toggle - Hide for backgrounds/videos */}
+                {!['backgrounds', 'video-assets'].includes(animation.category) && (
+                  <div className="absolute top-3 right-3 z-10">
+                    <button
+                      onClick={() => setPreviewMode(prev => prev === 'dark' ? 'light' : 'dark')}
+                      className={cn(
+                        'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors backdrop-blur-md',
+                        previewMode === 'dark'
+                          ? 'bg-[#1a1a1f] text-white hover:bg-[#252529] border border-white/10'
+                          : 'bg-white text-gray-800 hover:bg-gray-100 border border-black/10 shadow-sm'
+                      )}
+                    >
+                      {previewMode === 'dark' ? (
+                        <><Moon className="w-3.5 h-3.5" /> Dark</>
+                      ) : (
+                        <><Sun className="w-3.5 h-3.5" /> Light</>
+                      )}
+                    </button>
+                  </div>
+                )}
 
                 {/* Animation Preview */}
-                <div className="relative z-[1]">
+                <div className={cn(
+                  "relative z-[1]",
+                  ['backgrounds', 'video-assets'].includes(animation.category) && "absolute inset-0 w-full h-full z-0"
+                )}>
                   <ModalPreview animation={animation} config={configValues} />
                 </div>
               </div>
 
               {/* RIGHT: Tabs (Custom + Prompt/Code) */}
               <div className="md:w-[40%] flex flex-col min-h-0 flex-1">
-                {/* Tabs Header */}
-                <div className="flex border-b border-surface-border">
-                  <button
-                    onClick={() => setRightTab('custom')}
-                    className={cn(
-                      'flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
-                      rightTab === 'custom'
-                        ? 'text-accent border-b-2 border-accent'
-                        : 'text-text-muted hover:text-text-primary'
-                    )}
-                  >
-                    <Settings className="w-4 h-4" />
-                    Custom
-                  </button>
-                  <button
-                    onClick={() => setRightTab('code')}
-                    className={cn(
-                      'flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
-                      rightTab === 'code'
-                        ? 'text-accent border-b-2 border-accent'
-                        : 'text-text-muted hover:text-text-primary'
-                    )}
-                  >
-                    <Code2 className="w-4 h-4" />
-                    Prompt/Code
-                  </button>
-                </div>
+                {/* Tabs Header - Hide for video-assets */}
+                {animation.category !== 'video-assets' && (
+                  <div className="flex border-b border-surface-border">
+                    <button
+                      onClick={() => setRightTab('custom')}
+                      className={cn(
+                        'flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
+                        rightTab === 'custom'
+                          ? 'text-accent border-b-2 border-accent'
+                          : 'text-text-muted hover:text-text-primary'
+                      )}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Custom
+                    </button>
+                    <button
+                      onClick={() => setRightTab('code')}
+                      className={cn(
+                        'flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
+                        rightTab === 'code'
+                          ? 'text-accent border-b-2 border-accent'
+                          : 'text-text-muted hover:text-text-primary'
+                      )}
+                    >
+                      <Code2 className="w-4 h-4" />
+                      Prompt/Code
+                    </button>
+                  </div>
+                )}
 
                 {/* Tab Content */}
                 <div className="flex-1 overflow-hidden flex flex-col">
                   <AnimatePresence mode="wait">
-                    {/* Custom Tab */}
-                    {rightTab === 'custom' && (
+                    {/* Custom Tab (Always shown for video-assets if rightTab is custom, or just always for videos) */}
+                    {(rightTab === 'custom' || animation.category === 'video-assets') && (
                       <motion.div
                         key="custom"
                         initial={{ opacity: 0, x: -10 }}
@@ -288,6 +299,30 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
                         exit={{ opacity: 0, x: 10 }}
                         className="flex-1 overflow-auto p-4"
                       >
+                        {/* Video Source Section - Only for video-assets */}
+                        {animation.category === 'video-assets' && (
+                          <div className="mb-6">
+                            <h4 className="text-xs font-medium text-text-muted uppercase tracking-wide mb-2">Video Source</h4>
+                            <div className="flex gap-2">
+                              <div className="flex-1 bg-surface-raised border border-surface-border rounded-lg px-3 py-2 text-xs text-text-muted truncate font-mono select-all">
+                                {animation.config?.src?.default as string}
+                              </div>
+                              <button
+                                onClick={async () => {
+                                  const src = animation.config?.src?.default;
+                                  if (typeof src === 'string') {
+                                    await copyToClipboard(src);
+                                    showToast('Copied video URL!');
+                                  }
+                                }}
+                                className="p-2 bg-surface border border-surface-border rounded-lg hover:bg-surface-raised hover:text-accent transition-colors flex-shrink-0"
+                                title="Copy URL"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
 
                         {/* Animation Settings */}

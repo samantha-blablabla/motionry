@@ -10,6 +10,7 @@ import { LibraryHero } from '@/components/ui/LibraryHero';
 import { MobileMenu } from '@/components/ui/MobileMenu';
 import { ToastProvider } from '@/components/ui/Toast';
 import { CategoryTabs } from '@/components/ui/CategoryTabs';
+import { AnimationRow } from '@/components/ui/AnimationRow';
 import { FloatingDonateButton } from '@/components/ui/FloatingDonateButton';
 import animationsData from '@/data/animations.json';
 import type { Animation, AnimationsData } from '@/lib/types';
@@ -21,7 +22,7 @@ function LibraryContent() {
     const searchParams = useSearchParams();
 
     // Initialize from URL params
-    const [activeGroup, setActiveGroup] = useState<'components' | 'design'>('components');
+    const [activeGroup, setActiveGroup] = useState<'home' | 'components' | 'design' | 'videos'>('home');
     const [activeCategory, setActiveCategory] = useState<string | null>(
         searchParams.get('category') || null
     );
@@ -60,8 +61,9 @@ function LibraryContent() {
     // Calculate animation counts
     const groupCounts = useMemo(() => {
         return {
-            components: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group !== 'design').length,
-            design: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group === 'design').length
+            components: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group !== 'design' && data.categories.find(c => c.id === a.category)?.group !== 'videos').length,
+            design: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group === 'design').length,
+            videos: data.animations.filter(a => data.categories.find(c => c.id === a.category)?.group === 'videos').length
         };
     }, []);
 
@@ -74,13 +76,16 @@ function LibraryContent() {
         return counts;
     }, []);
 
+    // Video specific state
+    const [videoFilter, setVideoFilter] = useState<'all' | 'newest' | 'dark' | 'light'>('all');
+
     // Filter categories based on group
     const filteredCategories = useMemo(() => {
+        if (activeGroup === 'home' || activeGroup === 'videos') return []; // No standard tabs for Home or Videos
+
         return data.categories.filter(c => {
-            if (activeGroup === 'design') {
-                return c.group === 'design';
-            }
-            return c.group !== 'design'; // Default to components
+            if (activeGroup === 'design') return c.group === 'design';
+            return c.group !== 'design' && c.group !== 'videos'; // Default to components
         });
     }, [activeGroup]);
 
@@ -88,12 +93,27 @@ function LibraryContent() {
     const filteredAnimations = useMemo(() => {
         let result = data.animations;
 
-        // Filter by group first
-        result = result.filter(a => {
-            const category = data.categories.find(c => c.id === a.category);
-            if (activeGroup === 'design') return category?.group === 'design';
-            return category?.group !== 'design';
-        });
+        // Filter by group
+        if (activeGroup !== 'home') {
+            result = result.filter(a => {
+                const category = data.categories.find(c => c.id === a.category);
+                if (activeGroup === 'design') return category?.group === 'design';
+                if (activeGroup === 'videos') return category?.group === 'videos';
+                return category?.group !== 'design' && category?.group !== 'videos';
+            });
+
+            // Video specific filtering
+            if (activeGroup === 'videos') {
+                if (videoFilter === 'newest') {
+                    result = [...result].reverse();
+                } else if (videoFilter === 'dark') {
+                    result = result.filter(a => a.tags.some(t => ['dark', 'black', 'night', 'space'].includes(t.toLowerCase())));
+                } else if (videoFilter === 'light') {
+                    result = result.filter(a => a.tags.some(t => ['light', 'white', 'sky', 'cloud'].includes(t.toLowerCase())));
+                }
+            }
+        }
+
 
         // Filter by category
         if (activeCategory) {
@@ -111,7 +131,50 @@ function LibraryContent() {
         }
 
         return result;
-    }, [activeCategory, searchQuery]);
+    }, [activeCategory, searchQuery, activeGroup, videoFilter]);
+
+    // Showcase Data Logic
+    const showcaseSections = useMemo(() => {
+        if (activeCategory || searchQuery || activeGroup === 'videos') return null; // Don't show showcase if filtered or in Videos mode
+
+        const makeRow = (title: string, items: Animation[], href?: string, sub?: string) => ({
+            title, subtitle: sub, animations: items, href
+        });
+
+        const allAnimations = data.animations;
+
+        // Helper to get animations by ID
+        const getByIds = (ids: string[]) => allAnimations.filter(a => ids.includes(a.id));
+        // Helper to get by Group
+        const getByGroup = (g: string) => allAnimations.filter(a => {
+            const cat = data.categories.find(c => c.id === a.category);
+            return g === 'design' ? cat?.group === 'design' : cat?.group !== 'design';
+        });
+
+        if (activeGroup === 'home') {
+            // Mixed Showcase
+            const featuredIds = ['magnetic-hover', 'cursor-flow', 'aurora-background', 'text-reveal', 'card-swipe', 'border-beam'];
+            const featured = getByIds(featuredIds);
+            const latest = [...allAnimations].reverse().slice(0, 10);
+            const design = getByGroup('design').slice(0, 6);
+            const components = getByGroup('components').filter(a => !featuredIds.includes(a.id)).slice(0, 6); // Trending proxy
+
+            return [
+                makeRow("Featured Collections", featured, "/library?group=components", "Hand-picked favorites for you"),
+                makeRow("Latest Additions", latest, "/library", "Freshly baked components & assets"),
+                makeRow("Design Sources", design, "/library?group=design", "High quality backgrounds & patterns"),
+                makeRow("Trending Components", components, "/library?group=components", "Most popular interactive elements")
+            ];
+        }
+
+        // Disable showcase for Components, Design, and Videos -> forcing Grid View (Subpage)
+        // This matches user request to treat them as subpages with full grids
+        // specific filtering is handled by filteredAnimations and AnimationGrid
+
+        return null;
+    }, [activeGroup, activeCategory, searchQuery]);
+
+    // ... existing handlers ...
 
     const handleSelectAnimation = (animation: Animation) => {
         setSelectedAnimation(animation);
@@ -170,31 +233,74 @@ function LibraryContent() {
                         totalCount={data.animations.length}
                         filteredCount={filteredAnimations.length}
                         onMenuToggle={() => setIsMobileMenuOpen(true)}
-                        title={activeCategory
-                            ? data.categories.find(c => c.id === activeCategory)?.name
-                            : "Animation Library"}
-                        description={activeCategory
-                            ? data.categories.find(c => c.id === activeCategory)?.description
-                            : undefined}
+                        title={
+                            activeCategory
+                                ? data.categories.find(c => c.id === activeCategory)?.name
+                                : activeGroup === 'videos' ? "Video Backgrounds"
+                                    : activeGroup === 'design' ? "Design Sources"
+                                        : activeGroup === 'components' ? "Micro-Animations"
+                                            : "Animation Library"
+                        }
+                        description={
+                            activeCategory
+                                ? data.categories.find(c => c.id === activeCategory)?.description
+                                : activeGroup === 'videos' ? "Curated high-quality looping videos"
+                                    : activeGroup === 'design' ? "High quality backgrounds, patterns & textures"
+                                        : activeGroup === 'components' ? "Interactive elements and functional micro-interactions"
+                                            : undefined
+                        }
                     />
 
-                    {/* Hero Section - Only show when no search/filter is active */}
-                    {!searchQuery && !activeCategory && <LibraryHero />}
+                    {/* Hero Section - Only show when no search/filter is active and on Home */}
+                    {!searchQuery && !activeCategory && activeGroup === 'home' && <LibraryHero />}
 
                     <div className="flex-1 p-4 lg:p-6">
-                        {/* Category Tabs */}
-                        <div className="mb-6">
-                            <CategoryTabs
-                                categories={filteredCategories}
-                                activeCategory={activeCategory}
-                                onCategoryChange={handleCategoryChange}
-                            />
-                        </div>
+                        {filteredCategories.length > 0 && (
+                            <div className="mb-6">
+                                <CategoryTabs
+                                    categories={filteredCategories}
+                                    activeCategory={activeCategory}
+                                    onCategoryChange={handleCategoryChange}
+                                />
+                            </div>
+                        )}
 
-                        <AnimationGrid
-                            animations={filteredAnimations}
-                            onSelect={handleSelectAnimation}
-                        />
+                        {/* Video Custom Filters */}
+                        {activeGroup === 'videos' && (
+                            <div className="mb-8 flex gap-2">
+                                {['all', 'newest', 'dark', 'light'].map((filter) => (
+                                    <button
+                                        key={filter}
+                                        onClick={() => setVideoFilter(filter as any)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${videoFilter === filter
+                                            ? 'bg-white text-black shadow-lg shadow-white/10'
+                                            : 'bg-surface hover:bg-surface-raised text-text-muted hover:text-text-primary'
+                                            }`}
+                                    >
+                                        {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Showcase View vs Grid View */}
+                        {!activeCategory && !searchQuery && showcaseSections ? (
+                            <div className="space-y-12 pb-10">
+                                {showcaseSections.map((section, i) => (
+                                    <AnimationRow
+                                        key={i}
+                                        {...section}
+                                        onSelect={handleSelectAnimation}
+                                        index={i}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <AnimationGrid
+                                animations={filteredAnimations}
+                                onSelect={handleSelectAnimation}
+                            />
+                        )}
                     </div>
                 </main>
 
@@ -207,8 +313,8 @@ function LibraryContent() {
                     onPrev={() => handleNavigateAnimation('prev')}
                 />
 
-                {/* Floating Donate Button */}
-                <FloatingDonateButton />
+                {/* Floating Donate Button - Temporarily hidden per user request */}
+                {/* <FloatingDonateButton /> */}
             </div>
         </ToastProvider>
     );

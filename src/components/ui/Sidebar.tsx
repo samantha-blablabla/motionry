@@ -8,7 +8,8 @@ import {
   Sparkles,
   LayoutGrid,
   Layers,
-  Menu, // Added Menu
+  Video,
+  Menu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +22,11 @@ interface SidebarItemProps {
 }
 
 function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarItemProps) {
+  // ... item implementation (unchanged logic, just context)
+  // I will not repeat the whole SidebarItem function to save tokens if logic is same,
+  // but the tool requires Context. I will assume SidebarItem is stable.
+  // Actually I need to replace the imports and the Sidebar component.
+  // Let's replace the interfaces and the Sidebar component.
   const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -51,16 +57,24 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
         ref={buttonRef}
         onClick={onClick}
         className={cn(
-          'w-8 h-8 xl:w-12 xl:h-12 rounded-lg xl:rounded-xl flex items-center justify-center transition-all duration-300 relative',
+          'w-10 h-10 xl:w-12 xl:h-12 rounded-lg xl:rounded-xl flex items-center justify-center transition-all duration-300 relative',
           isActive
-            ? 'bg-accent/15 text-accent'
+            ? 'text-accent'
             : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised'
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label={label}
       >
-        <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
+        <Icon className="w-5 h-5 xl:w-6 xl:h-6" />
+
+        {isActive && (
+          <motion.div
+            layoutId="sidebar-active-glow"
+            className="absolute inset-0 rounded-lg xl:rounded-xl bg-accent/15 -z-10"
+            transition={{ duration: 0.3 }}
+          />
+        )}
       </motion.button>
 
       {mounted && createPortal(
@@ -100,25 +114,45 @@ function SidebarItem({ icon: Icon, label, isActive, onClick, count }: SidebarIte
 }
 
 interface SidebarProps {
-  activeGroup: 'components' | 'design';
-  onGroupChange: (group: 'components' | 'design') => void;
-  counts?: { components: number; design: number };
+  activeGroup: 'home' | 'components' | 'design' | 'videos';
+  onGroupChange: (group: 'home' | 'components' | 'design' | 'videos') => void;
+  counts?: { components: number; design: number; videos: number };
 }
 
 export function Sidebar({ activeGroup, onGroupChange, counts }: SidebarProps) {
 
   return (
-    <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-3 xl:py-6 flex-col items-center overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      {/* Logo */}
-      <div className="mb-4 xl:mb-8 shrink-0">
-        <div className="w-8 h-8 xl:w-10 xl:h-10 rounded-lg xl:rounded-xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center shadow-lg shadow-accent/20">
-          <Sparkles className="w-4 h-4 xl:w-5 xl:h-5 text-white" />
-        </div>
-      </div>
+    <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center">
+      {/* 1. Home / Logo */}
+      <motion.button
+        onClick={() => onGroupChange('home')}
+        className={cn(
+          "w-10 h-10 xl:w-12 xl:h-12 rounded-xl flex items-center justify-center transition-all duration-300 relative group mb-8",
+          activeGroup === 'home'
+            ? "bg-accent text-white shadow-lg shadow-accent/25 ring-2 ring-accent/20"
+            : "bg-surface-raised hover:bg-surface-raised/80 text-text-secondary hover:text-text-primary"
+        )}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Sparkles className={cn(
+          "w-5 h-5 xl:w-6 xl:h-6 transition-transform",
+          activeGroup === 'home' ? "fill-white/20" : "fill-transparent"
+        )} />
 
-      {/* Navigation Groups */}
-      <nav className="flex-1 flex flex-col gap-1.5 xl:gap-4 w-full items-center min-h-min">
-        {/* Group 1: Micro-animations (Components) */}
+        {/* Active Glow */}
+        {activeGroup === 'home' && (
+          <motion.div
+            layoutId="sidebar-active-glow"
+            className="absolute inset-0 rounded-xl bg-accent blur-md opacity-40 -z-10"
+            transition={{ duration: 0.3 }}
+          />
+        )}
+      </motion.button>
+
+      {/* Navigation Icons Group */}
+      <nav className="flex flex-col gap-6 w-full items-center">
+        {/* 2. Micro-animations */}
         <SidebarItem
           icon={LayoutGrid}
           label="Micro-animations"
@@ -127,9 +161,7 @@ export function Sidebar({ activeGroup, onGroupChange, counts }: SidebarProps) {
           count={counts?.components}
         />
 
-        <div className="w-8 h-[1px] bg-surface-border/50 my-1.5 xl:my-2 shrink-0" />
-
-        {/* Group 2: Design Sources */}
+        {/* 3. Design Sources */}
         <SidebarItem
           icon={Layers}
           label="Design Sources"
@@ -137,11 +169,19 @@ export function Sidebar({ activeGroup, onGroupChange, counts }: SidebarProps) {
           onClick={() => onGroupChange('design')}
           count={counts?.design}
         />
+
+        {/* 4. Video Assets */}
+        <SidebarItem
+          icon={Video}
+          label="Video Assets"
+          isActive={activeGroup === 'videos'}
+          onClick={() => onGroupChange('videos')}
+          count={counts?.videos}
+        />
       </nav>
 
-      {/* Footer / Settings */}
-      <div className="mt-auto pt-2 xl:pt-4 flex flex-col gap-1.5 xl:gap-2 items-center shrink-0">
-        <div className="w-8 h-[1px] bg-surface-border/50 mb-1.5 xl:mb-2" />
+      {/* Footer */}
+      <div className="mt-auto flex flex-col items-center">
         <SidebarItem
           icon={Menu}
           label="More info"

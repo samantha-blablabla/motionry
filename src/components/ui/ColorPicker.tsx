@@ -53,59 +53,12 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
         <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
                 <span className="text-text-muted">{label}</span>
-                <div className="flex bg-surface-overlay rounded-lg p-0.5 border border-surface-border">
-                    <button
-                        onClick={() => {
-                            setMode('solid');
-                            onChange(gradientColors.start);
-                        }}
-                        className={cn(
-                            "px-2 py-0.5 text-[10px] font-medium rounded-md transition-all",
-                            mode === 'solid' ? "bg-surface text-text-primary shadow-sm" : "text-text-muted hover:text-text-primary"
-                        )}
-                    >
-                        Solid
-                    </button>
-                    <button
-                        onClick={() => {
-                            setMode('gradient');
-                            onChange(`linear-gradient(135deg, ${gradientColors.start}, ${gradientColors.end})`);
-                        }}
-                        className={cn(
-                            "px-2 py-0.5 text-[10px] font-medium rounded-md transition-all",
-                            mode === 'gradient' ? "bg-surface text-text-primary shadow-sm" : "text-text-muted hover:text-text-primary"
-                        )}
-                    >
-                        Gradient
-                    </button>
-                </div>
             </div>
 
-            {mode === 'solid' ? (
-                <ColorSwatch
-                    color={value}
-                    onChange={onChange}
-                />
-            ) : (
-                <div className="space-y-2">
-                    {/* Gradient Preview */}
-                    <div
-                        className="w-full h-9 rounded-lg border border-surface-border"
-                        style={{ background: value }}
-                    />
-
-                    <div className="grid grid-cols-2 gap-2">
-                        <ColorSwatch
-                            color={gradientColors.start}
-                            onChange={(c) => handleGradientChange('start', c)}
-                        />
-                        <ColorSwatch
-                            color={gradientColors.end}
-                            onChange={(c) => handleGradientChange('end', c)}
-                        />
-                    </div>
-                </div>
-            )}
+            <ColorSwatch
+                color={value}
+                onChange={onChange}
+            />
         </div>
     );
 }
