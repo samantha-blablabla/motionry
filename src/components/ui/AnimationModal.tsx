@@ -376,8 +376,15 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
                         {/* Code Content */}
                         <div className="flex-1 overflow-auto p-4">
                           {codeTab === 'beginner' ? (
-                            <div className="p-4 bg-surface rounded-lg border border-surface-border">
-                              <p className="text-text-primary leading-relaxed whitespace-pre-wrap text-sm">
+                            <div className="relative p-4 bg-surface rounded-lg border border-surface-border">
+                              <button
+                                onClick={handleCopy}
+                                className="absolute top-2 right-2 p-1.5 rounded-md bg-surface-overlay hover:bg-surface-raised transition-colors"
+                                title="Copy prompt"
+                              >
+                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
+                              </button>
+                              <p className="text-text-primary leading-relaxed whitespace-pre-wrap text-sm pr-8">
                                 {getCustomizedPrompt()}
                               </p>
                             </div>
@@ -410,32 +417,25 @@ export function AnimationModal({ animation, isOpen, onClose, onNext, onPrev }: A
                                 </div>
                               )}
 
-                              <pre className="p-4 bg-surface rounded-lg border border-surface-border overflow-x-auto text-xs">
-                                <code className="text-text-primary font-mono whitespace-pre">
-                                  {getCustomizedCode()}
-                                </code>
-                              </pre>
+                              <div className="relative">
+                                <button
+                                  onClick={handleCopy}
+                                  className="absolute top-2 right-2 p-1.5 rounded-md bg-surface-overlay hover:bg-surface-raised transition-colors z-10"
+                                  title="Copy code"
+                                >
+                                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
+                                </button>
+                                <pre className="p-4 pr-12 bg-surface rounded-lg border border-surface-border overflow-x-auto text-xs">
+                                  <code className="text-text-primary font-mono whitespace-pre">
+                                    {getCustomizedCode()}
+                                  </code>
+                                </pre>
+                              </div>
                             </div>
                           )}
                         </div>
 
-                        {/* Copy Button */}
-                        <div className="p-3 border-t border-surface-border">
-                          <motion.button
-                            onClick={handleCopy}
-                            className={cn(
-                              'w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm',
-                              'bg-accent hover:bg-accent-hover text-white transition-colors'
-                            )}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            {copied ? (
-                              <><Check className="w-4 h-4" /> Copied!</>
-                            ) : (
-                              <><Copy className="w-4 h-4" /> Copy {codeTab === 'beginner' ? 'Prompt' : 'Code'}</>
-                            )}
-                          </motion.button>
-                        </div>
+
                       </motion.div>
                     )}
                   </AnimatePresence>
