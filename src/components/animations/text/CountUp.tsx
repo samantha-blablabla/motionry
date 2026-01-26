@@ -86,16 +86,16 @@ export function CountUpDemo() {
     return (
         <div className="grid grid-cols-3 gap-2 w-full px-2 items-center">
             <div className="text-center">
-                <CountUp end={99} suffix="%" className="text-2xl" />
-                <p className="text-xs text-gray-500 mt-1">Satisfaction</p>
+                <CountUp end={99} suffix="%" className="text-xl" />
+                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Satisfied</p>
             </div>
             <div className="text-center">
-                <CountUp end={1500} prefix="+" className="text-2xl" />
-                <p className="text-xs text-gray-500 mt-1">Users</p>
+                <CountUp end={1500} prefix="+" className="text-xl" />
+                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Users</p>
             </div>
             <div className="text-center">
-                <CountUp end={4.9} decimals={1} className="text-2xl" />
-                <p className="text-xs text-gray-500 mt-1">Rating</p>
+                <CountUp end={4.9} decimals={1} className="text-xl" />
+                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Rating</p>
             </div>
         </div>
     );
