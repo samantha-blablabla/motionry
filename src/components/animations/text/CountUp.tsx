@@ -84,18 +84,18 @@ export function CountUp({
 // Demo component showing multiple counters
 export function CountUpDemo() {
     return (
-        <div className="flex flex-wrap gap-8 justify-center items-center">
+        <div className="grid grid-cols-3 gap-2 w-full px-2 items-center">
             <div className="text-center">
-                <CountUp end={99} suffix="%" />
-                <p className="text-sm text-gray-500 mt-1">Satisfaction</p>
+                <CountUp end={99} suffix="%" className="text-2xl" />
+                <p className="text-xs text-gray-500 mt-1">Satisfaction</p>
             </div>
             <div className="text-center">
-                <CountUp end={1500} prefix="+" />
-                <p className="text-sm text-gray-500 mt-1">Users</p>
+                <CountUp end={1500} prefix="+" className="text-2xl" />
+                <p className="text-xs text-gray-500 mt-1">Users</p>
             </div>
             <div className="text-center">
-                <CountUp end={4.9} decimals={1} />
-                <p className="text-sm text-gray-500 mt-1">Rating</p>
+                <CountUp end={4.9} decimals={1} className="text-2xl" />
+                <p className="text-xs text-gray-500 mt-1">Rating</p>
             </div>
         </div>
     );

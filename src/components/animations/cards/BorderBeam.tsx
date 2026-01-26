@@ -22,11 +22,11 @@ export function BorderBeam({
 }: BorderBeamProps) {
     return (
         <div className={cn("relative p-[3px] rounded-xl overflow-hidden", className)} style={{ padding: borderWidth }}>
-            {/* Rotating gradient background */}
+            {/* Rotate gradient background - Sharper beam effect */}
             <motion.div
-                className="absolute inset-0"
+                className="absolute inset-[100%] w-[300%] h-[300%] left-[-100%] top-[-100%]"
                 style={{
-                    background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, ${colorFrom} 60deg, ${colorTo} 120deg, transparent 180deg)`,
+                    background: `conic-gradient(from 0deg, transparent 0 300deg, ${colorFrom} 320deg, ${colorTo} 340deg, transparent 360deg)`,
                 }}
                 animate={{ rotate: 360 }}
                 transition={{
