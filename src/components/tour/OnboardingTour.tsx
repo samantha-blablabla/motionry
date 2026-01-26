@@ -18,93 +18,106 @@ interface TourStep {
     targetSelector?: string; // CSS selector for element to highlight
     position?: 'top' | 'bottom' | 'left' | 'right'; // Modal position relative to target
     pointerPosition?: { x: number; y: number }; // Animated pointer position (% of target element)
+    action?: () => void; // Function to simulate interaction
 }
-
-const tourSteps: TourStep[] = [
-    {
-        icon: Sparkles,
-        title: "Welcome to Motionry! ✨",
-        description: "Your premium library of micro-animations and design resources. Let's show you around in just 30 seconds!",
-        emoji: "👋",
-    },
-    {
-        icon: Search,
-        title: "Browse & Discover",
-        description: "Explore 40+ animations organized by category. Click on the sidebar items to switch between different sections.",
-        emoji: "🔍",
-        tip: "Try clicking 'Micro-Animations' to see all interactive components!",
-        targetSelector: '[data-tour="sidebar"]',
-        position: 'right',
-    },
-    {
-        icon: Copy,
-        title: "Copy Code Instantly",
-        description: "Found something you like? Every card has a copy button in the top-right. Just one click to grab the code!",
-        emoji: "⚡",
-        tip: "Look for the copy icon - it's always ready!",
-        targetSelector: '[data-tour="animation-card"]',
-        position: 'bottom',
-        pointerPosition: { x: 88, y: 22 }, // Point to top-right copy button
-    },
-    {
-        icon: Sliders,
-        title: "Customize & Experiment",
-        description: "Click any card to open the customization modal. Adjust parameters in real-time and see instant previews!",
-        emoji: "🎨",
-        tip: "Changes are previewed instantly - try it out!",
-        targetSelector: '[data-tour="animation-card"]',
-        position: 'top',
-    },
-    {
-        icon: Search,
-        title: "Search & Filter",
-        description: "Use the search bar to find animations by name, description, or tags. Try searching 'hover' or 'loading'!",
-        emoji: "🎯",
-        tip: "Pro tip: Search works across all animations",
-        targetSelector: '[data-tour="search-bar"]',
-        position: 'bottom',
-    }
-];
 
 export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
-    const modalRef = useRef<HTMLDivElement>(null);
+    const [isDemonstrating, setIsDemonstrating] = useState(false);
+
+    // Define steps inside to access actions
+    const tourSteps: TourStep[] = [
+        {
+            icon: Sparkles,
+            title: "Welcome to Motionry! 👋",
+            description: "Let's learn how to use this library in 3 simple steps.",
+            emoji: "🚀",
+        },
+        {
+            icon: Search,
+            title: "1. Filter by Category",
+            description: "Start by selecting a category on the left. You can switch between Micro-Animations, Backgrounds, and Video Assets.",
+            emoji: "📂",
+            targetSelector: '[data-tour="sidebar"]', // Whole sidebar
+            position: 'right',
+            pointerPosition: { x: 50, y: 30 },
+        },
+        {
+            icon: Copy,
+            title: "2. One-Click Copy",
+            description: "See that button? Clicking it instantly copies the code (React/Framer Motion) to your clipboard.",
+            emoji: "⚡",
+            tip: "We'll show you exactly where to click!",
+            targetSelector: '[data-tour="animation-card"]', // First card
+            position: 'bottom',
+            pointerPosition: { x: 88, y: 22 }, // Point to copy button
+            action: () => {
+                // Simulate hover to show button
+                const card = document.querySelector('[data-tour="animation-card"]');
+                if (card) {
+                    card.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                }
+            }
+        },
+        {
+            icon: Sliders,
+            title: "3. Customize Details",
+            description: "Click anywhere else on the card to open the Detail View. There you can tweak settings and see the full code.",
+            emoji: "🎨",
+            targetSelector: '[data-tour="animation-card"]',
+            position: 'top',
+            pointerPosition: { x: 50, y: 50 },
+        },
+        {
+            icon: Search,
+            title: "Pro Tip: Quick Search",
+            description: "Press '/' anytime to jump to search. Find animations by name, tag, or use-case.",
+            emoji: "⌨️",
+            targetSelector: '[data-tour="search-bar"]',
+            position: 'bottom',
+        }
+    ];
 
     const totalSteps = tourSteps.length;
     const step = tourSteps[currentStep];
 
-    // Calculate target element position
+    // Update Target & Scroll
     useEffect(() => {
-        if (!isOpen || !step.targetSelector) {
-            setTargetRect(null);
-            return;
-        }
+        if (!isOpen) return;
 
-        const updateTargetRect = () => {
-            const element = document.querySelector(step.targetSelector!);
-            if (element) {
-                const rect = element.getBoundingClientRect();
-                setTargetRect(rect);
+        const updatePosition = () => {
+            if (step.targetSelector) {
+                const element = document.querySelector(step.targetSelector);
+                if (element) {
+                    // Smooth scroll to target
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Wait for scroll to finish before updating rect
+                    setTimeout(() => {
+                        setTargetRect(element.getBoundingClientRect());
+
+                        // Trigger action simulation
+                        if (step.action) {
+                            setIsDemonstrating(true);
+                            step.action();
+                            setTimeout(() => setIsDemonstrating(false), 2000);
+                        }
+                    }, 600); // Wait 600ms for smooth scroll
+                }
+            } else {
+                setTargetRect(null);
             }
         };
 
-        // Initial update with delay to ensure DOM is ready
-        setTimeout(updateTargetRect, 100);
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+        return () => window.removeEventListener('resize', updatePosition);
+    }, [currentStep, isOpen, step]);
 
-        window.addEventListener('resize', updateTargetRect);
-        window.addEventListener('scroll', updateTargetRect);
-
-        return () => {
-            window.removeEventListener('resize', updateTargetRect);
-            window.removeEventListener('scroll', updateTargetRect);
-        };
-    }, [isOpen, step.targetSelector, currentStep]);
-
-    // Calculate modal position based on target and position preference
+    // Modal Positioning Logic
     const getModalStyle = (): React.CSSProperties => {
         if (!targetRect || !step.position) {
-            // Center modal if no target
             return {
                 position: 'fixed',
                 top: '50%',
@@ -115,7 +128,7 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
         }
 
         const padding = 24;
-        const modalWidth = 400; // Approximate
+        const modalWidth = 400;
         let top = 0;
         let left = 0;
 
@@ -124,19 +137,16 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                 top = Math.max(padding, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - 300));
                 left = Math.min(targetRect.right + padding, window.innerWidth - modalWidth - padding);
                 return { position: 'fixed', top, left, transform: 'translateY(-50%)', maxWidth: '28rem' };
-
             case 'left':
                 top = Math.max(padding, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - 300));
                 left = Math.max(padding, targetRect.left - modalWidth - padding);
                 return { position: 'fixed', top, left, transform: 'translateY(-50%)', maxWidth: '28rem' };
-
             case 'bottom':
-                top = Math.min(targetRect.bottom + padding, window.innerHeight - 400);
+                top = Math.min(targetRect.bottom + padding, window.innerHeight - 250);
                 left = Math.max(padding, Math.min(targetRect.left + targetRect.width / 2, window.innerWidth - modalWidth / 2 - padding));
                 return { position: 'fixed', top, left, transform: 'translateX(-50%)', maxWidth: '28rem' };
-
             case 'top':
-                top = Math.max(padding, targetRect.top - padding - 300);
+                top = Math.max(padding, targetRect.top - padding - 250);
                 left = Math.max(padding, Math.min(targetRect.left + targetRect.width / 2, window.innerWidth - modalWidth / 2 - padding));
                 return { position: 'fixed', top, left, transform: 'translateX(-50%)', maxWidth: '28rem' };
         }
@@ -177,9 +187,8 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Custom Spotlight System */}
+                    {/* Spotlight Overlay */}
                     <div className="fixed inset-0 z-[100] pointer-events-none">
-                        {/* Dark overlay with spotlight cutout */}
                         {targetRect ? (
                             <svg className="absolute inset-0 w-full h-full">
                                 <defs>
@@ -200,118 +209,83 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                                     y="0"
                                     width="100%"
                                     height="100%"
-                                    fill="rgba(0, 0, 0, 0.75)"
+                                    fill="rgba(0, 0, 0, 0.7)"
                                     mask="url(#spotlight-mask)"
-                                    className="backdrop-blur-sm"
+                                    className="backdrop-blur-[2px] transition-all duration-500 ease-out"
                                 />
                             </svg>
                         ) : (
-                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                            />
                         )}
 
-                        {/* Pulsing highlight border */}
+                        {/* Target Highlight Ring */}
                         {targetRect && (
-                            <>
+                            <motion.div
+                                layoutId="highlight-ring"
+                                className="absolute rounded-xl border-2 border-accent/50 box-border"
+                                style={{
+                                    top: targetRect.top - 12,
+                                    left: targetRect.left - 12,
+                                    width: targetRect.width + 24,
+                                    height: targetRect.height + 24,
+                                }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            >
+                                {/* Ping effect */}
                                 <motion.div
-                                    className="absolute rounded-xl border-2 border-accent pointer-events-none"
-                                    style={{
-                                        top: targetRect.top - 8,
-                                        left: targetRect.left - 8,
-                                        width: targetRect.width + 16,
-                                        height: targetRect.height + 16,
-                                    }}
-                                    animate={{
-                                        scale: [1, 1.02, 1],
-                                        opacity: [0.6, 1, 0.6],
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        ease: 'easeInOut',
-                                    }}
+                                    className="absolute inset-0 rounded-xl border border-accent"
+                                    animate={{ scale: [1, 1.1], opacity: [1, 0] }}
+                                    transition={{ duration: 1.5, repeat: Infinity }}
                                 />
-
-                                {/* Glow effect */}
-                                <motion.div
-                                    className="absolute rounded-xl pointer-events-none"
-                                    style={{
-                                        top: targetRect.top - 8,
-                                        left: targetRect.left - 8,
-                                        width: targetRect.width + 16,
-                                        height: targetRect.height + 16,
-                                        boxShadow: '0 0 40px 10px rgba(99, 102, 241, 0.3)',
-                                    }}
-                                    animate={{
-                                        opacity: [0.5, 0.8, 0.5],
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        ease: 'easeInOut',
-                                    }}
-                                />
-                            </>
+                            </motion.div>
                         )}
 
-                        {/* Animated Pointer */}
+                        {/* Animated Pointer Hand */}
                         {targetRect && step.pointerPosition && (
                             <motion.div
-                                className="absolute pointer-events-none z-10"
-                                style={{
-                                    top: targetRect.top + (targetRect.height * step.pointerPosition.y / 100),
-                                    left: targetRect.left + (targetRect.width * step.pointerPosition.x / 100),
-                                }}
-                                initial={{ opacity: 0, scale: 0, rotate: -45 }}
+                                className="absolute z-50 text-accent filter drop-shadow-lg"
+                                initial={{ opacity: 0, scale: 0 }}
                                 animate={{
                                     opacity: 1,
                                     scale: 1,
-                                    y: [0, -12, 0],
-                                    rotate: -45,
+                                    top: targetRect.top + (targetRect.height * step.pointerPosition.y / 100),
+                                    left: targetRect.left + (targetRect.width * step.pointerPosition.x / 100),
                                 }}
-                                exit={{ opacity: 0, scale: 0 }}
-                                transition={{
-                                    y: {
-                                        duration: 1.5,
-                                        repeat: Infinity,
-                                        ease: 'easeInOut',
-                                    },
-                                }}
+                                transition={{ type: "spring", stiffness: 200, damping: 25 }}
                             >
-                                <div className="relative">
-                                    <MousePointer2 className="w-10 h-10 text-accent drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]" fill="currentColor" />
-                                    {/* Ripple effect */}
+                                <MousePointer2
+                                    className="w-12 h-12 fill-accent/20"
+                                    style={{ transform: 'rotate(-25deg)' }}
+                                />
+
+                                {/* Click Ripple Effect */}
+                                {isDemonstrating && (
                                     <motion.div
-                                        className="absolute inset-0 border-2 border-accent rounded-full"
-                                        animate={{
-                                            scale: [1, 2],
-                                            opacity: [0.8, 0],
-                                        }}
-                                        transition={{
-                                            duration: 1.5,
-                                            repeat: Infinity,
-                                            ease: 'easeOut',
-                                        }}
+                                        className="absolute top-0 left-0 w-12 h-12 rounded-full border-2 border-accent bg-accent/20"
+                                        initial={{ scale: 0.5, opacity: 1 }}
+                                        animate={{ scale: 2, opacity: 0 }}
+                                        transition={{ duration: 0.6 }}
                                     />
-                                </div>
+                                )}
                             </motion.div>
                         )}
                     </div>
 
-                    {/* Clickable backdrop to close */}
-                    <div
-                        className="fixed inset-0 z-[101]"
-                        onClick={handleSkip}
-                    />
+                    {/* Interaction Blocker */}
+                    <div className="fixed inset-0 z-[101]" onClick={handleSkip} />
 
-                    {/* Tour Modal */}
+                    {/* Tour Modal Card */}
                     <motion.div
-                        ref={modalRef}
-                        className="z-[102] w-full bg-surface-raised border border-surface-border rounded-2xl shadow-2xl overflow-hidden"
+                        className="fixed z-[102] w-full bg-surface/95 backdrop-blur-md border border-surface-border rounded-2xl shadow-2xl overflow-hidden"
                         style={getModalStyle()}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        key={currentStep} // Re-animate on step change
+                        transition={{ type: "spring", duration: 0.5 }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Close Button */}
@@ -323,97 +297,56 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                         </button>
 
                         {/* Progress Bar */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-surface-border">
+                        <div className="h-1 bg-surface-border w-full">
                             <motion.div
-                                className="h-full bg-gradient-to-r from-accent to-purple-500"
+                                className="h-full bg-accent"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-                                transition={{ duration: 0.3 }}
                             />
                         </div>
 
-                        {/* Content */}
-                        <div className="p-6 pt-8">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentStep}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="space-y-4"
-                                >
-                                    {/* Icon & Title */}
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-purple-500/20 border border-accent/30 flex items-center justify-center flex-shrink-0">
-                                            <span className="text-2xl">{step.emoji}</span>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-xs text-text-muted mb-0.5">
-                                                Step {currentStep + 1} of {totalSteps}
-                                            </div>
-                                            <h2 className="text-xl font-bold text-text-primary">
-                                                {step.title}
-                                            </h2>
-                                        </div>
-                                    </div>
-
-                                    {/* Description */}
-                                    <p className="text-sm text-text-secondary leading-relaxed">
-                                        {step.description}
-                                    </p>
-
-                                    {/* Tip */}
+                        <div className="p-6">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-3xl shadow-inner shrink-0 leading-none pt-1">
+                                    {step.emoji}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-text-primary mb-2">{step.title}</h3>
+                                    <p className="text-sm text-text-secondary leading-relaxed">{step.description}</p>
                                     {step.tip && (
-                                        <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                                            <div className="flex items-start gap-2">
-                                                <Sparkles className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                                                <p className="text-xs text-text-primary">
-                                                    <span className="font-semibold">Tip:</span> {step.tip}
-                                                </p>
-                                            </div>
+                                        <div className="mt-3 flex items-center gap-2 text-xs text-accent bg-accent/5 px-2 py-1 rounded border border-accent/10 w-fit">
+                                            <Sparkles className="w-3 h-3" />
+                                            {step.tip}
                                         </div>
                                     )}
-                                </motion.div>
-                            </AnimatePresence>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Footer Navigation */}
-                        <div className="px-6 py-4 bg-surface border-t border-surface-border flex items-center justify-between">
-                            {/* Previous Button */}
+                        <div className="px-6 py-4 bg-surface-raised/50 border-t border-surface-border flex justify-between items-center">
                             <button
-                                onClick={handlePrev}
-                                disabled={currentStep === 0}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface-raised"
+                                onClick={handleFinish}
+                                className="text-xs text-text-muted hover:text-text-primary font-medium px-2 py-1"
                             >
-                                <ChevronLeft className="w-4 h-4" />
-                                Back
+                                Skip
                             </button>
 
-                            {/* Dots Indicator */}
-                            <div className="flex items-center gap-1.5">
-                                {tourSteps.map((_, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setCurrentStep(idx)}
-                                        className={`h-1.5 rounded-full transition-all ${idx === currentStep
-                                                ? 'bg-accent w-6'
-                                                : idx < currentStep
-                                                    ? 'bg-accent/50 w-1.5'
-                                                    : 'bg-surface-border w-1.5'
-                                            }`}
-                                    />
-                                ))}
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handlePrev}
+                                    disabled={currentStep === 0}
+                                    className="p-2 rounded-lg hover:bg-surface-active disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronLeft className="w-5 h-5 text-text-primary" />
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg text-sm font-bold shadow-lg shadow-accent/20 transition-all hover:scale-105 active:scale-95"
+                                >
+                                    {currentStep === totalSteps - 1 ? 'Finish' : 'Next'}
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
                             </div>
-
-                            {/* Next/Finish Button */}
-                            <button
-                                onClick={handleNext}
-                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all"
-                            >
-                                {currentStep === totalSteps - 1 ? "Got it!" : 'Next'}
-                                {currentStep < totalSteps - 1 && <ChevronRight className="w-4 h-4" />}
-                            </button>
                         </div>
                     </motion.div>
                 </>
