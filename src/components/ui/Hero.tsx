@@ -1,16 +1,78 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, Github, Play } from 'lucide-react';
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Play } from 'lucide-react';
 
 interface HeroProps {
     onExplore: () => void;
 }
 
+// Typewriter text
+const TYPEWRITER_TEXT = "Welcome to Motionry, wait for a minute to get magic...";
+
 export function Hero({ onExplore }: HeroProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+    const [isButtonClicked, setIsButtonClicked] = useState(false);
+    const [displayedText, setDisplayedText] = useState("");
+    const [showTypewriter, setShowTypewriter] = useState(false);
+
+    // Handle button click - start animation sequence
+    const handleButtonClick = useCallback(() => {
+        if (isButtonClicked) return;
+        setIsButtonClicked(true);
+        setDisplayedText("");
+    }, [isButtonClicked]);
+
+    // Delay before showing typewriter (1 second after morph)
+    useEffect(() => {
+        if (!isButtonClicked) return;
+
+        const delayTimer = setTimeout(() => {
+            setShowTypewriter(true);
+        }, 1000); // 1 second delay after morph
+
+        return () => clearTimeout(delayTimer);
+    }, [isButtonClicked]);
+
+    // Typewriter effect with pause
+    useEffect(() => {
+        if (!showTypewriter) return;
+
+        let isCancelled = false;
+
+        const runTypewriter = async () => {
+            const part1 = "Welcome to Motionry,";
+            const part2 = " wait for a minute to get magic...";
+            const fullText = part1 + part2;
+
+            // Type first part
+            for (let i = 0; i <= part1.length; i++) {
+                if (isCancelled) return;
+                setDisplayedText(part1.slice(0, i));
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+
+            // Pause after comma
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Type second part
+            for (let i = part1.length; i <= fullText.length; i++) {
+                if (isCancelled) return;
+                setDisplayedText(fullText.slice(0, i));
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+
+            // Wait before navigation
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (!isCancelled) onExplore();
+        };
+
+        runTypewriter();
+
+        return () => { isCancelled = true; };
+    }, [showTypewriter, onExplore]);
 
     // Initialize HLS.js for video streaming - lazy load for performance
     useEffect(() => {
@@ -26,10 +88,14 @@ export function Hero({ onExplore }: HeroProps) {
             if (Hls.isSupported()) {
                 const hls = new Hls({
                     enableWorker: true,
-                    lowLatencyMode: true,
-                    startLevel: -1, // Auto quality selection
-                    maxBufferLength: 30,
-                    maxMaxBufferLength: 60,
+                    lowLatencyMode: false, // Disable for smoother playback
+                    startLevel: -1, // Auto quality selection based on bandwidth
+                    maxBufferLength: 15, // Slightly higher buffer for smoother playback
+                    maxMaxBufferLength: 30, // Cap max buffer
+                    maxBufferSize: 30 * 1000 * 1000, // 30MB max buffer size
+                    abrEwmaDefaultEstimate: 2000000, // Higher bandwidth estimate (2Mbps) for better initial quality
+                    abrBandWidthFactor: 0.9, // Less conservative for faster quality upgrade
+                    abrBandWidthUpFactor: 0.7, // Faster quality upgrades
                 });
                 hls.loadSource(videoSrc);
                 hls.attachMedia(video);
@@ -59,6 +125,10 @@ export function Hero({ onExplore }: HeroProps) {
                 <video
                     ref={videoRef}
                     className="absolute inset-0 w-full h-full object-cover"
+                    style={{
+                        willChange: 'auto',
+                        transform: 'translateZ(0)',
+                    }}
                     autoPlay
                     muted
                     loop
@@ -113,41 +183,105 @@ export function Hero({ onExplore }: HeroProps) {
                     Copy the perfect animation for your next project in seconds.
                 </motion.p>
 
-                {/* CTA Buttons */}
+                {/* CTA Button */}
                 <motion.div
-                    className="flex flex-col sm:flex-row items-center justify-center gap-3 lg:gap-4"
+                    className="flex items-center justify-center"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
                 >
                     <motion.button
-                        onClick={onExplore}
-                        className="group flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-4 rounded-xl bg-white hover:bg-gray-100 text-black font-semibold text-base lg:text-lg transition-colors"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        onClick={handleButtonClick}
+                        className="relative overflow-hidden"
+                        style={{
+                            borderRadius: 28,
+                        }}
+                        layout
+                        transition={{
+                            layout: { type: "spring", stiffness: 100, damping: 20 }
+                        }}
+                        whileHover={!isButtonClicked ? { scale: 1.02 } : {}}
+                        whileTap={!isButtonClicked ? { scale: 0.98 } : {}}
+                        disabled={isButtonClicked}
                     >
-                        <Play className="w-4 h-4 lg:w-5 lg:h-5" />
-                        Browse Library
-                        <motion.span
-                            className="inline-block"
-                            animate={{ x: [0, 4, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                            →
-                        </motion.span>
-                    </motion.button>
+                        {/* Border Beam Effect - only shows when clicked */}
+                        <AnimatePresence>
+                            {isButtonClicked && (
+                                <motion.div
+                                    className="absolute inset-0"
+                                    layout
+                                    initial={{ opacity: 0, rotate: 0 }}
+                                    animate={{ opacity: 1, rotate: 360 }}
+                                    style={{
+                                        borderRadius: 28,
+                                        background: 'conic-gradient(from 0deg, transparent 0deg, transparent 80deg, rgba(255,255,255,0.6) 90deg, transparent 100deg, transparent 360deg)',
+                                    }}
+                                    transition={{
+                                        opacity: { duration: 0.3 },
+                                        rotate: { duration: 2, repeat: Infinity, ease: 'linear' }
+                                    }}
+                                />
+                            )}
+                        </AnimatePresence>
 
-                    <motion.a
-                        href="https://github.com/samantha-blablabla/motionry"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-4 rounded-xl border border-white/30 hover:border-white/50 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold text-base lg:text-lg transition-colors"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <Github className="w-4 h-4 lg:w-5 lg:h-5" />
-                        View on GitHub
-                    </motion.a>
+                        {/* Inner content */}
+                        <motion.div
+                            className={`relative flex items-center justify-center gap-2 text-base lg:text-lg h-[56px] min-w-[200px] ${isButtonClicked
+                                ? 'bg-black/90 backdrop-blur-md text-white px-8 font-normal'
+                                : 'bg-white hover:bg-gray-100 text-black px-6 font-semibold'
+                                }`}
+                            style={{
+                                borderRadius: 28,
+                                margin: isButtonClicked ? '1px' : '0',
+                                boxShadow: isButtonClicked ? 'inset 0 0 0 1px rgba(255,255,255,0.1)' : 'none',
+                            }}
+                            layout
+                            transition={{
+                                layout: { type: "spring", stiffness: 100, damping: 20 }
+                            }}
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {!isButtonClicked ? (
+                                    <motion.div
+                                        layout
+                                        key="initial"
+                                        className="flex items-center gap-2"
+                                        initial={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <Play className="w-4 h-4 lg:w-5 lg:h-5" />
+                                        <span>Browse Library</span>
+                                        <motion.span
+                                            className="inline-block"
+                                            animate={{ x: [0, 4, 0] }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                        >
+                                            →
+                                        </motion.span>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        layout
+                                        key="typewriter"
+                                        className="flex items-center gap-3 min-w-[300px] lg:min-w-[450px]"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <span className="text-sm lg:text-base text-white/80 font-light">
+                                            {displayedText}
+                                            <motion.span
+                                                className="inline-block w-0.5 h-4 lg:h-5 bg-white/80 ml-0.5"
+                                                animate={{ opacity: [1, 0] }}
+                                                transition={{ duration: 0.5, repeat: Infinity }}
+                                            />
+                                        </span>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    </motion.button>
                 </motion.div>
 
                 {/* Stats */}
