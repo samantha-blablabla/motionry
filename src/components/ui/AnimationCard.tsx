@@ -118,6 +118,8 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
           <Play className="w-3 h-3 fill-current text-accent" />
           <span className="text-accent font-medium">Interactive</span>
         </motion.div>
+
+
       </motion.div>
 
       {/* Info Section - overflow-visible to allow tooltip to show */}
@@ -184,16 +186,24 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
           </motion.button>
         </div>
 
-        {/* Tags with increased top spacing and consistent gap */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {animation.tags.slice(0, 3).map((tag) => (
+        {/* Tags - Single Line with Counter */}
+        <div className="flex items-center gap-1.5 mt-6 overflow-hidden">
+          {animation.tags.slice(0, 4).map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 text-xs rounded-md bg-surface text-text-secondary border border-surface-border/50 font-medium"
+              className={cn(
+                "px-2 py-0.5 text-[11px] rounded-md font-medium whitespace-nowrap flex-shrink-0",
+                "bg-surface/50 text-text-secondary border border-surface-border/30"
+              )}
             >
               {tag}
             </span>
           ))}
+          {animation.tags.length > 4 && (
+            <span className="px-2 py-0.5 text-[11px] rounded-md font-medium text-text-muted flex-shrink-0">
+              +{animation.tags.length - 4}
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
