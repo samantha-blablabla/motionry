@@ -50,6 +50,7 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
       onClick={() => onSelect(animation)}
       whileHover={{ y: -2 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      data-tour="animation-card"
     >
       {/* Preview Area */}
       <motion.div

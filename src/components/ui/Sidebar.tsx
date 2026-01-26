@@ -122,7 +122,10 @@ interface SidebarProps {
 export function Sidebar({ activeGroup, onGroupChange, counts }: SidebarProps) {
 
   return (
-    <aside className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center">
+    <aside
+      className="hidden lg:flex w-16 xl:w-20 h-screen sticky top-0 z-50 border-r border-surface-border bg-surface py-6 flex-col items-center"
+      data-tour="sidebar"
+    >
       {/* 1. Home / Logo */}
       <motion.button
         onClick={() => onGroupChange('home')}

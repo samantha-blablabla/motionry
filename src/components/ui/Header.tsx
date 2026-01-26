@@ -112,6 +112,7 @@ export function Header({
           animate={{ width: isSearchFocused ? 320 : 240 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           style={{ maxWidth: '100%' }}
+          data-tour="search-bar"
         >
           <Search className="w-4 h-4 text-text-muted flex-shrink-0" />
           <input
