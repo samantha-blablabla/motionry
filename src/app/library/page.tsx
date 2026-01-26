@@ -12,6 +12,8 @@ import { ToastProvider } from '@/components/ui/Toast';
 import { CategoryTabs } from '@/components/ui/CategoryTabs';
 import { AnimationRow } from '@/components/ui/AnimationRow';
 import { FloatingDonateButton } from '@/components/ui/FloatingDonateButton';
+import { OnboardingTour } from '@/components/tour/OnboardingTour';
+import { HelpButton } from '@/components/tour/HelpButton';
 import animationsData from '@/data/animations.json';
 import type { Animation, AnimationsData } from '@/lib/types';
 
@@ -32,6 +34,20 @@ function LibraryContent() {
     const [selectedAnimation, setSelectedAnimation] = useState<Animation | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Onboarding tour state
+    const [isTourOpen, setIsTourOpen] = useState(false);
+
+    // Check if user has completed tour
+    useEffect(() => {
+        const hasCompletedTour = localStorage.getItem('motionry_tour_completed');
+        if (!hasCompletedTour) {
+            // Show tour after a short delay for first-time visitors
+            const timer = setTimeout(() => setIsTourOpen(true), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
 
     // Sync URL when filters change
     const updateURL = useCallback((category: string | null, query: string) => {
@@ -315,6 +331,15 @@ function LibraryContent() {
 
                 {/* Floating Donate Button - Temporarily hidden per user request */}
                 {/* <FloatingDonateButton /> */}
+
+                {/* Onboarding Tour */}
+                <OnboardingTour
+                    isOpen={isTourOpen}
+                    onClose={() => setIsTourOpen(false)}
+                />
+
+                {/* Help Button - Only show after tour is completed */}
+                {!isTourOpen && <HelpButton onClick={() => setIsTourOpen(true)} />}
             </div>
         </ToastProvider>
     );
