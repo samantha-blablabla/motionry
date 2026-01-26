@@ -32,12 +32,10 @@ import { BorderBeam } from '@/components/animations/cards/BorderBeam';
 import { StaggeredMenu } from '@/components/animations/navigation/StaggeredMenu';
 import { TextReveal } from '@/components/animations/text/TextReveal';
 // Backgrounds
-import { AuroraBackground } from '@/components/animations/backgrounds/AuroraBackground';
 import { GridPattern } from '@/components/animations/backgrounds/GridPattern';
 import { DotPattern } from '@/components/animations/backgrounds/DotPattern';
-import { VideoBackground } from '@/components/animations/backgrounds/VideoBackground';
-import { ShootingStars } from '@/components/animations/backgrounds/ShootingStars';
-import { GeometricShapes } from '@/components/animations/backgrounds/GeometricShapes';
+import { VideoBackground } from '@/components/animations/backgrounds/VideoBackground'; // Keep for video assets
+import { DotMatrixWave } from '@/components/animations/backgrounds/DotMatrixWave';
 
 // Registry type
 type AnimationRegistry = {
@@ -75,10 +73,10 @@ export const animationRegistry: AnimationRegistry = {
   'staggered-menu': StaggeredMenu,
   'text-reveal': TextReveal,
   // Backgrounds
-  'aurora-background': AuroraBackground,
   'grid-pattern': GridPattern,
   'dot-pattern': DotPattern,
-  'video-background': VideoBackground,
+  'dot-matrix-wave': DotMatrixWave,
+  'video-background': VideoBackground, // Keep valid for generic usage if needed
   'video-abstract-ink': VideoBackground,
   'video-gradient-loop': VideoBackground,
   'video-neon-city': VideoBackground,
@@ -97,8 +95,6 @@ export const animationRegistry: AnimationRegistry = {
   'video-deep-ocean': VideoBackground,
   'video-starlight-drift': VideoBackground,
   'video-quantum-wave': VideoBackground,
-  'shooting-stars': ShootingStars,
-  'geometric-shapes': GeometricShapes,
 };
 
 // Helper to get component by ID
