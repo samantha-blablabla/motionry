@@ -21,8 +21,8 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       type: 'spring',
@@ -47,7 +47,7 @@ export function AnimationGrid({ animations, onSelect }: AnimationGridProps) {
 
   return (
     <motion.div
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
