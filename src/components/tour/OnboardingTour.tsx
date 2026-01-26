@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, Sparkles, Copy, Search, Sliders, MousePointer2 } from 'lucide-react';
 
@@ -15,18 +15,18 @@ interface TourStep {
     description: string;
     emoji: string;
     tip?: string;
-    targetSelector?: string; // CSS selector for element to highlight
-    position?: 'top' | 'bottom' | 'left' | 'right'; // Modal position relative to target
-    pointerPosition?: { x: number; y: number }; // Animated pointer position (% of target element)
-    action?: () => void; // Function to simulate interaction
+    targetSelector?: string;
+    position?: 'top' | 'bottom' | 'left' | 'right';
+    pointerPosition?: { x: number; y: number };
+    action?: () => void;
 }
 
 export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
     const [isDemonstrating, setIsDemonstrating] = useState(false);
+    const [isStepVisible, setIsStepVisible] = useState(true); // Control visibility for transitions
 
-    // Define steps inside to access actions
     const tourSteps: TourStep[] = [
         {
             icon: Sparkles,
@@ -39,7 +39,7 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
             title: "1. Filter by Category",
             description: "Start by selecting a category on the left. You can switch between Micro-Animations, Backgrounds, and Video Assets.",
             emoji: "📂",
-            targetSelector: '[data-tour="sidebar"]', // Whole sidebar
+            targetSelector: '[data-tour="sidebar"]',
             position: 'right',
             pointerPosition: { x: 50, y: 30 },
         },
@@ -49,11 +49,10 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
             description: "See that button? Clicking it instantly copies the code (React/Framer Motion) to your clipboard.",
             emoji: "⚡",
             tip: "We'll show you exactly where to click!",
-            targetSelector: '[data-tour="animation-card"]', // First card
+            targetSelector: '[data-tour="animation-card"]',
             position: 'bottom',
-            pointerPosition: { x: 88, y: 22 }, // Point to copy button
+            pointerPosition: { x: 88, y: 22 },
             action: () => {
-                // Simulate hover to show button
                 const card = document.querySelector('[data-tour="animation-card"]');
                 if (card) {
                     card.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
@@ -82,40 +81,83 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
     const totalSteps = tourSteps.length;
     const step = tourSteps[currentStep];
 
-    // Update Target & Scroll
+    // Helper to check if element is in viewport
+    const isInViewport = (rect: DOMRect) => {
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    };
+
+    // Update Target & Scroll with FADE transition
     useEffect(() => {
         if (!isOpen) return;
 
+        let timeoutId: NodeJS.Timeout;
+
         const updatePosition = () => {
-            if (step.targetSelector) {
-                const element = document.querySelector(step.targetSelector);
-                if (element) {
-                    // Smooth scroll to target
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // 1. Hide current step UI
+            setIsStepVisible(false);
+            setTargetRect(null); // Clear rect immediately to prevent jumping spotlight
 
-                    // Wait for scroll to finish before updating rect
-                    setTimeout(() => {
-                        setTargetRect(element.getBoundingClientRect());
+            // 2. Wait for fade out, then scroll and find new target
+            timeoutId = setTimeout(() => {
+                if (step.targetSelector) {
+                    const element = document.querySelector(step.targetSelector);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
 
-                        // Trigger action simulation
-                        if (step.action) {
-                            setIsDemonstrating(true);
-                            step.action();
-                            setTimeout(() => setIsDemonstrating(false), 2000);
+                        // Only scroll if NOT FULLY in viewport
+                        if (!isInViewport(rect)) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
-                    }, 600); // Wait 600ms for smooth scroll
+
+                        // 3. Wait for scroll to settle/finish
+                        setTimeout(() => {
+                            const newRect = element.getBoundingClientRect();
+                            setTargetRect(newRect);
+                            setIsStepVisible(true); // Show UI again
+
+                            // Trigger action
+                            if (step.action) {
+                                setIsDemonstrating(true);
+                                step.action();
+                                setTimeout(() => setIsDemonstrating(false), 2000);
+                            }
+                        }, 500); // 500ms scroll buffer
+                    }
+                } else {
+                    // No target (Welcome step), just show UI
+                    setTargetRect(null);
+                    setIsStepVisible(true);
                 }
-            } else {
-                setTargetRect(null);
-            }
+            }, 300); // 300ms fade out duration
         };
 
         updatePosition();
-        window.addEventListener('resize', updatePosition);
-        return () => window.removeEventListener('resize', updatePosition);
+
+        return () => clearTimeout(timeoutId);
     }, [currentStep, isOpen, step]);
 
-    // Modal Positioning Logic
+    // Window resize handler
+    useEffect(() => {
+        const handleResize = () => {
+            if (step.targetSelector) {
+                const element = document.querySelector(step.targetSelector);
+                if (element) setTargetRect(element.getBoundingClientRect());
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', handleResize);
+        }
+    }, [step]);
+
+
     const getModalStyle = (): React.CSSProperties => {
         if (!targetRect || !step.position) {
             return {
@@ -124,6 +166,7 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 maxWidth: '32rem',
+                margin: 0
             };
         }
 
@@ -180,6 +223,7 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
     useEffect(() => {
         if (isOpen) {
             setCurrentStep(0);
+            setIsStepVisible(true);
         }
     }, [isOpen]);
 
@@ -188,17 +232,27 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
             {isOpen && (
                 <>
                     {/* Spotlight Overlay */}
-                    <div className="fixed inset-0 z-[100] pointer-events-none">
-                        {targetRect ? (
-                            <svg className="absolute inset-0 w-full h-full">
+                    <motion.div
+                        className="fixed inset-0 z-[100] pointer-events-none"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {isStepVisible && targetRect ? (
+                            <svg className="absolute inset-0 w-full h-full transition-all duration-300">
                                 <defs>
                                     <mask id="spotlight-mask">
                                         <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                                        <rect
-                                            x={targetRect.left - 8}
-                                            y={targetRect.top - 8}
-                                            width={targetRect.width + 16}
-                                            height={targetRect.height + 16}
+                                        <motion.rect
+                                            initial={{ x: targetRect.left - 8, y: targetRect.top - 8, width: targetRect.width + 16, height: targetRect.height + 16 }}
+                                            animate={{
+                                                x: targetRect.left - 8,
+                                                y: targetRect.top - 8,
+                                                width: targetRect.width + 16,
+                                                height: targetRect.height + 16
+                                            }}
+                                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
                                             rx="12"
                                             fill="black"
                                         />
@@ -211,41 +265,42 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                                     height="100%"
                                     fill="rgba(0, 0, 0, 0.7)"
                                     mask="url(#spotlight-mask)"
-                                    className="backdrop-blur-[2px] transition-all duration-500 ease-out"
+                                    className="backdrop-blur-[2px]"
                                 />
                             </svg>
                         ) : (
                             <motion.div
+                                key="overlay-bg"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
                             />
                         )}
 
                         {/* Target Highlight Ring */}
-                        {targetRect && (
+                        {isStepVisible && targetRect && (
                             <motion.div
                                 layoutId="highlight-ring"
                                 className="absolute rounded-xl border-2 border-accent/50 box-border"
-                                style={{
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{
+                                    opacity: 1,
+                                    scale: 1,
                                     top: targetRect.top - 12,
                                     left: targetRect.left - 12,
                                     width: targetRect.width + 24,
                                     height: targetRect.height + 24,
                                 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             >
-                                {/* Ping effect */}
-                                <motion.div
-                                    className="absolute inset-0 rounded-xl border border-accent"
-                                    animate={{ scale: [1, 1.1], opacity: [1, 0] }}
-                                    transition={{ duration: 1.5, repeat: Infinity }}
-                                />
+                                <div className="absolute inset-0 rounded-xl border border-accent animate-ping opacity-20" />
                             </motion.div>
                         )}
 
                         {/* Animated Pointer Hand */}
-                        {targetRect && step.pointerPosition && (
+                        {isStepVisible && targetRect && step.pointerPosition && (
                             <motion.div
                                 className="absolute z-50 text-accent filter drop-shadow-lg"
                                 initial={{ opacity: 0, scale: 0 }}
@@ -255,14 +310,14 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                                     top: targetRect.top + (targetRect.height * step.pointerPosition.y / 100),
                                     left: targetRect.left + (targetRect.width * step.pointerPosition.x / 100),
                                 }}
-                                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                                exit={{ opacity: 0, scale: 0 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 25, delay: 0.2 }}
                             >
                                 <MousePointer2
                                     className="w-12 h-12 fill-accent/20"
                                     style={{ transform: 'rotate(-25deg)' }}
                                 />
 
-                                {/* Click Ripple Effect */}
                                 {isDemonstrating && (
                                     <motion.div
                                         className="absolute top-0 left-0 w-12 h-12 rounded-full border-2 border-accent bg-accent/20"
@@ -273,82 +328,88 @@ export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
                                 )}
                             </motion.div>
                         )}
-                    </div>
+                    </motion.div>
 
                     {/* Interaction Blocker */}
                     <div className="fixed inset-0 z-[101]" onClick={handleSkip} />
 
                     {/* Tour Modal Card */}
-                    <motion.div
-                        className="fixed z-[102] w-full bg-surface/95 backdrop-blur-md border border-surface-border rounded-2xl shadow-2xl overflow-hidden"
-                        style={getModalStyle()}
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        key={currentStep} // Re-animate on step change
-                        transition={{ type: "spring", duration: 0.5 }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Close Button */}
-                        <button
-                            onClick={handleSkip}
-                            className="absolute top-3 right-3 p-1.5 rounded-lg bg-surface hover:bg-surface-overlay transition-colors z-10"
-                        >
-                            <X className="w-4 h-4 text-text-muted" />
-                        </button>
-
-                        {/* Progress Bar */}
-                        <div className="h-1 bg-surface-border w-full">
+                    <AnimatePresence mode="wait">
+                        {isStepVisible && (
                             <motion.div
-                                className="h-full bg-accent"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-                            />
-                        </div>
-
-                        <div className="p-6">
-                            <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-3xl shadow-inner shrink-0 leading-none pt-1">
-                                    {step.emoji}
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-text-primary mb-2">{step.title}</h3>
-                                    <p className="text-sm text-text-secondary leading-relaxed">{step.description}</p>
-                                    {step.tip && (
-                                        <div className="mt-3 flex items-center gap-2 text-xs text-accent bg-accent/5 px-2 py-1 rounded border border-accent/10 w-fit">
-                                            <Sparkles className="w-3 h-3" />
-                                            {step.tip}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="px-6 py-4 bg-surface-raised/50 border-t border-surface-border flex justify-between items-center">
-                            <button
-                                onClick={handleFinish}
-                                className="text-xs text-text-muted hover:text-text-primary font-medium px-2 py-1"
+                                key={currentStep}
+                                className="fixed z-[102] w-full bg-surface/95 backdrop-blur-md border border-surface-border rounded-2xl shadow-2xl overflow-hidden"
+                                style={getModalStyle()}
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                transition={{ type: "spring", duration: 0.4 }}
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                Skip
-                            </button>
+                                <button
+                                    onClick={handleSkip}
+                                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-surface hover:bg-surface-overlay transition-colors z-10"
+                                >
+                                    <X className="w-4 h-4 text-text-muted" />
+                                </button>
 
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={handlePrev}
-                                    disabled={currentStep === 0}
-                                    className="p-2 rounded-lg hover:bg-surface-active disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    <ChevronLeft className="w-5 h-5 text-text-primary" />
-                                </button>
-                                <button
-                                    onClick={handleNext}
-                                    className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg text-sm font-bold shadow-lg shadow-accent/20 transition-all hover:scale-105 active:scale-95"
-                                >
-                                    {currentStep === totalSteps - 1 ? 'Finish' : 'Next'}
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
+                                <div className="h-1 bg-surface-border w-full">
+                                    <motion.div
+                                        className="h-full bg-accent"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+                                        transition={{ duration: 0.5 }}
+                                    />
+                                </div>
+
+                                <div className="p-6">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-3xl shadow-inner shrink-0 leading-none pt-1">
+                                            {step.emoji}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-text-primary mb-2">{step.title}</h3>
+                                            <p className="text-sm text-text-secondary leading-relaxed">{step.description}</p>
+                                            {step.tip && (
+                                                <div className="mt-3 flex items-center gap-2 text-xs text-accent bg-accent/5 px-2 py-1 rounded border border-accent/10 w-fit">
+                                                    <Sparkles className="w-3 h-3" />
+                                                    {step.tip}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="px-6 py-4 bg-surface-raised/50 border-t border-surface-border flex justify-between items-center">
+                                    <div className="flex gap-1">
+                                        {tourSteps.map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentStep ? 'bg-accent' : 'bg-surface-border'}`}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handlePrev}
+                                            disabled={currentStep === 0}
+                                            className="p-2 rounded-lg hover:bg-surface-active disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        >
+                                            <ChevronLeft className="w-5 h-5 text-text-primary" />
+                                        </button>
+                                        <button
+                                            onClick={handleNext}
+                                            className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg text-sm font-bold shadow-lg shadow-accent/20 transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            {currentStep === totalSteps - 1 ? 'Finish' : 'Next'}
+                                            <ChevronRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </>
             )}
         </AnimatePresence>
