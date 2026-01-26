@@ -40,16 +40,16 @@ export function PulseRing({
                         height: size * 0.25,
                         border: `2px solid ${color}`,
                     }}
-                    initial={{ scale: 1, opacity: 0.8 }}
+                    initial={{ scale: 0.5, opacity: 0 }}
                     animate={{
-                        scale: [1, 4],
-                        opacity: [0.8, 0],
+                        scale: [0.5, 4],
+                        opacity: [0, 0.6, 0], // Fade in and out smoothly
                     }}
                     transition={{
-                        duration: duration,
+                        duration: 3, // Slower for elegance
                         repeat: Infinity,
-                        delay: i * (duration / ringCount),
-                        ease: 'easeOut',
+                        delay: i * (3 / ringCount), // Evenly distributed
+                        ease: "easeOut",
                     }}
                 />
             ))}
