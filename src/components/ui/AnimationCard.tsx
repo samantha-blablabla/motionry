@@ -78,11 +78,12 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
             ['backgrounds', 'video-assets'].includes(animation.category)
               ? "absolute inset-0 !scale-100 w-full"
               : "flex items-center justify-center",
-            animation.id === 'count-up' ? 'w-[250%]' : 'w-full', // Give 2.5x width space for scaled content
+            ['count-up', 'staggered-menu'].includes(animation.id) ? 'w-[250%] shrink-0' : 'w-full', // Give 2.5x width space for scaled content
             !['backgrounds', 'video-assets'].includes(animation.category) && (
               animation.id === 'count-up' ? 'scale-[0.4]' :
-                animation.category === 'navigation' ? 'scale-[0.75]' :
-                  animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
+                animation.id === 'staggered-menu' ? 'scale-[0.6]' :
+                  animation.category === 'navigation' ? 'scale-[0.75]' :
+                    animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
             )
           )}>
             <AnimationComponent {...defaultProps} />
