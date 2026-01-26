@@ -74,10 +74,11 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
 
         {hasComponent && AnimationComponent ? (
           <div className={cn(
-            "w-full h-full origin-center transform-gpu relative z-[1]",
+            "h-full origin-center transform-gpu relative z-[1]",
             ['backgrounds', 'video-assets'].includes(animation.category)
-              ? "absolute inset-0 !scale-100"
+              ? "absolute inset-0 !scale-100 w-full"
               : "flex items-center justify-center",
+            animation.id === 'count-up' ? 'w-[250%]' : 'w-full', // Give 2.5x width space for scaled content
             !['backgrounds', 'video-assets'].includes(animation.category) && (
               animation.id === 'count-up' ? 'scale-[0.4]' :
                 animation.category === 'navigation' ? 'scale-[0.75]' :
