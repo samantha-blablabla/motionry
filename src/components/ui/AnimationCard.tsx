@@ -79,8 +79,9 @@ export function AnimationCard({ animation, onSelect }: AnimationCardProps) {
               ? "absolute inset-0 !scale-100"
               : "flex items-center justify-center",
             !['backgrounds', 'video-assets'].includes(animation.category) && (
-              animation.category === 'navigation' ? 'scale-[0.75]' :
-                animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
+              animation.id === 'count-up' ? 'scale-[0.4]' :
+                animation.category === 'navigation' ? 'scale-[0.75]' :
+                  animation.category === 'cards' ? 'scale-[0.8]' : 'scale-[0.9]'
             )
           )}>
             <AnimationComponent {...defaultProps} />

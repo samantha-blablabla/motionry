@@ -84,18 +84,18 @@ export function CountUp({
 // Demo component showing multiple counters
 export function CountUpDemo() {
     return (
-        <div className="grid grid-cols-3 gap-2 w-full px-2 items-center">
+        <div className="grid grid-cols-3 gap-8 w-full px-4 items-center max-w-2xl mx-auto">
             <div className="text-center">
-                <CountUp end={99} suffix="%" className="text-xl" />
-                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Satisfied</p>
+                <CountUp end={99} suffix="%" className="text-5xl md:text-6xl" />
+                <p className="text-sm font-medium uppercase tracking-widest text-text-secondary mt-3">Satisfied</p>
             </div>
             <div className="text-center">
-                <CountUp end={1500} prefix="+" className="text-xl" />
-                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Users</p>
+                <CountUp end={1500} prefix="+" className="text-5xl md:text-6xl" />
+                <p className="text-sm font-medium uppercase tracking-widest text-text-secondary mt-3">Users</p>
             </div>
             <div className="text-center">
-                <CountUp end={4.9} decimals={1} className="text-xl" />
-                <p className="text-[10px] uppercase tracking-wider text-text-secondary mt-1">Rating</p>
+                <CountUp end={4.9} decimals={1} className="text-5xl md:text-6xl" />
+                <p className="text-sm font-medium uppercase tracking-widest text-text-secondary mt-3">Rating</p>
             </div>
         </div>
     );
